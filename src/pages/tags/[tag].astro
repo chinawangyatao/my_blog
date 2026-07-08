@@ -1,0 +1,129 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import PostCard from '../../components/PostCard.astro';
+import SectionTitle from '../../components/SectionTitle.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
+
+  return allTags.map((tag) => {
+    const filteredPosts = posts
+      .filter(post => post.data.tags.includes(tag))
+      .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+    return {
+      params: { tag },
+      props: { posts: filteredPosts, tag },
+    };
+  });
+}
+
+const { posts, tag } = Astro.props;
+---
+
+<Layout title={`标签「${tag}」- wxc 的博客`} description={`包含标签「${tag}」的所有文章`}>
+  <div class="tag-page container">
+    <div class="tag-header reveal">
+      <a href="/" class="back-link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        首页
+      </a>
+      <SectionTitle
+        title={`#${tag}`}
+        subtitle={`共 ${posts.length} 篇文章`}
+      />
+    </div>
+
+    <div class="post-grid">
+      {posts.map((post, index) => (
+        <div class="reveal" style={`transition-delay: ${index * 60}ms`}>
+          <PostCard
+            title={post.data.title}
+            href={`/posts/${post.id}`}
+            pubDate={post.data.pubDate}
+            description={post.data.description}
+            category={post.data.category}
+            tags={post.data.tags}
+            heroImage={post.data.heroImage}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .tag-page {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-16);
+  }
+
+  .tag-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+    transition: color var(--duration-fast) var(--ease-out);
+    cursor: pointer;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  @media (min-width: 640px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .post-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity var(--duration-slow) var(--ease-out),
+                transform var(--duration-slow) var(--ease-out);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+  reveals.forEach((el) => observer.observe(el));
+</script>

@@ -1,11 +1,153 @@
 ---
+import ThemeToggle from './ThemeToggle.astro';
 
-import Navigation from "./Navigation.astro";
-import "../styles/global.css"
+const navItems = [
+  { href: '/', label: '首页', icon: 'home' },
+  { href: '/tech', label: '技术', icon: 'code' },
+  { href: '/life', label: '生活', icon: 'heart' },
+  { href: '/interests', label: '兴趣', icon: 'star' },
+  { href: '/about', label: '关于', icon: 'user' },
+];
 
+const currentPath = Astro.url.pathname;
 ---
-<header>
-    <nav>
-        <Navigation />
+
+<header class="site-header">
+  <div class="header-inner container">
+    <!-- Logo -->
+    <a href="/" class="logo" aria-label="wxc 的博客 - 首页">
+      <span class="logo-mark">w</span>
+      <span class="logo-text">wxc<span class="logo-dot">.</span>dev</span>
+    </a>
+
+    <!-- Desktop Nav -->
+    <nav class="desktop-nav" aria-label="主导航">
+      {navItems.map(item => (
+        <a
+          href={item.href}
+          class:list={['nav-link', { active: currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href)) }]}
+        >
+          {item.label}
+        </a>
+      ))}
     </nav>
+
+    <div class="header-actions">
+      <ThemeToggle />
+    </div>
+  </div>
 </header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: color-mix(in srgb, var(--color-bg) 80%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--color-border);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    width: 100%;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--text-lg);
+    color: var(--color-text);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    background: var(--gradient-hero);
+    color: #fff;
+    font-size: var(--text-base);
+    font-weight: 800;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--duration-normal) var(--ease-spring);
+  }
+
+  .logo:hover .logo-mark {
+    transform: rotate(-8deg) scale(1.05);
+  }
+
+  .logo-text {
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .logo-dot {
+    color: var(--color-accent);
+  }
+
+  .desktop-nav {
+    display: none;
+    align-items: center;
+    gap: var(--space-1);
+  }
+
+  .nav-link {
+    position: relative;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    border-radius: var(--radius-md);
+    transition: color var(--duration-fast) var(--ease-out),
+                background-color var(--duration-fast) var(--ease-out);
+    cursor: pointer;
+  }
+
+  .nav-link:hover {
+    color: var(--color-text);
+    background: var(--color-surface-muted);
+  }
+
+  .nav-link.active {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 4px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  @media (min-width: 768px) {
+    .desktop-nav {
+      display: flex;
+    }
+  }
+</style>

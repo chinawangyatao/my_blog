@@ -1,0 +1,242 @@
+---
+interface Props {
+  title: string;
+  href: string;
+  pubDate: Date;
+  description?: string;
+  category?: 'tech' | 'life' | 'interests';
+  tags?: string[];
+  heroImage?: string;
+  featured?: boolean;
+}
+
+const {
+  title,
+  href,
+  pubDate,
+  description,
+  category = 'tech',
+  tags = [],
+  heroImage,
+  featured = false,
+} = Astro.props;
+
+const categoryLabels = {
+  tech: '技术',
+  life: '生活',
+  interests: '兴趣',
+};
+
+const categoryColors = {
+  tech: 'var(--color-tech)',
+  life: 'var(--color-life)',
+  interests: 'var(--color-interest)',
+};
+
+const formattedDate = new Intl.DateTimeFormat('zh-CN', {
+  month: 'short',
+  day: 'numeric',
+  year: 'numeric',
+}).format(pubDate);
+---
+
+<article class:list={['post-card', `cat-${category}`, { featured }]} data-category={category}>
+  <a href={href} class="card-link" aria-label={title}>
+    {heroImage ? (
+      <div class="card-image">
+        <img src={heroImage} alt={title} loading="lazy" />
+        <span class="card-category" style={`--cat-color: ${categoryColors[category]}`}>
+          {categoryLabels[category]}
+        </span>
+      </div>
+    ) : (
+      <div class="card-image card-image-placeholder" style={`--cat-color: ${categoryColors[category]}`}>
+        <span class="card-category" style={`--cat-color: ${categoryColors[category]}`}>
+          {categoryLabels[category]}
+        </span>
+      </div>
+    )}
+
+    <div class="card-body">
+      <div class="card-meta">
+        <time class="card-date">{formattedDate}</time>
+        {tags.length > 0 && (
+          <span class="card-tags">· {tags.slice(0, 2).join(' · ')}</span>
+        )}
+      </div>
+
+      <h3 class="card-title">{title}</h3>
+
+      {description && <p class="card-description">{description}</p>}
+
+      <div class="card-footer">
+        <span class="card-read-more">
+          阅读全文
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </span>
+      </div>
+    </div>
+  </a>
+</article>
+
+<style>
+  .post-card {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: transform var(--duration-normal) var(--ease-out),
+                box-shadow var(--duration-normal) var(--ease-out),
+                border-color var(--duration-normal) var(--ease-out);
+  }
+
+  .post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--cat-color, var(--color-border-strong));
+  }
+
+  .card-link {
+    display: block;
+    cursor: pointer;
+    color: inherit;
+  }
+
+  .card-image {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--color-surface-muted);
+  }
+
+  .card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--duration-slow) var(--ease-out);
+  }
+
+  .post-card:hover .card-image img {
+    transform: scale(1.05);
+  }
+
+  .card-image-placeholder {
+    background: linear-gradient(135deg,
+      color-mix(in srgb, var(--cat-color) 15%, var(--color-surface-muted)),
+      color-mix(in srgb, var(--cat-color) 5%, var(--color-surface-muted))
+    );
+  }
+
+  .card-category {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--cat-color);
+    background: color-mix(in srgb, var(--cat-color) 15%, white);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  :global(:root[data-theme="dark"]) .card-category {
+    background: color-mix(in srgb, var(--cat-color) 20%, rgba(0,0,0,0.6));
+  }
+
+  .card-body {
+    padding: var(--space-4) var(--space-4) var(--space-5);
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+  }
+
+  .card-date {
+    font-weight: 500;
+  }
+
+  .card-tags {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .card-title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    line-height: var(--leading-snug);
+    margin-bottom: var(--space-2);
+    color: var(--color-text);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
+
+  .post-card:hover .card-title {
+    color: var(--cat-color);
+  }
+
+  .card-description {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+    margin-bottom: var(--space-4);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .card-read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--cat-color);
+    transition: gap var(--duration-fast) var(--ease-out);
+  }
+
+  .post-card:hover .card-read-more {
+    gap: var(--space-2);
+  }
+
+  /* Featured card */
+  .post-card.featured {
+    grid-column: span 1;
+  }
+
+  @media (min-width: 768px) {
+    .post-card.featured {
+      grid-column: span 2;
+    }
+
+    .post-card.featured .card-image {
+      aspect-ratio: 21 / 9;
+    }
+
+    .post-card.featured .card-title {
+      font-size: var(--text-2xl);
+    }
+
+    .post-card.featured .card-description {
+      font-size: var(--text-base);
+      -webkit-line-clamp: 3;
+    }
+  }
+</style>

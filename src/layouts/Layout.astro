@@ -1,23 +1,85 @@
-<!doctype html>
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro Basics</title>
-	</head>
-	<body>
-		<slot />
-	</body>
-</html>
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import BottomNav from '../components/BottomNav.astro';
 
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		height: 100%;
-	}
-</style>
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  category?: 'tech' | 'life' | 'interests';
+}
+
+const {
+  title = 'wxc 的博客',
+  description = '一个记录技术、生活与兴趣的个人空间',
+  image,
+  category,
+} = Astro.props;
+
+const siteUrl = Astro.site ?? new URL('https://wxc.dev');
+const ogImage = image ?? `${siteUrl}og-default.png`;
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+
+// Prevent flash of wrong theme
+const themeScript = `
+  (function() {
+    const stored = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const theme = stored || (prefersDark ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  })();
+`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="generator" content={Astro.generator} />
+
+  <!-- Primary Meta Tags -->
+  <title>{title}</title>
+  <meta name="title" content={title} />
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalURL} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  {image && <meta property="og:image" content={ogImage} />}
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={canonicalURL} />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description} />
+  {image && <meta property="twitter:image" content={ogImage} />}
+
+  <!-- Theme color -->
+  <meta name="theme-color" content="#FAFAF9" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0C0A09" media="(prefers-color-scheme: dark)" />
+
+  <!-- Prevent theme flash -->
+  <script is:inline set:html={themeScript} />
+
+  <!-- Category-based accent color -->
+  {category === 'tech' && <style>:root { --color-accent: var(--color-tech); --color-accent-hover: var(--color-tech-hover); }</style>}
+  {category === 'life' && <style>:root { --color-accent: var(--color-life); --color-accent-hover: var(--color-life-hover); }</style>}
+  {category === 'interests' && <style>:root { --color-accent: var(--color-interest); --color-accent-hover: var(--color-interest-hover); }</style>}
+</head>
+<body>
+  <Header />
+  <main>
+    <slot />
+  </main>
+  <Footer />
+  <BottomNav />
+</body>
+</html>

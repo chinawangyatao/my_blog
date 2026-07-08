@@ -1,0 +1,90 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  category?: 'tech' | 'life' | 'interests';
+  align?: 'left' | 'center';
+}
+
+const {
+  title,
+  subtitle,
+  category,
+  align = 'left',
+} = Astro.props;
+
+const categoryLabels = {
+  tech: '技术分享',
+  life: '生活',
+  interests: '兴趣',
+};
+
+const categoryColors = {
+  tech: 'var(--color-tech)',
+  life: 'var(--color-life)',
+  interests: 'var(--color-interest)',
+};
+---
+
+<div class:list={['section-title', `align-${align}`]} data-category={category}>
+  {category && (
+    <span class="section-eyebrow" style={`--cat-color: ${categoryColors[category]}`}>
+      <span class="eyebrow-line"></span>
+      {categoryLabels[category]}
+    </span>
+  )}
+  <h2 class="section-heading">{title}</h2>
+  {subtitle && <p class="section-subtitle">{subtitle}</p>}
+</div>
+
+<style>
+  .section-title {
+    margin-bottom: var(--space-8);
+  }
+
+  .align-center {
+    text-align: center;
+  }
+
+  .align-center .section-eyebrow {
+    justify-content: center;
+  }
+
+  .section-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--cat-color, var(--color-accent));
+    margin-bottom: var(--space-2);
+  }
+
+  .eyebrow-line {
+    display: inline-block;
+    width: 24px;
+    height: 2px;
+    border-radius: var(--radius-full);
+    background: var(--cat-color, var(--color-accent));
+  }
+
+  .section-heading {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  @media (min-width: 640px) {
+    .section-heading {
+      font-size: var(--text-4xl);
+    }
+  }
+
+  .section-subtitle {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-top: var(--space-2);
+    line-height: var(--leading-normal);
+  }
+</style>

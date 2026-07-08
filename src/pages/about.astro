@@ -1,76 +1,584 @@
 ---
-import '../styles/global.css';
-import Navigation from "../components/Navigation.astro";
-import Footer from '../components/Footer.astro';
-import Header from "../components/Header.astro";
+import Layout from '../layouts/Layout.astro';
 
-const pageTitle = "关于我wxc";
-const identity = {
-    firstName: "莎拉",
-    country: "加拿大",
-    occupation: "技术撰稿人",
-    hobbies: ["摄影", "观鸟", "棒球"],
-};
+const skills = [
+  { category: '前端', items: ['React', 'Vue', 'TypeScript', 'Astro', 'Tailwind CSS', 'Next.js'] },
+  { category: '后端', items: ['Node.js', 'Python', 'PostgreSQL', 'Redis', 'Docker'] },
+  { category: '工具', items: ['Git', 'Figma', 'Vim', 'VS Code'] },
+];
 
-const skills = ["HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
+const timeline = [
+  {
+    year: '2024',
+    title: '全栈开发者',
+    org: '独立项目',
+    description: '使用 Astro、React 搭建个人博客系统，探索现代 Web 开发最佳实践。',
+  },
+  {
+    year: '2023',
+    title: '前端工程师',
+    org: '科技公司',
+    description: '负责大型 Web 应用的前端架构设计与性能优化，推动组件库建设。',
+  },
+  {
+    year: '2022',
+    title: '开始学习编程',
+    org: '自学',
+    description: '从 HTML/CSS 开始，逐步深入 JavaScript、React 和全栈开发。',
+  },
+];
 
-const happy = true;
-const finished = false;
-const goal = 3;
-const skillColor = "crimson";
-
+const interests = [
+  { name: '手冲咖啡', icon: 'coffee', desc: '每个周末的仪式感' },
+  { name: '胶片摄影', icon: 'camera', desc: '用胶片记录慢生活' },
+  { name: '骑行', icon: 'bike', desc: '城市与远方的探索' },
+  { name: '阅读', icon: 'book', desc: '技术与人文的交汇' },
+];
 ---
-<html lang="zh-CN">
-<head>
-    <meta charset ="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{pageTitle}</title>
-</head>
-<body>
-<style define:vars={{skillColor}}>
-    h1 {
-        color: purple;
-        font-size: 4rem;
-    }
 
-    .skill {
-        color: green;
-        font-weight: bold;
-        color: var(--skillColor);
+<Layout title="关于我 - wxc 的博客" description="wxc 的个人简历 - 全栈开发者，热爱技术与生活">
+  <div class="about-page">
+    <!-- Hero -->
+    <section class="about-hero container">
+      <div class="hero-grid">
+        <div class="hero-left reveal">
+          <div class="avatar">
+            <div class="avatar-inner">w</div>
+            <div class="avatar-ring"></div>
+          </div>
+        </div>
+        <div class="hero-right reveal reveal-delay-1">
+          <span class="about-badge">👋 你好</span>
+          <h1 class="about-name">我是 <span class="text-gradient">wxc</span></h1>
+          <p class="about-role">全栈开发者 · 生活记录者 · 兴趣广泛</p>
+          <p class="about-bio">
+            我是一名热爱技术的开发者，也是一个对生活充满好奇的人。
+            白天用代码构建产品，周末用胶片记录生活。
+            相信技术可以让生活更美好，也相信生活能让代码更有温度。
+          </p>
+          <div class="about-cta">
+            <a href="mailto:hello@wxc.dev" class="btn btn-primary">
+              联系我
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener" class="btn btn-secondary">
+              GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <!-- Skills -->
+    <section class="section">
+      <div class="container">
+        <div class="reveal">
+          <h2 class="about-section-title">技能栈</h2>
+          <p class="about-section-subtitle">我用这些工具构建产品和解决问题</p>
+        </div>
+        <div class="skills-grid">
+          {skills.map((group, index) => (
+            <div class="skill-card reveal" style={`transition-delay: ${index * 80}ms`}>
+              <h3 class="skill-category">{group.category}</h3>
+              <div class="skill-list">
+                {group.items.map(item => (
+                  <span class="skill-tag">{item}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="section">
+      <div class="container">
+        <div class="reveal">
+          <h2 class="about-section-title">经历</h2>
+          <p class="about-section-subtitle">我的成长路径</p>
+        </div>
+        <div class="timeline">
+          {timeline.map((item, index) => (
+            <div class="timeline-item reveal" style={`transition-delay: ${index * 80}ms`}>
+              <div class="timeline-marker">
+                <span class="timeline-dot"></span>
+                {index < timeline.length - 1 && <span class="timeline-line"></span>}
+              </div>
+              <div class="timeline-content">
+                <span class="timeline-year">{item.year}</span>
+                <h3 class="timeline-title">{item.title}</h3>
+                <span class="timeline-org">{item.org}</span>
+                <p class="timeline-desc">{item.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Interests -->
+    <section class="section">
+      <div class="container">
+        <div class="reveal">
+          <h2 class="about-section-title">兴趣与爱好</h2>
+          <p class="about-section-subtitle">工作之外，这些事情让我快乐</p>
+        </div>
+        <div class="interests-grid">
+          {interests.map((interest, index) => (
+            <div class="interest-card reveal" style={`transition-delay: ${index * 80}ms`}>
+              <div class="interest-icon">
+                {interest.icon === 'coffee' && (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/>
+                  </svg>
+                )}
+                {interest.icon === 'camera' && (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                )}
+                {interest.icon === 'bike' && (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="5.5" cy="17.5" r="3.5"/>
+                    <circle cx="18.5" cy="17.5" r="3.5"/>
+                    <path d="M15 6a1 1 0 100-2 1 1 0 000 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>
+                  </svg>
+                )}
+                {interest.icon === 'book' && (
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                  </svg>
+                )}
+              </div>
+              <h3 class="interest-name">{interest.name}</h3>
+              <p class="interest-desc">{interest.desc}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Quote -->
+    <section class="section">
+      <div class="container">
+        <div class="quote-card reveal">
+          <svg class="quote-mark" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zM12 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
+          </svg>
+          <p class="quote-text">
+            代码是写给机器的诗歌，生活是写给自己的故事。
+            两者兼修，方得自在。
+          </p>
+          <p class="quote-author">— wxc</p>
+        </div>
+      </div>
+    </section>
+  </div>
+</Layout>
+
+<style>
+  .about-page {
+    padding-top: var(--space-12);
+  }
+
+  /* Hero */
+  .about-hero {
+    padding: var(--space-12) 0;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-8);
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .hero-grid {
+      grid-template-columns: auto 1fr;
+      gap: var(--space-12);
     }
+  }
+
+  .hero-left {
+    display: flex;
+    justify-content: center;
+  }
+
+  .avatar {
+    position: relative;
+    width: 140px;
+    height: 140px;
+  }
+
+  @media (min-width: 768px) {
+    .avatar {
+      width: 180px;
+      height: 180px;
+    }
+  }
+
+  .avatar-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: var(--radius-full);
+    background: var(--gradient-hero);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #fff;
+    box-shadow: var(--shadow-lg);
+    z-index: 1;
+  }
+
+  .avatar-ring {
+    position: absolute;
+    inset: -8px;
+    border-radius: var(--radius-full);
+    border: 2px dashed var(--color-accent);
+    opacity: 0.4;
+    animation: spin 20s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .about-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: var(--radius-full);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-3);
+  }
+
+  .about-name {
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-2);
+  }
+
+  @media (min-width: 640px) {
+    .about-name {
+      font-size: var(--text-5xl);
+    }
+  }
+
+  .about-role {
+    font-size: var(--text-lg);
+    color: var(--color-accent);
+    font-weight: 500;
+    margin-bottom: var(--space-4);
+  }
+
+  .about-bio {
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-relaxed);
+    margin-bottom: var(--space-6);
+    max-width: 540px;
+  }
+
+  .about-cta {
+    display: flex;
+    gap: var(--space-3);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    transition: all var(--duration-normal) var(--ease-out);
+    cursor: pointer;
+  }
+
+  .btn-primary {
+    background: var(--color-text);
+    color: var(--color-bg);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-secondary {
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--color-text);
+  }
+
+  /* Section titles */
+  .about-section-title {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    margin-bottom: var(--space-1);
+  }
+
+  @media (min-width: 640px) {
+    .about-section-title {
+      font-size: var(--text-3xl);
+    }
+  }
+
+  .about-section-subtitle {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-8);
+  }
+
+  /* Skills */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .skills-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .skill-card {
+    padding: var(--space-6);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: all var(--duration-normal) var(--ease-out);
+  }
+
+  .skill-card:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  .skill-category {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    color: var(--color-accent);
+  }
+
+  .skill-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .skill-tag {
+    display: inline-block;
+    padding: 0.3rem 0.7rem;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+
+  .skill-tag:hover {
+    color: var(--color-accent);
+    border-color: var(--color-accent);
+  }
+
+  /* Timeline */
+  .timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .timeline-item {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .timeline-marker {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+  }
+
+  .timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--radius-full);
+    background: var(--color-accent);
+    border: 2px solid var(--color-bg);
+    box-shadow: 0 0 0 2px var(--color-accent);
+    flex-shrink: 0;
+  }
+
+  .timeline-line {
+    width: 2px;
+    flex: 1;
+    min-height: 40px;
+    background: var(--color-border);
+    margin: var(--space-1) 0;
+  }
+
+  .timeline-content {
+    padding-bottom: var(--space-8);
+  }
+
+  .timeline-year {
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .timeline-title {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    margin: var(--space-1) 0;
+  }
+
+  .timeline-org {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-2);
+    display: block;
+  }
+
+  .timeline-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+  }
+
+  /* Interests */
+  .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .interests-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .interest-card {
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    text-align: center;
+    transition: all var(--duration-normal) var(--ease-out);
+  }
+
+  .interest-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-interest);
+  }
+
+  .interest-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    background: var(--color-interest-bg);
+    color: var(--color-interest);
+    margin-bottom: var(--space-3);
+  }
+
+  .interest-name {
+    font-size: var(--text-base);
+    font-weight: 700;
+    margin-bottom: var(--space-1);
+  }
+
+  .interest-desc {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  /* Quote */
+  .quote-card {
+    text-align: center;
+    padding: var(--space-12);
+    border-radius: var(--radius-2xl);
+    background: var(--gradient-hero);
+    color: #fff;
+  }
+
+  .quote-mark {
+    color: rgba(255, 255, 255, 0.3);
+    margin: 0 auto var(--space-4);
+  }
+
+  .quote-text {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: var(--leading-relaxed);
+    color: #fff;
+    margin-bottom: var(--space-4);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  @media (min-width: 640px) {
+    .quote-text {
+      font-size: var(--text-2xl);
+    }
+  }
+
+  .quote-author {
+    font-size: var(--text-sm);
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 500;
+  }
+
+  /* Reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity var(--duration-slow) var(--ease-out),
+                transform var(--duration-slow) var(--ease-out);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 </style>
 
-
-<Header />
-
-<h1>{pageTitle}</h1>
-<h2>……和我的新 Astro 网站！</h2>
-
-<p>我正在学习 Astro 的入门教程。这是我网站上的第二个页面，也是我自己建立的第一页面！</p>
-
-<p>随着我完成更多教程，该站点将更新，所以请继续查看我的旅程将如何进行吧！</p>
-
-<p>以下是关于我的几个事实：</p>
-<ul>
-    <li>我的名字是{identity.firstName}.</li>
-    <li>我住在{identity.country}。我的职业是{identity.occupation}。</li>
-    {identity.hobbies.length >= 2 &&
-            <li>我的两个习惯：{identity.hobbies[0]}和{identity.hobbies[1]}</li>
-    }
-</ul>
-<p>我的技能是：</p>
-<ul>
-    {skills.map((skill) => <li class="skill">{skill}</li>)}
-</ul>
-
-{happy && <p>我非常乐意学习 Astro！</p>}
-
-{finished && <p>我完成了这节教程！</p>}
-
-{goal === 3 ? <p>我的目标是在三天内完成。</p> : <p>我的目标不是 3 天。</p>}
-
-<Footer />
-
-</body>
-</html>
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+  reveals.forEach((el) => observer.observe(el));
+</script>

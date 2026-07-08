@@ -1,25 +1,414 @@
 ---
-import Welcome from '../components/Welcome.astro';
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import Navigation from '../components/Navigation.astro';
-import Footer from '../components/Footer.astro';
-import Header from "../components/Header.astro";
-const pageTitle = "首页";
+import Hero from '../components/Hero.astro';
+import PostCard from '../components/PostCard.astro';
+import SectionTitle from '../components/SectionTitle.astro';
 
+// Get all posts sorted by date
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const featuredPosts = allPosts.filter(post => post.data.featured).slice(0, 2);
+const recentPosts = allPosts.slice(0, 6);
+
+// Get posts by category
+const techPosts = allPosts.filter(post => post.data.category === 'tech');
+const lifePosts = allPosts.filter(post => post.data.category === 'life');
+const interestPosts = allPosts.filter(post => post.data.category === 'interests');
+
+const categories = [
+  {
+    href: '/tech',
+    title: '技术分享',
+    description: '探索前端、后端与一切有趣的技术',
+    count: techPosts.length,
+    color: 'var(--color-tech)',
+    bg: 'var(--color-tech-bg)',
+    icon: 'code',
+  },
+  {
+    href: '/life',
+    title: '生活',
+    description: '记录旅行、日常与生活中的小确幸',
+    count: lifePosts.length,
+    color: 'var(--color-life)',
+    bg: 'var(--color-life-bg)',
+    icon: 'heart',
+  },
+  {
+    href: '/interests',
+    title: '兴趣',
+    description: '咖啡、摄影、骑行，热爱让生活闪光',
+    count: interestPosts.length,
+    color: 'var(--color-interest)',
+    bg: 'var(--color-interest-bg)',
+    icon: 'star',
+  },
+];
 ---
 
-<Layout>
-	<h1>wxc Astro Blog 测试</h1>
+<Layout title="wxc 的博客 - 用心生活，认真编码">
+  <!-- Hero Section -->
+  <Hero />
 
+  <!-- Categories -->
+  <section class="section">
+    <div class="container">
+      <SectionTitle
+        title="探索我的世界"
+        subtitle="三个板块，三种视角，一个完整的我"
+        align="center"
+      />
 
-		<Header/>
+      <div class="category-grid">
+        {categories.map((cat, index) => (
+          <a
+            href={cat.href}
+            class="category-card reveal"
+            style={`--cat-color: ${cat.color}; --cat-bg: ${cat.bg}; transition-delay: ${index * 80}ms`}
+          >
+            <div class="category-icon">
+              {cat.icon === 'code' && (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="16 18 22 12 16 6"/>
+                  <polyline points="8 6 2 12 8 18"/>
+                </svg>
+              )}
+              {cat.icon === 'heart' && (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+                </svg>
+              )}
+              {cat.icon === 'star' && (
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              )}
+            </div>
+            <h3 class="category-title">{cat.title}</h3>
+            <p class="category-desc">{cat.description}</p>
+            <div class="category-footer">
+              <span class="category-count">{cat.count} 篇文章</span>
+              <span class="category-arrow">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M5 12h14M12 5l7 7-7 7"/>
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
 
+  <!-- Featured Posts -->
+  {featuredPosts.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <SectionTitle
+          title="精选文章"
+          subtitle="值得一读的好内容"
+          category="tech"
+        />
+        <div class="featured-grid">
+          {featuredPosts.map(post => (
+            <PostCard
+              title={post.data.title}
+              href={`/posts/${post.id}`}
+              pubDate={post.data.pubDate}
+              description={post.data.description}
+              category={post.data.category}
+              tags={post.data.tags}
+              heroImage={post.data.heroImage}
+              featured={true}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
 
-	<Welcome />
+  <!-- Recent Posts -->
+  <section class="section">
+    <div class="container">
+      <div class="recent-header">
+        <SectionTitle
+          title="最新文章"
+          subtitle="刚刚发布的内容"
+        />
+        <a href="/tech" class="view-all">
+          查看全部
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
 
-	<Footer />
+      <div class="post-grid">
+        {recentPosts.map((post, index) => (
+          <div class="reveal" style={`transition-delay: ${index * 60}ms`}>
+            <PostCard
+              title={post.data.title}
+              href={`/posts/${post.id}`}
+              pubDate={post.data.pubDate}
+              description={post.data.description}
+              category={post.data.category}
+              tags={post.data.tags}
+              heroImage={post.data.heroImage}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
 
+  <!-- CTA -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-card reveal">
+        <div class="cta-content">
+          <h2 class="cta-title">想了解更多关于我？</h2>
+          <p class="cta-description">这里有我的故事、技能和经历</p>
+        </div>
+        <a href="/about" class="btn btn-primary">
+          关于我
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
 </Layout>
+
+<style>
+  .category-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+
+  @media (min-width: 768px) {
+    .category-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+    }
+  }
+
+  .category-card {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6);
+    border-radius: var(--radius-xl);
+    background: var(--cat-bg, var(--color-surface));
+    border: 1px solid var(--color-border);
+    transition: all var(--duration-normal) var(--ease-out);
+    cursor: pointer;
+    min-height: 200px;
+  }
+
+  .category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--cat-color);
+  }
+
+  .category-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: var(--radius-lg);
+    background: var(--cat-color);
+    color: #fff;
+    margin-bottom: var(--space-4);
+    transition: transform var(--duration-normal) var(--ease-spring);
+  }
+
+  .category-card:hover .category-icon {
+    transform: scale(1.1) rotate(-5deg);
+  }
+
+  .category-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+  }
+
+  .category-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+    flex: 1;
+  }
+
+  .category-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .category-count {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .category-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--cat-color);
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .category-card:hover .category-arrow {
+    transform: translateX(4px);
+  }
+
+  .featured-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    margin-top: var(--space-8);
+  }
+
+  @media (min-width: 768px) {
+    .featured-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .recent-header {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  @media (min-width: 640px) {
+    .recent-header {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .view-all {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-accent);
+    transition: gap var(--duration-fast) var(--ease-out);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .view-all:hover {
+    gap: var(--space-2);
+  }
+
+  .post-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    margin-top: var(--space-8);
+  }
+
+  @media (min-width: 640px) {
+    .post-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .post-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .cta-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-6);
+    padding: var(--space-10);
+    border-radius: var(--radius-2xl);
+    background: var(--gradient-hero);
+    color: #fff;
+    text-align: left;
+  }
+
+  @media (min-width: 640px) {
+    .cta-card {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .cta-title {
+    font-size: var(--text-2xl);
+    color: #fff;
+    margin-bottom: var(--space-2);
+  }
+
+  @media (min-width: 640px) {
+    .cta-title {
+      font-size: var(--text-3xl);
+    }
+  }
+
+  .cta-description {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  .cta-card .btn-primary {
+    background: #fff;
+    color: var(--color-text);
+  }
+
+  .cta-card .btn-primary:hover {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-text);
+  }
+
+  /* Reveal animation */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity var(--duration-slow) var(--ease-out),
+                transform var(--duration-slow) var(--ease-out);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+
+<script>
+  // Scroll reveal animation
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }
+  );
+
+  reveals.forEach((el) => observer.observe(el));
+</script>

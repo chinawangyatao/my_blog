@@ -1,0 +1,302 @@
+---
+import Layout from './Layout.astro';
+import TagFilter from '../components/TagFilter.astro';
+
+interface Props {
+  title: string;
+  pubDate: Date;
+  description?: string;
+  author?: string;
+  tags?: string[];
+  category?: 'tech' | 'life' | 'interests';
+  heroImage?: string;
+}
+
+const {
+  title,
+  pubDate,
+  description,
+  author = 'wxc',
+  tags = [],
+  category = 'tech',
+  heroImage,
+} = Astro.props;
+
+const categoryLabels = {
+  tech: '技术分享',
+  life: '生活',
+  interests: '兴趣',
+};
+
+const categoryColors = {
+  tech: 'var(--color-tech)',
+  life: 'var(--color-life)',
+  interests: 'var(--color-interest)',
+};
+
+const formattedDate = new Intl.DateTimeFormat('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+}).format(pubDate);
+---
+
+<Layout title={`${title} - wxc 的博客`} description={description} category={category}>
+  <!-- Reading Progress Bar -->
+  <div class="reading-progress" id="reading-progress"></div>
+
+  <article class="post-article">
+    <!-- Hero Image -->
+    {heroImage && (
+      <div class="post-hero">
+        <img src={heroImage} alt={title} loading="eager" />
+        <div class="post-hero-overlay"></div>
+      </div>
+    )}
+
+    <!-- Post Header -->
+    <header class="post-header container container-narrow">
+      <div class="post-meta">
+        <span class="post-category" style={`--cat-color: ${categoryColors[category]}`}>
+          {categoryLabels[category]}
+        </span>
+        <span class="post-date">{formattedDate}</span>
+      </div>
+      <h1 class="post-title">{title}</h1>
+      {description && <p class="post-description">{description}</p>}
+      <div class="post-author">
+        <div class="author-avatar">{author.charAt(0).toUpperCase()}</div>
+        <span>{author}</span>
+      </div>
+    </header>
+
+    <!-- Post Content -->
+    <div class="post-content container container-narrow">
+      <slot />
+    </div>
+
+    <!-- Post Footer -->
+    <footer class="post-footer container container-narrow">
+      {tags.length > 0 && <TagFilter tags={tags} />}
+      <a href={`/${category}`} class="back-link">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7"/>
+        </svg>
+        返回{categoryLabels[category]}
+      </a>
+    </footer>
+  </article>
+</Layout>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    width: 0%;
+    background: var(--color-accent);
+    z-index: var(--z-overlay);
+    transition: width 50ms linear;
+    border-radius: 0 var(--radius-full) var(--radius-full) 0;
+  }
+
+  .post-article {
+    padding-top: var(--space-12);
+  }
+
+  .post-hero {
+    position: relative;
+    width: 100%;
+    height: 40vh;
+    min-height: 280px;
+    max-height: 480px;
+    overflow: hidden;
+    margin-bottom: var(--space-8);
+  }
+
+  .post-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .post-hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, var(--color-bg) 100%);
+  }
+
+  .post-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .post-category {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--cat-color);
+    background: color-mix(in srgb, var(--cat-color) 12%, transparent);
+  }
+
+  .post-date {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .post-title {
+    font-size: var(--text-4xl);
+    font-weight: 800;
+    line-height: var(--leading-tight);
+    margin-bottom: var(--space-4);
+  }
+
+  @media (min-width: 768px) {
+    .post-title {
+      font-size: var(--text-5xl);
+    }
+  }
+
+  .post-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    margin-bottom: var(--space-6);
+  }
+
+  .post-author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  .author-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius-full);
+    background: var(--gradient-tech);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--text-sm);
+  }
+
+  .post-content {
+    font-size: var(--text-lg);
+    line-height: var(--leading-relaxed);
+  }
+
+  .post-content :global(h2) {
+    font-size: var(--text-2xl);
+    margin-top: var(--space-10);
+    margin-bottom: var(--space-4);
+  }
+
+  .post-content :global(h3) {
+    font-size: var(--text-xl);
+    margin-top: var(--space-8);
+    margin-bottom: var(--space-3);
+  }
+
+  .post-content :global(p) {
+    margin-bottom: var(--space-4);
+    color: var(--color-text);
+  }
+
+  .post-content :global(ul),
+  .post-content :global(ol) {
+    margin: var(--space-4) 0;
+    padding-left: var(--space-6);
+  }
+
+  .post-content :global(li) {
+    margin-bottom: var(--space-2);
+    color: var(--color-text);
+  }
+
+  .post-content :global(ul) {
+    list-style: disc;
+  }
+
+  .post-content :global(ol) {
+    list-style: decimal;
+  }
+
+  .post-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--space-4) 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .post-content :global(th),
+  .post-content :global(td) {
+    padding: var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+  }
+
+  .post-content :global(th) {
+    background: var(--color-surface-muted);
+    font-weight: 600;
+  }
+
+  .post-content :global(img) {
+    border-radius: var(--radius-lg);
+    margin: var(--space-4) 0;
+  }
+
+  .post-footer {
+    margin-top: var(--space-16);
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-bottom: var(--space-16);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    transition: color var(--duration-fast) var(--ease-out);
+    cursor: pointer;
+  }
+
+  .back-link:hover {
+    color: var(--color-accent);
+  }
+</style>
+
+<script>
+  // Reading progress bar
+  const progress = document.getElementById('reading-progress');
+  if (progress) {
+    const updateProgress = () => {
+      const scrolled = window.scrollY;
+      const height = document.documentElement.scrollHeight - window.innerHeight;
+      const percent = height > 0 ? (scrolled / height) * 100 : 0;
+      progress.style.width = `${percent}%`;
+    };
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+  }
+</script>
