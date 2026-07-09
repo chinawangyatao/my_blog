@@ -69,18 +69,18 @@
 </style>
 
 <script>
-  const toggle = document.getElementById('theme-toggle-btn');
+  document.addEventListener('astro:page-load', () => {
+    const toggle = document.getElementById('theme-toggle-btn');
 
-  const getTheme = () => {
-    const stored = localStorage.getItem('theme');
-    if (stored) return stored;
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  };
+    const getTheme = () => {
+      return localStorage.getItem('theme') || 'dark';
+    };
 
-  toggle?.addEventListener('click', () => {
-    const current = getTheme();
-    const next = current === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', next);
-    document.documentElement.setAttribute('data-theme', next);
+    toggle?.addEventListener('click', () => {
+      const current = getTheme();
+      const next = current === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('theme', next);
+      document.documentElement.setAttribute('data-theme', next);
+    });
   });
 </script>

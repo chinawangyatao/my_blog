@@ -4,13 +4,29 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import PostCard from '../components/PostCard.astro';
 import SectionTitle from '../components/SectionTitle.astro';
+import Masonry from '../components/react/Masonry.tsx';
 
 // Get all posts sorted by date
 const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
-const featuredPosts = allPosts.filter(post => post.data.featured).slice(0, 2);
 const recentPosts = allPosts.slice(0, 6);
+
+// Masonry items: use all posts with hero images for a rich layout
+const categoryLabels = { tech: '技术', life: '生活', interests: '兴趣' };
+const categoryColors = { tech: '#60A5FA', life: '#E89B7A', interests: '#9CAF6C' };
+const masonryHeights = [520, 360, 460, 580, 380, 500, 420];
+
+const masonryItems = allPosts.slice(0, 7).map((post, i) => ({
+  id: post.id,
+  img: post.data.heroImage || `https://picsum.photos/seed/${post.id}/600/400`,
+  url: `/posts/${post.id}`,
+  height: masonryHeights[i % masonryHeights.length],
+  title: post.data.title,
+  category: categoryLabels[post.data.category],
+  categoryColor: categoryColors[post.data.category],
+  date: new Intl.DateTimeFormat('zh-CN', { month: 'short', day: 'numeric', year: 'numeric' }).format(post.data.pubDate),
+}));
 
 // Get posts by category
 const techPosts = allPosts.filter(post => post.data.category === 'tech');
@@ -24,7 +40,7 @@ const categories = [
     description: '探索前端、后端与一切有趣的技术',
     count: techPosts.length,
     color: 'var(--color-tech)',
-    bg: 'var(--color-tech-bg)',
+    gradient: 'linear-gradient(135deg, #2563EB 0%, #7C3AED 100%)',
     icon: 'code',
   },
   {
@@ -33,7 +49,7 @@ const categories = [
     description: '记录旅行、日常与生活中的小确幸',
     count: lifePosts.length,
     color: 'var(--color-life)',
-    bg: 'var(--color-life-bg)',
+    gradient: 'linear-gradient(135deg, #C67B5C 0%, #E89B7A 100%)',
     icon: 'heart',
   },
   {
@@ -42,7 +58,7 @@ const categories = [
     description: '咖啡、摄影、骑行，热爱让生活闪光',
     count: interestPosts.length,
     color: 'var(--color-interest)',
-    bg: 'var(--color-interest-bg)',
+    gradient: 'linear-gradient(135deg, #6B7B3C 0%, #9CAF6C 100%)',
     icon: 'star',
   },
 ];
@@ -66,32 +82,40 @@ const categories = [
           <a
             href={cat.href}
             class="category-card reveal"
-            style={`--cat-color: ${cat.color}; --cat-bg: ${cat.bg}; transition-delay: ${index * 80}ms`}
+            style={`--cat-color: ${cat.color}; --cat-gradient: ${cat.gradient}; transition-delay: ${index * 80}ms`}
           >
+            <div class="category-glow"></div>
+            <div class="category-line"></div>
+            <span class="category-number">0{index + 1}</span>
+
             <div class="category-icon">
               {cat.icon === 'code' && (
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="16 18 22 12 16 6"/>
                   <polyline points="8 6 2 12 8 18"/>
                 </svg>
               )}
               {cat.icon === 'heart' && (
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
                 </svg>
               )}
               {cat.icon === 'star' && (
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                 </svg>
               )}
             </div>
-            <h3 class="category-title">{cat.title}</h3>
-            <p class="category-desc">{cat.description}</p>
+
+            <div class="category-body">
+              <h3 class="category-title">{cat.title}</h3>
+              <p class="category-desc">{cat.description}</p>
+            </div>
+
             <div class="category-footer">
               <span class="category-count">{cat.count} 篇文章</span>
               <span class="category-arrow">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
               </span>
@@ -102,32 +126,31 @@ const categories = [
     </div>
   </section>
 
-  <!-- Featured Posts -->
-  {featuredPosts.length > 0 && (
-    <section class="section">
-      <div class="container">
-        <SectionTitle
-          title="精选文章"
-          subtitle="值得一读的好内容"
-          category="tech"
+  <!-- Featured Posts - Masonry -->
+  <section class="section">
+    <div class="container">
+      <SectionTitle
+        title="精选文章"
+        subtitle="值得一读的好内容"
+        category="tech"
+      />
+      <div class="masonry-wrapper">
+        <Masonry
+          client:visible
+          items={masonryItems}
+          ease="power3.out"
+          duration={0.6}
+          stagger={0.08}
+          animateFrom="bottom"
+          scaleOnHover={true}
+          hoverScale={0.96}
+          blurToFocus={true}
+          colorShiftOnHover={false}
+          gap={16}
         />
-        <div class="featured-grid">
-          {featuredPosts.map(post => (
-            <PostCard
-              title={post.data.title}
-              href={`/posts/${post.id}`}
-              pubDate={post.data.pubDate}
-              description={post.data.description}
-              category={post.data.category}
-              tags={post.data.tags}
-              heroImage={post.data.heroImage}
-              featured={true}
-            />
-          ))}
-        </div>
       </div>
-    </section>
-  )}
+    </div>
+  </section>
 
   <!-- Recent Posts -->
   <section class="section">
@@ -186,7 +209,7 @@ const categories = [
   .category-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: var(--space-4);
+    gap: var(--space-5);
     margin-top: var(--space-8);
   }
 
@@ -198,90 +221,204 @@ const categories = [
   }
 
   .category-card {
+    position: relative;
     display: flex;
     flex-direction: column;
-    padding: var(--space-6);
-    border-radius: var(--radius-xl);
-    background: var(--cat-bg, var(--color-surface));
+    padding: var(--space-8) var(--space-6) var(--space-6);
+    border-radius: var(--radius-2xl);
+    background: var(--color-surface);
     border: 1px solid var(--color-border);
-    transition: all var(--duration-normal) var(--ease-out);
+    overflow: hidden;
     cursor: pointer;
-    min-height: 200px;
+    min-height: 280px;
+    isolation: isolate;
+    transition: transform var(--duration-normal) var(--ease-spring),
+                box-shadow var(--duration-slow) var(--ease-out),
+                border-color var(--duration-normal) var(--ease-out);
+  }
+
+  /* Gradient border on hover */
+  .category-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: var(--cat-gradient);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity var(--duration-normal) var(--ease-out);
+    z-index: 3;
+    pointer-events: none;
   }
 
   .category-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--cat-color);
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px -16px color-mix(in srgb, var(--cat-color) 25%, transparent);
+    border-color: transparent;
   }
 
+  .category-card:hover::before {
+    opacity: 1;
+  }
+
+  /* Glow orb background */
+  .category-glow {
+    position: absolute;
+    top: -40%;
+    right: -25%;
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    background: var(--cat-gradient);
+    filter: blur(70px);
+    opacity: 0.12;
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-slow) var(--ease-out),
+                transform var(--duration-slow) var(--ease-out);
+  }
+
+  .category-card:hover .category-glow {
+    opacity: 0.3;
+    transform: scale(1.15);
+  }
+
+  /* Top gradient accent line */
+  .category-line {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36%;
+    height: 3px;
+    background: var(--cat-gradient);
+    border-radius: 0 0 var(--radius-full) var(--radius-full);
+    transition: width var(--duration-slow) var(--ease-spring);
+    z-index: 2;
+  }
+
+  .category-card:hover .category-line {
+    width: 100%;
+  }
+
+  /* Large watermark number */
+  .category-number {
+    position: absolute;
+    top: var(--space-4);
+    right: var(--space-5);
+    font-family: var(--font-display);
+    font-size: 5.5rem;
+    font-weight: 900;
+    line-height: 1;
+    color: var(--cat-color);
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity var(--duration-normal) var(--ease-out);
+    letter-spacing: -0.05em;
+  }
+
+  .category-card:hover .category-number {
+    opacity: 0.12;
+  }
+
+  /* Icon */
   .category-icon {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 56px;
     height: 56px;
     border-radius: var(--radius-lg);
-    background: var(--cat-color);
+    background: var(--cat-gradient);
     color: #fff;
-    margin-bottom: var(--space-4);
-    transition: transform var(--duration-normal) var(--ease-spring);
+    margin-bottom: var(--space-6);
+    box-shadow: 0 8px 24px -6px color-mix(in srgb, var(--cat-color) 50%, transparent);
+    transition: transform var(--duration-normal) var(--ease-spring),
+                box-shadow var(--duration-normal) var(--ease-out);
   }
 
   .category-card:hover .category-icon {
-    transform: scale(1.1) rotate(-5deg);
+    transform: scale(1.08) rotate(-6deg);
+    box-shadow: 0 12px 32px -6px color-mix(in srgb, var(--cat-color) 60%, transparent);
+  }
+
+  /* Body */
+  .category-body {
+    position: relative;
+    z-index: 2;
+    flex: 1;
   }
 
   .category-title {
-    font-size: var(--text-xl);
-    font-weight: 700;
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    line-height: var(--leading-tight);
     margin-bottom: var(--space-2);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+    transition: background var(--duration-normal) var(--ease-out);
+  }
+
+  .category-card:hover .category-title {
+    background: var(--cat-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
   }
 
   .category-desc {
     font-size: var(--text-sm);
     color: var(--color-text-secondary);
     line-height: var(--leading-normal);
-    flex: 1;
   }
 
+  /* Footer */
   .category-footer {
+    position: relative;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: var(--space-4);
+    margin-top: var(--space-6);
     padding-top: var(--space-4);
     border-top: 1px solid var(--color-border);
   }
 
   .category-count {
-    font-size: var(--text-sm);
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
-    font-weight: 500;
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
   }
 
   .category-arrow {
     display: flex;
     align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, var(--cat-color) 12%, transparent);
     color: var(--cat-color);
-    transition: transform var(--duration-fast) var(--ease-out);
+    transition: all var(--duration-normal) var(--ease-spring);
   }
 
   .category-card:hover .category-arrow {
+    background: var(--cat-gradient);
+    color: #fff;
     transform: translateX(4px);
+    box-shadow: 0 4px 16px -2px color-mix(in srgb, var(--cat-color) 50%, transparent);
   }
 
-  .featured-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-6);
+  .masonry-wrapper {
     margin-top: var(--space-8);
-  }
-
-  @media (min-width: 768px) {
-    .featured-grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    min-height: 500px;
   }
 
   .recent-header {
@@ -371,14 +508,31 @@ const categories = [
     color: rgba(255, 255, 255, 0.85);
   }
 
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    transition: all var(--duration-normal) var(--ease-out);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   .cta-card .btn-primary {
     background: #fff;
-    color: var(--color-text);
+    color: #1C1917;
   }
 
   .cta-card .btn-primary:hover {
     background: rgba(255, 255, 255, 0.9);
-    color: var(--color-text);
+    color: #1C1917;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
   }
 
   /* Reveal animation */
@@ -397,18 +551,20 @@ const categories = [
 
 <script>
   // Scroll reveal animation
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          observer.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }
-  );
+  document.addEventListener('astro:page-load', () => {
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -60px 0px' }
+    );
 
-  reveals.forEach((el) => observer.observe(el));
+    reveals.forEach((el) => observer.observe(el));
+  });
 </script>

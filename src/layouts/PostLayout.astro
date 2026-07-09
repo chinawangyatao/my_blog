@@ -78,12 +78,6 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
     <!-- Post Footer -->
     <footer class="post-footer container container-narrow">
       {tags.length > 0 && <TagFilter tags={tags} />}
-      <a href={`/${category}`} class="back-link">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-        返回{categoryLabels[category]}
-      </a>
     </footer>
   </article>
 </Layout>
@@ -259,44 +253,67 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
   .post-content :global(img) {
     border-radius: var(--radius-lg);
     margin: var(--space-4) 0;
+    cursor: zoom-in;
+    transition: transform var(--duration-normal) var(--ease-out);
+  }
+
+  .post-content :global(img:hover) {
+    transform: scale(1.01);
+  }
+
+  /* medium-zoom overlay */
+  :global(.medium-zoom-overlay) {
+    z-index: var(--z-modal);
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(4px);
+  }
+
+  :global(.medium-zoom-image--opened) {
+    z-index: calc(var(--z-modal) + 1);
   }
 
   .post-footer {
     margin-top: var(--space-16);
     padding-top: var(--space-8);
     border-top: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-6);
     padding-bottom: var(--space-16);
-  }
-
-  .back-link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    color: var(--color-text-muted);
-    font-size: var(--text-sm);
-    transition: color var(--duration-fast) var(--ease-out);
-    cursor: pointer;
-  }
-
-  .back-link:hover {
-    color: var(--color-accent);
   }
 </style>
 
 <script>
-  // Reading progress bar
-  const progress = document.getElementById('reading-progress');
-  if (progress) {
-    const updateProgress = () => {
-      const scrolled = window.scrollY;
-      const height = document.documentElement.scrollHeight - window.innerHeight;
-      const percent = height > 0 ? (scrolled / height) * 100 : 0;
-      progress.style.width = `${percent}%`;
-    };
-    window.addEventListener('scroll', updateProgress, { passive: true });
-    updateProgress();
-  }
+  import mediumZoom from 'medium-zoom';
+
+  let scrollHandler: (() => void) | null = null;
+
+  document.addEventListener('astro:page-load', () => {
+    // Clean up old scroll handler
+    if (scrollHandler) {
+      window.removeEventListener('scroll', scrollHandler);
+      scrollHandler = null;
+    }
+
+    // Reading progress bar
+    const progress = document.getElementById('reading-progress');
+    if (progress) {
+      scrollHandler = () => {
+        const scrolled = window.scrollY;
+        const height = document.documentElement.scrollHeight - window.innerHeight;
+        const percent = height > 0 ? (scrolled / height) * 100 : 0;
+        progress.style.width = `${percent}%`;
+      };
+      window.addEventListener('scroll', scrollHandler, { passive: true });
+      scrollHandler();
+    }
+
+    // Medium zoom for post images
+    const postContent = document.querySelector('.post-content');
+    if (postContent) {
+      const images = postContent.querySelectorAll('img');
+      mediumZoom(images, {
+        margin: 24,
+        background: 'rgba(0, 0, 0, 0.85)',
+        scrollOffset: 0,
+      });
+    }
+  });
 </script>

@@ -11,7 +11,7 @@ featured: true
 
 # 用 Astro 搭建个人博客
 
-在这篇文章中，我将分享如何从零开始使用 Astro 搭建一个高性能的个人博客。
+在这篇文章中，我将分享如何从零开始使用 Astro 搭建一个高性能的个人博客。qq
 
 ## 为什么选择 Astro？
 
@@ -51,6 +51,9 @@ const blog = defineCollection({
 
 export const collections = { blog };
 ```
+
+测试照片
+![zhaop](https://images.unsplash.com/photo-1517180102446-f3ece451e9d1?w=1200&h=630&fit=crop)
 
 ## 总结
 

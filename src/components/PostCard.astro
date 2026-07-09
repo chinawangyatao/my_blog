@@ -1,4 +1,6 @@
 ---
+import BorderGlow from './react/BorderGlow.tsx';
+
 interface Props {
   title: string;
   href: string;
@@ -33,6 +35,24 @@ const categoryColors = {
   interests: 'var(--color-interest)',
 };
 
+// BorderGlow config per category
+const glowConfig = {
+  tech: {
+    colors: ['#2563EB', '#7C3AED', '#38bdf8'],
+    glowColor: '220 80 60',
+  },
+  life: {
+    colors: ['#C67B5C', '#E89B7A', '#f472b6'],
+    glowColor: '20 60 60',
+  },
+  interests: {
+    colors: ['#6B7B3C', '#9CAF6C', '#38bdf8'],
+    glowColor: '80 50 55',
+  },
+};
+
+const cfg = glowConfig[category];
+
 const formattedDate = new Intl.DateTimeFormat('zh-CN', {
   month: 'short',
   day: 'numeric',
@@ -41,61 +61,65 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
 ---
 
 <article class:list={['post-card', `cat-${category}`, { featured }]} data-category={category}>
-  <a href={href} class="card-link" aria-label={title}>
-    {heroImage ? (
-      <div class="card-image">
-        <img src={heroImage} alt={title} loading="lazy" />
-        <span class="card-category" style={`--cat-color: ${categoryColors[category]}`}>
-          {categoryLabels[category]}
-        </span>
-      </div>
-    ) : (
-      <div class="card-image card-image-placeholder" style={`--cat-color: ${categoryColors[category]}`}>
-        <span class="card-category" style={`--cat-color: ${categoryColors[category]}`}>
-          {categoryLabels[category]}
-        </span>
-      </div>
-    )}
+  <BorderGlow
+    client:visible
+    colors={cfg.colors}
+    glowColor={cfg.glowColor}
+    backgroundColor="var(--color-surface)"
+    borderRadius={16}
+    glowRadius={24}
+    glowIntensity={0.8}
+    edgeSensitivity={35}
+    coneSpread={20}
+  >
+    <a href={href} class="card-link" aria-label={title} target="_blank" rel="noopener noreferrer">
+      {heroImage ? (
+        <div class="card-image">
+          <img src={heroImage} alt={title} loading="lazy" />
+          <span class="card-category" style={`--cat-color: ${categoryColors[category]}`}>
+            {categoryLabels[category]}
+          </span>
+        </div>
+      ) : (
+        <div class="card-image card-image-placeholder" style={`--cat-color: ${categoryColors[category]}`}>
+          <span class="card-category" style={`--cat-color: ${categoryColors[category]}`}>
+            {categoryLabels[category]}
+          </span>
+        </div>
+      )}
 
-    <div class="card-body">
-      <div class="card-meta">
-        <time class="card-date">{formattedDate}</time>
-        {tags.length > 0 && (
-          <span class="card-tags">· {tags.slice(0, 2).join(' · ')}</span>
-        )}
+      <div class="card-body">
+        <div class="card-meta">
+          <time class="card-date">{formattedDate}</time>
+          {tags.length > 0 && (
+            <span class="card-tags">· {tags.slice(0, 2).join(' · ')}</span>
+          )}
+        </div>
+
+        <h3 class="card-title">{title}</h3>
+
+        {description && <p class="card-description">{description}</p>}
+
+        <div class="card-footer">
+          <span class="card-read-more">
+            阅读全文
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </span>
+        </div>
       </div>
-
-      <h3 class="card-title">{title}</h3>
-
-      {description && <p class="card-description">{description}</p>}
-
-      <div class="card-footer">
-        <span class="card-read-more">
-          阅读全文
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 12h14M12 5l7 7-7 7"/>
-          </svg>
-        </span>
-      </div>
-    </div>
-  </a>
+    </a>
+  </BorderGlow>
 </article>
 
 <style>
   .post-card {
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    transition: transform var(--duration-normal) var(--ease-out),
-                box-shadow var(--duration-normal) var(--ease-out),
-                border-color var(--duration-normal) var(--ease-out);
+    transition: transform var(--duration-normal) var(--ease-out);
   }
 
   .post-card:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
-    border-color: var(--cat-color, var(--color-border-strong));
   }
 
   .card-link {
@@ -110,6 +134,8 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
     aspect-ratio: 16 / 9;
     overflow: hidden;
     background: var(--color-surface-muted);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
   }
 
   .card-image img {
@@ -145,6 +171,7 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
     -webkit-backdrop-filter: blur(8px);
   }
 
+  :global(:root[data-theme="dark"]) .card-category,
   :global(:root[data-theme="dark"]) .card-category {
     background: color-mix(in srgb, var(--cat-color) 20%, rgba(0,0,0,0.6));
   }

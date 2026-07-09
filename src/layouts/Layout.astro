@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import BottomNav from '../components/BottomNav.astro';
@@ -26,8 +27,7 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 const themeScript = `
   (function() {
     const stored = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = stored || (prefersDark ? 'dark' : 'light');
+    const theme = stored || 'dark';
     document.documentElement.setAttribute('data-theme', theme);
   })();
 `;
@@ -63,11 +63,13 @@ const themeScript = `
   {image && <meta property="twitter:image" content={ogImage} />}
 
   <!-- Theme color -->
-  <meta name="theme-color" content="#FAFAF9" media="(prefers-color-scheme: light)" />
-  <meta name="theme-color" content="#0C0A09" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#0C0A09" />
 
   <!-- Prevent theme flash -->
-  <script is:inline set:html={themeScript} />
+  <script is:inline data-astro-rerun set:html={themeScript} />
+
+  <!-- View Transitions -->
+  <ClientRouter />
 
   <!-- Category-based accent color -->
   {category === 'tech' && <style>:root { --color-accent: var(--color-tech); --color-accent-hover: var(--color-tech-hover); }</style>}

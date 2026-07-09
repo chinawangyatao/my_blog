@@ -1,12 +1,32 @@
 ---
+import Lightfall from './react/Lightfall.tsx';
 ---
 
 <section class="hero">
+  <!-- Lightfall WebGL Background -->
   <div class="hero-bg">
-    <div class="hero-blob hero-blob-1"></div>
-    <div class="hero-blob hero-blob-2"></div>
-    <div class="hero-blob hero-blob-3"></div>
+    <Lightfall
+      client:load
+      colors={['#A6C8FF', '#7C3AED', '#FF9FFC']}
+      backgroundColor="#0A0A12"
+      speed={0.5}
+      streakCount={6}
+      streakWidth={1}
+      streakLength={1}
+      glow={1}
+      density={0.8}
+      twinkle={1}
+      zoom={3}
+      backgroundGlow={0.4}
+      opacity={1}
+      mouseInteraction={true}
+      mouseStrength={0.5}
+      mouseRadius={0.8}
+    />
   </div>
+
+  <!-- Dark overlay for text readability -->
+  <div class="hero-overlay"></div>
 
   <div class="hero-content container">
     <div class="hero-badge reveal">
@@ -15,7 +35,7 @@
     </div>
 
     <h1 class="hero-title reveal reveal-delay-1">
-      嗨，我是 <span class="text-gradient">wxc</span><br />
+      嗨，我是 <span class="text-gradient-light">wxc</span><br />
       <span class="hero-subtitle">用心生活，认真编码</span>
     </h1>
 
@@ -72,6 +92,7 @@
     justify-content: center;
     overflow: hidden;
     padding: var(--space-16) 0;
+    background: #0A0A12;
   }
 
   .hero-bg {
@@ -81,49 +102,17 @@
     z-index: 0;
   }
 
-  .hero-blob {
+  .hero-overlay {
     position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    opacity: 0.35;
-    animation: float 8s var(--ease-in-out) infinite;
-  }
-
-  .hero-blob-1 {
-    width: 400px;
-    height: 400px;
-    background: var(--color-tech);
-    top: -100px;
-    right: -100px;
-  }
-
-  .hero-blob-2 {
-    width: 350px;
-    height: 350px;
-    background: var(--color-life);
-    bottom: -50px;
-    left: -100px;
-    animation-delay: 2s;
-  }
-
-  .hero-blob-3 {
-    width: 300px;
-    height: 300px;
-    background: #7C3AED;
-    top: 40%;
-    left: 50%;
-    transform: translateX(-50%);
-    animation-delay: 4s;
-    opacity: 0.2;
-  }
-
-  :global(:root[data-theme="dark"]) .hero-blob {
-    opacity: 0.2;
+    inset: 0;
+    z-index: 1;
+    background: radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 18, 0.5) 100%);
+    pointer-events: none;
   }
 
   .hero-content {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -136,12 +125,13 @@
     gap: var(--space-2);
     padding: 0.4rem 1rem;
     border-radius: var(--radius-full);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     font-size: var(--text-sm);
-    color: var(--color-text-secondary);
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: var(--space-6);
-    box-shadow: var(--shadow-sm);
   }
 
   .badge-dot {
@@ -159,6 +149,7 @@
     line-height: 1.1;
     margin-bottom: var(--space-6);
     max-width: 800px;
+    color: #fff;
   }
 
   @media (min-width: 640px) {
@@ -173,18 +164,25 @@
     }
   }
 
+  .text-gradient-light {
+    background: linear-gradient(135deg, #A6C8FF 0%, #FF9FFC 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
   .hero-subtitle {
     font-family: var(--font-handwritten);
     font-size: 0.65em;
     font-weight: 500;
-    color: var(--color-text-secondary);
+    color: rgba(255, 255, 255, 0.7);
     display: inline-block;
     margin-top: var(--space-2);
   }
 
   .hero-description {
     font-size: var(--text-lg);
-    color: var(--color-text-secondary);
+    color: rgba(255, 255, 255, 0.75);
     max-width: 560px;
     margin-bottom: var(--space-8);
     line-height: var(--leading-relaxed);
@@ -218,25 +216,28 @@
   }
 
   .btn-primary {
-    background: var(--color-text);
-    color: var(--color-bg);
+    background: #fff;
+    color: #0A0A12;
   }
 
   .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-    color: var(--color-bg);
+    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.2);
+    color: #0A0A12;
   }
 
   .btn-secondary {
-    background: var(--color-surface);
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
   }
 
   .btn-secondary:hover {
-    border-color: var(--color-text);
-    color: var(--color-text);
+    background: rgba(255, 255, 255, 0.18);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #fff;
   }
 
   .hero-stats {
@@ -245,9 +246,10 @@
     gap: var(--space-6);
     padding: var(--space-4) var(--space-6);
     border-radius: var(--radius-xl);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    box-shadow: var(--shadow-sm);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 
   .stat {
@@ -260,20 +262,20 @@
     font-family: var(--font-display);
     font-size: var(--text-2xl);
     font-weight: 800;
-    color: var(--color-text);
+    color: #fff;
     line-height: 1;
   }
 
   .stat-label {
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.6);
     margin-top: var(--space-1);
   }
 
   .stat-divider {
     width: 1px;
     height: 32px;
-    background: var(--color-border);
+    background: rgba(255, 255, 255, 0.15);
   }
 
   .hero-scroll-hint {
@@ -281,22 +283,19 @@
     bottom: var(--space-8);
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: var(--space-1);
     font-size: var(--text-xs);
-    color: var(--color-text-muted);
+    color: rgba(255, 255, 255, 0.5);
     animation: float 2s var(--ease-in-out) infinite;
   }
 
   @media (max-width: 767px) {
     .hero-scroll-hint {
       display: none;
-    }
-    .hero {
-      min-height: auto;
-      padding: var(--space-12) 0;
     }
   }
 </style>
