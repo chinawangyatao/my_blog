@@ -38,9 +38,9 @@ const categoryInfo = {
       <div class="tags-bar reveal reveal-delay-1">
         <span class="tags-label">标签：</span>
         <div class="tags-list">
-          <a href="/tech" class="tag active">全部</a>
+          <button class="tag active" data-tag="all">全部</button>
           {allTags.map(tag => (
-            <a href={`/tags/${tag}`} class="tag">{tag}</a>
+            <button class="tag" data-tag={tag}>{tag}</button>
           ))}
         </div>
       </div>
@@ -50,7 +50,7 @@ const categoryInfo = {
     {posts.length > 0 ? (
       <div class="post-grid">
         {posts.map((post, index) => (
-          <div class="reveal" style={`transition-delay: ${index * 60}ms`}>
+          <div class="reveal" data-tags={post.data.tags.join(',')} style={`transition-delay: ${index * 60}ms`}>
             <PostCard
               title={post.data.title}
               href={`/posts/${post.id}`}
@@ -148,6 +148,7 @@ const categoryInfo = {
     border-radius: var(--radius-full);
     font-size: var(--text-xs);
     font-weight: 500;
+    font-family: inherit;
     color: var(--color-text-secondary);
     background: var(--color-surface-muted);
     border: 1px solid var(--color-border);
@@ -205,6 +206,29 @@ const categoryInfo = {
 
 <script>
   document.addEventListener('astro:page-load', () => {
+    // Tag filtering
+    const tagButtons = document.querySelectorAll('.tags-list .tag');
+    const postCards = document.querySelectorAll('[data-tags]');
+
+    tagButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tag = btn.dataset.tag;
+
+        tagButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        postCards.forEach(card => {
+          if (tag === 'all') {
+            card.style.display = '';
+          } else {
+            const tags = card.dataset.tags.split(',');
+            card.style.display = tags.includes(tag) ? '' : 'none';
+          }
+        });
+      });
+    });
+
+    // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {

@@ -3,8 +3,80 @@
    "Tech & Life" - Professional meets Warm
    ============================================ */
 
-/* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&family=Poppins:wght@400;500;600;700;800&family=Caveat:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+/* --- Tailwind CSS v4 --- */
+@import "tailwindcss";
+
+/* Dark mode: use data-theme attribute instead of prefers-color-scheme */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * Map existing design tokens to Tailwind's theme namespace.
+ * Using `inline` so utilities reference the CSS variables directly,
+ * which means dark mode overrides (--color-* in [data-theme="dark"])
+ * automatically apply to all Tailwind utilities like bg-bg, text-text, etc.
+ */
+@theme inline {
+  /* Colors - surfaces & text */
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-surface-elevated: var(--color-surface-elevated);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-text: var(--color-text);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+
+  /* Colors - category accents */
+  --color-tech: var(--color-tech);
+  --color-tech-hover: var(--color-tech-hover);
+  --color-tech-light: var(--color-tech-light);
+  --color-tech-bg: var(--color-tech-bg);
+  --color-life: var(--color-life);
+  --color-life-hover: var(--color-life-hover);
+  --color-life-light: var(--color-life-light);
+  --color-life-bg: var(--color-life-bg);
+  --color-interest: var(--color-interest);
+  --color-interest-hover: var(--color-interest-hover);
+  --color-interest-light: var(--color-interest-light);
+  --color-interest-bg: var(--color-interest-bg);
+  --color-accent: var(--color-accent);
+  --color-accent-hover: var(--color-accent-hover);
+
+  /* Fonts */
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-handwritten: var(--font-handwritten);
+  --font-mono: var(--font-mono);
+
+  /* Font sizes */
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+  --text-2xl: var(--text-2xl);
+  --text-3xl: var(--text-3xl);
+  --text-4xl: var(--text-4xl);
+  --text-5xl: var(--text-5xl);
+  --text-6xl: var(--text-6xl);
+
+  /* Border radius */
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+  --radius-full: var(--radius-full);
+
+  /* Shadows */
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+}
 
 /* --- CSS Reset --- */
 *, *::before, *::after {
@@ -60,33 +132,33 @@ ul, ol {
   --color-border: #E7E5E4;
   --color-border-strong: #D6D3D1;
 
-  /* Tech Accent - Professional Blue */
-  --color-tech: #2563EB;
-  --color-tech-hover: #1D4ED8;
-  --color-tech-light: #DBEAFE;
-  --color-tech-bg: #EFF6FF;
+  /* Tech Accent - Electric Sky Blue (Tailwind sky-400) */
+  --color-tech: #38BDF8;
+  --color-tech-hover: #0EA5E9;
+  --color-tech-light: #E0F2FE;
+  --color-tech-bg: #F0F9FF;
 
-  /* Life Accent - Warm Terracotta */
-  --color-life: #C67B5C;
-  --color-life-hover: #B5651D;
-  --color-life-light: #F5E0D8;
-  --color-life-bg: #FDF4F0;
+  /* Life Accent - Vibrant Orange (Tailwind orange-400) */
+  --color-life: #FB923C;
+  --color-life-hover: #F97316;
+  --color-life-light: #FFEDD5;
+  --color-life-bg: #FFF7ED;
 
-  /* Interest Accent - Natural Green */
-  --color-interest: #6B7B3C;
-  --color-interest-hover: #5A6B2C;
-  --color-interest-light: #E8EFD9;
-  --color-interest-bg: #F4F7EA;
+  /* Interest Accent - Bright Purple (Tailwind purple-400) */
+  --color-interest: #C084FC;
+  --color-interest-hover: #A855F7;
+  --color-interest-light: #F3E8FF;
+  --color-interest-bg: #FAF5FF;
 
   /* Accent (primary brand) */
-  --color-accent: #2563EB;
-  --color-accent-hover: #1D4ED8;
+  --color-accent: #38BDF8;
+  --color-accent-hover: #0EA5E9;
 
   /* Gradient */
-  --gradient-tech: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
-  --gradient-life: linear-gradient(135deg, #C67B5C 0%, #E89B7A 100%);
-  --gradient-interest: linear-gradient(135deg, #6B7B3C 0%, #9CAF6C 100%);
-  --gradient-hero: linear-gradient(135deg, #2563EB 0%, #7C3AED 50%, #C67B5C 100%);
+  --gradient-tech: linear-gradient(135deg, #38BDF8 0%, #6366F1 100%);
+  --gradient-life: linear-gradient(135deg, #FB923C 0%, #F43F5E 100%);
+  --gradient-interest: linear-gradient(135deg, #C084FC 0%, #E879F9 100%);
+  --gradient-hero: linear-gradient(135deg, #38BDF8 0%, #C084FC 50%, #FB923C 100%);
 
   /* --- Typography --- */
   --font-sans: 'Noto Sans SC', 'Poppins', system-ui, -apple-system, sans-serif;
@@ -134,7 +206,7 @@ ul, ol {
   --container-lg: 1024px;
   --container-xl: 1200px;
   --container-max: 1280px;
-  --content-width: 72ch;
+  --content-width: clamp(640px, 75vw, 920px);
 
   /* --- Border Radius --- */
   --radius-sm: 6px;
@@ -151,8 +223,8 @@ ul, ol {
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.10), 0 4px 8px rgba(0, 0, 0, 0.04);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.06);
   --shadow-2xl: 0 24px 64px rgba(0, 0, 0, 0.16);
-  --shadow-glow-tech: 0 0 32px rgba(37, 99, 235, 0.15);
-  --shadow-glow-life: 0 0 32px rgba(198, 123, 92, 0.15);
+  --shadow-glow-tech: 0 0 32px rgba(56, 189, 248, 0.15);
+  --shadow-glow-life: 0 0 32px rgba(251, 146, 60, 0.15);
 
   /* --- Transitions --- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -178,34 +250,7 @@ ul, ol {
 }
 
 /* --- Dark Mode --- */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #0C0A09;
-    --color-surface: #1C1917;
-    --color-surface-elevated: #292524;
-    --color-surface-muted: #292524;
-    --color-text: #FAFAF9;
-    --color-text-secondary: #D6D3D1;
-    --color-text-muted: #A8A29E;
-    --color-border: #44403C;
-    --color-border-strong: #57534E;
-
-    --color-tech-light: rgba(37, 99, 235, 0.15);
-    --color-tech-bg: rgba(37, 99, 235, 0.08);
-    --color-life-light: rgba(198, 123, 92, 0.15);
-    --color-life-bg: rgba(198, 123, 92, 0.08);
-    --color-interest-light: rgba(107, 123, 60, 0.15);
-    --color-interest-bg: rgba(107, 123, 60, 0.08);
-
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
-  }
-}
-
-/* Manual dark mode via data attribute */
+/* Manual dark mode via data attribute (always set by inline script in Layout.astro) */
 :root[data-theme="dark"] {
   --color-bg: #0C0A09;
   --color-surface: #1C1917;
@@ -217,12 +262,12 @@ ul, ol {
   --color-border: #44403C;
   --color-border-strong: #57534E;
 
-  --color-tech-light: rgba(37, 99, 235, 0.15);
-  --color-tech-bg: rgba(37, 99, 235, 0.08);
-  --color-life-light: rgba(198, 123, 92, 0.15);
-  --color-life-bg: rgba(198, 123, 92, 0.08);
-  --color-interest-light: rgba(107, 123, 60, 0.15);
-  --color-interest-bg: rgba(107, 123, 60, 0.08);
+  --color-tech-light: rgba(56, 189, 248, 0.15);
+  --color-tech-bg: rgba(56, 189, 248, 0.08);
+  --color-life-light: rgba(251, 146, 60, 0.15);
+  --color-life-bg: rgba(251, 146, 60, 0.08);
+  --color-interest-light: rgba(192, 132, 252, 0.15);
+  --color-interest-bg: rgba(192, 132, 252, 0.08);
 
   --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -505,16 +550,16 @@ blockquote {
 /* ============================================
    View Transitions
    ============================================ */
-@view-transition {
-  navigation: auto;
+::view-transition-group(root) {
+  background-color: var(--color-bg);
 }
 
 ::view-transition-old(root) {
-  animation: pageFadeOut 250ms var(--ease-out) both;
+  animation: pageFadeOut 180ms var(--ease-out) both;
 }
 
 ::view-transition-new(root) {
-  animation: pageFadeIn 350ms var(--ease-out) both;
+  animation: pageFadeIn 300ms var(--ease-out) 80ms both;
 }
 
 @keyframes pageFadeOut {
@@ -524,14 +569,14 @@ blockquote {
   }
   to {
     opacity: 0;
-    transform: translateY(-12px);
+    transform: translateY(-8px);
   }
 }
 
 @keyframes pageFadeIn {
   from {
     opacity: 0;
-    transform: translateY(16px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;

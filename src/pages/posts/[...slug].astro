@@ -11,7 +11,8 @@ export async function getStaticPaths() {
 }
 
 const post = Astro.props;
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
+const tocHeadings = headings.filter(h => h.depth === 2 || h.depth === 3);
 ---
 
 <PostLayout
@@ -22,6 +23,7 @@ const { Content } = await render(post);
   tags={post.data.tags}
   category={post.data.category}
   heroImage={post.data.heroImage}
+  headings={tocHeadings}
 >
   <Content />
 </PostLayout>

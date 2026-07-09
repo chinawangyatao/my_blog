@@ -1,5 +1,6 @@
 ---
 import Lightfall from './react/Lightfall.tsx';
+import CountUp from './react/CountUp.tsx';
 ---
 
 <section class="hero">
@@ -7,7 +8,7 @@ import Lightfall from './react/Lightfall.tsx';
   <div class="hero-bg">
     <Lightfall
       client:load
-      colors={['#A6C8FF', '#7C3AED', '#FF9FFC']}
+      colors={['#38BDF8', '#C084FC', '#FB923C']}
       backgroundColor="#0A0A12"
       speed={0.5}
       streakCount={6}
@@ -59,12 +60,12 @@ import Lightfall from './react/Lightfall.tsx';
 
     <div class="hero-stats reveal reveal-delay-4">
       <div class="stat">
-        <span class="stat-value">7+</span>
+        <span class="stat-value"><CountUp client:load to={7} duration={2} delay={0.3} />+</span>
         <span class="stat-label">篇文章</span>
       </div>
       <div class="stat-divider"></div>
       <div class="stat">
-        <span class="stat-value">3</span>
+        <span class="stat-value"><CountUp client:load to={3} duration={2} delay={0.5} /></span>
         <span class="stat-label">个板块</span>
       </div>
       <div class="stat-divider"></div>
@@ -165,7 +166,7 @@ import Lightfall from './react/Lightfall.tsx';
   }
 
   .text-gradient-light {
-    background: linear-gradient(135deg, #A6C8FF 0%, #FF9FFC 100%);
+    background: linear-gradient(135deg, #38BDF8 0%, #C084FC 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

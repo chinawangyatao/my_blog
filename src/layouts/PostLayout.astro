@@ -1,6 +1,11 @@
 ---
 import Layout from './Layout.astro';
-import TagFilter from '../components/TagFilter.astro';
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
 
 interface Props {
   title: string;
@@ -10,6 +15,7 @@ interface Props {
   tags?: string[];
   category?: 'tech' | 'life' | 'interests';
   heroImage?: string;
+  headings?: Heading[];
 }
 
 const {
@@ -20,6 +26,7 @@ const {
   tags = [],
   category = 'tech',
   heroImage,
+  headings = [],
 } = Astro.props;
 
 const categoryLabels = {
@@ -39,6 +46,26 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
   month: 'long',
   day: 'numeric',
 }).format(pubDate);
+
+// Group headings: h2 as parents, h3 as children
+interface TocGroup {
+  heading: Heading;
+  children: Heading[];
+}
+const tocGroups: TocGroup[] = [];
+let currentGroup: TocGroup | null = null;
+for (const h of headings) {
+  if (h.depth === 2) {
+    currentGroup = { heading: h, children: [] };
+    tocGroups.push(currentGroup);
+  } else if (h.depth === 3) {
+    if (currentGroup) {
+      currentGroup.children.push(h);
+    } else {
+      tocGroups.push({ heading: h, children: [] });
+    }
+  }
+}
 ---
 
 <Layout title={`${title} - wxc 的博客`} description={description} category={category}>
@@ -68,18 +95,69 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
         <div class="author-avatar">{author.charAt(0).toUpperCase()}</div>
         <span>{author}</span>
       </div>
+      {tags.length > 0 && (
+        <div class="post-tags">
+          {tags.map(tag => (
+            <span class="post-tag">{tag}</span>
+          ))}
+        </div>
+      )}
     </header>
 
     <!-- Post Content -->
     <div class="post-content container container-narrow">
       <slot />
     </div>
-
-    <!-- Post Footer -->
-    <footer class="post-footer container container-narrow">
-      {tags.length > 0 && <TagFilter tags={tags} />}
-    </footer>
   </article>
+
+  <!-- Table of Contents (desktop only) -->
+  {tocGroups.length > 0 && (
+    <nav class="toc" aria-label="目录">
+      <div class="toc-header">
+        <span class="toc-title">目录</span>
+      </div>
+      <div class="toc-body">
+        <ul class="toc-list">
+          {tocGroups.map((group, gi) => (
+            <li class={`toc-group${group.children.length > 0 ? '' : ' toc-group--leaf'}`} data-group={gi}>
+              <div class="toc-row">
+                <a
+                  href={`#${group.heading.slug}`}
+                  class="toc-link toc-link-h2"
+                  data-slug={group.heading.slug}
+                >
+                  {group.heading.text}
+                </a>
+                {group.children.length > 0 && (
+                  <button class="toc-toggle" type="button" aria-label="展开/折叠" aria-expanded="true">
+                    <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+                )}
+              </div>
+              {group.children.length > 0 && (
+                <ul class="toc-children">
+                  {group.children.map(h => (
+                    <li>
+                      <a
+                        href={`#${h.slug}`}
+                        class="toc-link toc-link-h3"
+                        data-slug={h.slug}
+                        data-parent-group={gi}
+                      >
+                        {h.text}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </nav>
+  )}
 </Layout>
 
 <style>
@@ -257,6 +335,26 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
     transition: transform var(--duration-normal) var(--ease-out);
   }
 
+  .post-content :global(div.mermaid) {
+    display: flex;
+    justify-content: center;
+    margin: var(--space-8) 0;
+    padding: var(--space-8) var(--space-6);
+    border-radius: var(--radius-lg);
+    background: #18181B;
+    border: 1px solid var(--color-border);
+    overflow-x: auto;
+  }
+
+  :global(:root[data-theme="light"]) .post-content :global(div.mermaid) {
+    background: #F5F5F4;
+  }
+
+  .post-content :global(div.mermaid svg) {
+    max-width: 100%;
+    height: auto;
+  }
+
   .post-content :global(img:hover) {
     transform: scale(1.01);
   }
@@ -272,18 +370,296 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
     z-index: calc(var(--z-modal) + 1);
   }
 
-  .post-footer {
-    margin-top: var(--space-16);
-    padding-top: var(--space-8);
-    border-top: 1px solid var(--color-border);
-    padding-bottom: var(--space-16);
+  .post-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .post-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+  }
+
+  /* Table of Contents */
+  .toc {
+    display: none;
+    position: fixed;
+    left: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 264px;
+    max-height: 60vh;
+    z-index: var(--z-sticky);
+    background: color-mix(in srgb, var(--color-surface) 60%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .toc-header {
+    flex-shrink: 0;
+    padding: var(--space-3) var(--space-4);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
+    display: flex;
+    align-items: center;
+  }
+
+  .toc-title {
+    font-size: var(--text-xs);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-muted);
+  }
+
+  .toc-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--space-2);
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--color-text-muted) 25%, transparent) transparent;
+  }
+
+  .toc-body::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .toc-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .toc-body::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--color-text-muted) 25%, transparent);
+    border-radius: var(--radius-full);
+  }
+
+  .toc-body::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--color-text-muted) 40%, transparent);
+  }
+
+  .toc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .toc-group {
+    border-radius: var(--radius-md);
+  }
+
+  .toc-row {
+    display: flex;
+    align-items: center;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .toc-link {
+    flex: 1;
+    min-width: 0;
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
+    line-height: var(--leading-snug);
+    color: var(--color-text-muted);
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+    border-radius: var(--radius-md);
+    transition: color var(--duration-fast) var(--ease-out),
+                background var(--duration-fast) var(--ease-out);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .toc-link:hover {
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-text) 6%, transparent);
+  }
+
+  .toc-link.active {
+    color: var(--color-accent);
+    font-weight: 600;
+    background: color-mix(in srgb, var(--color-accent) 12%, transparent);
+  }
+
+  .toc-link-h3 {
+    font-size: var(--text-xs);
+    font-weight: 400;
+    padding: 6px var(--space-3) 6px var(--space-4);
+  }
+
+  /* Toggle button */
+  .toc-toggle {
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: background var(--duration-fast) var(--ease-out),
+                color var(--duration-fast) var(--ease-out);
+  }
+
+  .toc-toggle:hover {
+    background: color-mix(in srgb, var(--color-text) 8%, transparent);
+    color: var(--color-text);
+  }
+
+  .toc-toggle svg {
+    width: 12px;
+    height: 12px;
+    transition: transform var(--duration-normal) var(--ease-out);
+  }
+
+  .toc-group.collapsed .toc-toggle svg {
+    transform: rotate(-90deg);
+  }
+
+  /* Children - collapsible with smooth animation */
+  .toc-children {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-left: var(--space-4);
+    padding-left: var(--space-2);
+    border-left: 1px solid color-mix(in srgb, var(--color-border) 60%, transparent);
+    overflow: hidden;
+    max-height: 1000px;
+    opacity: 1;
+    transition: max-height var(--duration-normal) var(--ease-out),
+                opacity var(--duration-fast) var(--ease-out);
+  }
+
+  .toc-group.collapsed .toc-children {
+    max-height: 0;
+    opacity: 0;
+  }
+
+  @media (min-width: 1280px) {
+    .toc {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Center content in the space to the right of the TOC */
+    .post-header,
+    .post-content {
+      margin-left: calc((100vw + 264px + 1.5rem - var(--content-width)) / 2);
+      margin-right: auto;
+    }
+  }
+
+  /* Scroll offset for headings (account for sticky header) */
+  :global(h2[id]), :global(h3[id]) {
+    scroll-margin-top: calc(var(--header-height) + 1rem);
   }
 </style>
 
 <script>
   import mediumZoom from 'medium-zoom';
+  import mermaid from 'mermaid';
 
   let scrollHandler: (() => void) | null = null;
+  let tocObserver: IntersectionObserver | null = null;
+  const mermaidTexts = new Map<string, string>();
+  let themeObserver: MutationObserver | null = null;
+
+  function getMermaidTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    if (isLight) {
+      return {
+        background: 'transparent',
+        primaryColor: '#FFFFFF',
+        primaryTextColor: '#1C1917',
+        primaryBorderColor: '#2563EB',
+        secondaryColor: '#F5F5F4',
+        secondaryTextColor: '#57534E',
+        secondaryBorderColor: '#7C3AED',
+        tertiaryColor: '#F5F5F4',
+        tertiaryTextColor: '#57534E',
+        tertiaryBorderColor: '#D6D3D1',
+        lineColor: '#78716C',
+        textColor: '#1C1917',
+        mainBkg: '#F5F5F4',
+        nodeBorder: '#2563EB',
+        clusterBkg: '#FFFFFF',
+        clusterBorder: '#D6D3D1',
+        edgeLabelBackground: '#FFFFFF',
+        fontFamily: 'var(--font-sans)',
+      };
+    }
+    return {
+      background: 'transparent',
+      primaryColor: '#1C1917',
+      primaryTextColor: '#FAFAF9',
+      primaryBorderColor: '#38BDF8',
+      secondaryColor: '#292524',
+      secondaryTextColor: '#D6D3D1',
+      secondaryBorderColor: '#C084FC',
+      tertiaryColor: '#292524',
+      tertiaryTextColor: '#D6D3D1',
+      tertiaryBorderColor: '#57534E',
+      lineColor: '#A8A29E',
+      textColor: '#FAFAF9',
+      mainBkg: '#292524',
+      nodeBorder: '#38BDF8',
+      clusterBkg: '#1C1917',
+      clusterBorder: '#57534E',
+      edgeLabelBackground: '#1C1917',
+      fontFamily: 'var(--font-sans)',
+    };
+  }
+
+  function renderMermaid() {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: getMermaidTheme(),
+    });
+
+    document.querySelectorAll('div.mermaid').forEach((el) => {
+      const id = el.id;
+      const text = mermaidTexts.get(id);
+      if (text) {
+        el.innerHTML = '';
+        el.removeAttribute('data-processed');
+        el.textContent = text;
+      }
+    });
+
+    mermaid.run();
+  }
+
+  // Set up theme observer once
+  if (!themeObserver) {
+    themeObserver = new MutationObserver(() => {
+      if (document.querySelector('div.mermaid')) {
+        renderMermaid();
+      }
+    });
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+  }
 
   document.addEventListener('astro:page-load', () => {
     // Clean up old scroll handler
@@ -305,6 +681,29 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
       scrollHandler();
     }
 
+    // Mermaid diagrams - convert code blocks and store text
+    const mermaidBlocks = document.querySelectorAll('pre[data-language="mermaid"], pre.language-mermaid');
+    mermaidBlocks.forEach((el, i) => {
+      const code = el.querySelector('code');
+      let text = code ? code.textContent : el.textContent;
+      // Strip inline style/classDef directives designed for light themes
+      text = text.split('\n').filter(line => {
+        const trimmed = line.trim();
+        return !trimmed.startsWith('style ') && !trimmed.startsWith('classDef ');
+      }).join('\n');
+      const div = document.createElement('div');
+      div.className = 'mermaid';
+      div.id = `mermaid-diagram-${i}`;
+      div.textContent = text;
+      mermaidTexts.set(div.id, text);
+      el.replaceWith(div);
+    });
+
+    // Render mermaid if any diagrams exist
+    if (document.querySelector('div.mermaid')) {
+      renderMermaid();
+    }
+
     // Medium zoom for post images
     const postContent = document.querySelector('.post-content');
     if (postContent) {
@@ -313,6 +712,95 @@ const formattedDate = new Intl.DateTimeFormat('zh-CN', {
         margin: 24,
         background: 'rgba(0, 0, 0, 0.85)',
         scrollOffset: 0,
+      });
+    }
+
+    // Table of Contents - scroll highlight + collapse
+    if (tocObserver) {
+      tocObserver.disconnect();
+      tocObserver = null;
+    }
+
+    const tocLinks = document.querySelectorAll<HTMLAnchorElement>('.toc-link');
+    if (tocLinks.length > 0) {
+      const slugToLink = new Map<string, HTMLAnchorElement>();
+      tocLinks.forEach((link) => {
+        const slug = link.dataset.slug;
+        if (slug) slugToLink.set(slug, link);
+      });
+
+      const headingEls = Array.from(document.querySelectorAll<HTMLElement>('h2[id], h3[id]'));
+      const tocGroups = document.querySelectorAll<HTMLElement>('.toc-group');
+
+      const expandGroup = (group: HTMLElement) => {
+        group.classList.remove('collapsed');
+        const toggle = group.querySelector('.toc-toggle');
+        if (toggle) toggle.setAttribute('aria-expanded', 'true');
+      };
+
+      const setActive = (slug: string) => {
+        tocLinks.forEach((l) => l.classList.remove('active'));
+        const link = slugToLink.get(slug);
+        if (!link) return;
+        link.classList.add('active');
+
+        // Auto-expand the parent group if this is an h3
+        const parentGi = link.dataset.parentGroup;
+        if (parentGi) {
+          const parent = document.querySelector(`.toc-group[data-group="${parentGi}"]`);
+          if (parent) expandGroup(parent as HTMLElement);
+        }
+
+        // Scroll the active link into view within the TOC body
+        const tocBody = document.querySelector('.toc-body');
+        if (tocBody) {
+          const linkRect = link.getBoundingClientRect();
+          const bodyRect = tocBody.getBoundingClientRect();
+          if (linkRect.top < bodyRect.top || linkRect.bottom > bodyRect.bottom) {
+            link.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+          }
+        }
+      };
+
+      tocObserver = new IntersectionObserver(
+        (entries) => {
+          const visible = entries
+            .filter((e) => e.isIntersecting)
+            .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
+          if (visible.length > 0) {
+            setActive(visible[0].target.id);
+          }
+        },
+        { rootMargin: '-80px 0px -70% 0px' }
+      );
+
+      headingEls.forEach((h) => tocObserver!.observe(h));
+
+      // Smooth scroll on click (scroll-margin-top handles header offset)
+      tocLinks.forEach((link) => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          const slug = link.dataset.slug;
+          const target = slug ? document.getElementById(slug) : null;
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+            history.replaceState(null, '', `#${slug}`);
+          }
+        });
+      });
+
+      // Collapse/expand toggle
+      const toggles = document.querySelectorAll<HTMLButtonElement>('.toc-toggle');
+      toggles.forEach((toggle) => {
+        toggle.addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const group = toggle.closest('.toc-group');
+          if (group) {
+            const collapsed = group.classList.toggle('collapsed');
+            toggle.setAttribute('aria-expanded', String(!collapsed));
+          }
+        });
       });
     }
   });

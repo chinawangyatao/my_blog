@@ -14,7 +14,7 @@ const recentPosts = allPosts.slice(0, 6);
 
 // Masonry items: use all posts with hero images for a rich layout
 const categoryLabels = { tech: '技术', life: '生活', interests: '兴趣' };
-const categoryColors = { tech: '#60A5FA', life: '#E89B7A', interests: '#9CAF6C' };
+const categoryColors = { tech: '#38BDF8', life: '#FB923C', interests: '#C084FC' };
 const masonryHeights = [520, 360, 460, 580, 380, 500, 420];
 
 const masonryItems = allPosts.slice(0, 7).map((post, i) => ({
@@ -40,7 +40,7 @@ const categories = [
     description: '探索前端、后端与一切有趣的技术',
     count: techPosts.length,
     color: 'var(--color-tech)',
-    gradient: 'linear-gradient(135deg, #2563EB 0%, #7C3AED 100%)',
+    gradient: 'linear-gradient(135deg, #38BDF8 0%, #6366F1 100%)',
     icon: 'code',
   },
   {
@@ -49,7 +49,7 @@ const categories = [
     description: '记录旅行、日常与生活中的小确幸',
     count: lifePosts.length,
     color: 'var(--color-life)',
-    gradient: 'linear-gradient(135deg, #C67B5C 0%, #E89B7A 100%)',
+    gradient: 'linear-gradient(135deg, #FB923C 0%, #F43F5E 100%)',
     icon: 'heart',
   },
   {
@@ -58,7 +58,7 @@ const categories = [
     description: '咖啡、摄影、骑行，热爱让生活闪光',
     count: interestPosts.length,
     color: 'var(--color-interest)',
-    gradient: 'linear-gradient(135deg, #6B7B3C 0%, #9CAF6C 100%)',
+    gradient: 'linear-gradient(135deg, #C084FC 0%, #E879F9 100%)',
     icon: 'star',
   },
 ];

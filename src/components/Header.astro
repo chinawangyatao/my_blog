@@ -2,17 +2,17 @@
 import ThemeToggle from './ThemeToggle.astro';
 
 const navItems = [
-  { href: '/', label: '首页', icon: 'home' },
-  { href: '/tech', label: '技术', icon: 'code' },
-  { href: '/life', label: '生活', icon: 'heart' },
-  { href: '/interests', label: '兴趣', icon: 'star' },
-  { href: '/about', label: '关于', icon: 'user' },
+  { href: '/', label: '首页' },
+  { href: '/tech', label: '技术' },
+  { href: '/life', label: '生活' },
+  { href: '/interests', label: '兴趣' },
+  { href: '/about', label: '关于' },
 ];
 
 const currentPath = Astro.url.pathname;
 ---
 
-<header class="site-header">
+<header class="site-header" id="site-header">
   <div class="header-inner container">
     <!-- Logo -->
     <a href="/" class="logo" aria-label="wxc 的博客 - 首页">
@@ -43,13 +43,22 @@ const currentPath = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: var(--z-header);
-    background: color-mix(in srgb, var(--color-bg) 80%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--color-border);
+    background: color-mix(in srgb, var(--color-bg) 70%, transparent);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-border) 50%, transparent);
     height: var(--header-height);
     display: flex;
     align-items: center;
+    transition: box-shadow var(--duration-normal) var(--ease-out),
+                background var(--duration-normal) var(--ease-out),
+                border-color var(--duration-normal) var(--ease-out);
+  }
+
+  .site-header.scrolled {
+    box-shadow: 0 8px 32px -12px rgba(0, 0, 0, 0.2);
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+    border-bottom-color: color-mix(in srgb, var(--color-border) 80%, transparent);
   }
 
   .header-inner {
@@ -60,6 +69,7 @@ const currentPath = Astro.url.pathname;
     width: 100%;
   }
 
+  /* Logo */
   .logo {
     display: flex;
     align-items: center;
@@ -76,19 +86,21 @@ const currentPath = Astro.url.pathname;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--radius-md);
-    background: var(--gradient-hero);
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #38BDF8 0%, #C084FC 100%);
     color: #fff;
     font-size: var(--text-base);
     font-weight: 800;
-    box-shadow: var(--shadow-sm);
-    transition: transform var(--duration-normal) var(--ease-spring);
+    box-shadow: 0 4px 14px -3px color-mix(in srgb, #38BDF8 50%, transparent);
+    transition: transform var(--duration-normal) var(--ease-spring),
+                box-shadow var(--duration-normal) var(--ease-out);
   }
 
   .logo:hover .logo-mark {
     transform: rotate(-8deg) scale(1.05);
+    box-shadow: 0 6px 18px -3px color-mix(in srgb, #C084FC 55%, transparent);
   }
 
   .logo-text {
@@ -99,44 +111,41 @@ const currentPath = Astro.url.pathname;
     color: var(--color-accent);
   }
 
+  /* Desktop Nav - glass pill */
   .desktop-nav {
     display: none;
     align-items: center;
-    gap: var(--space-1);
+    gap: 4px;
+    padding: 5px;
+    border-radius: 9999px;
+    background: color-mix(in srgb, var(--color-surface) 50%, transparent);
+    border: 1px solid color-mix(in srgb, var(--color-border) 40%, transparent);
   }
 
   .nav-link {
     position: relative;
-    padding: var(--space-2) var(--space-3);
-    font-size: var(--text-sm);
+    padding: 8px 26px;
+    font-size: var(--text-base);
     font-weight: 500;
     color: var(--color-text-secondary);
-    border-radius: var(--radius-md);
+    border-radius: 9999px;
     transition: color var(--duration-fast) var(--ease-out),
-                background-color var(--duration-fast) var(--ease-out);
+                background-color var(--duration-fast) var(--ease-out),
+                box-shadow var(--duration-fast) var(--ease-out);
     cursor: pointer;
   }
 
   .nav-link:hover {
     color: var(--color-text);
-    background: var(--color-surface-muted);
+    background: color-mix(in srgb, var(--color-text) 7%, transparent);
   }
 
   .nav-link.active {
-    color: var(--color-accent);
+    color: #FAFAFA;
+    background: #3F3F46;
     font-weight: 600;
-  }
-
-  .nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: var(--radius-full);
-    background: var(--color-accent);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06),
+                0 2px 8px -2px rgba(0, 0, 0, 0.3);
   }
 
   .header-actions {
@@ -151,3 +160,27 @@ const currentPath = Astro.url.pathname;
     }
   }
 </style>
+
+<script>
+  let scrollHandler: (() => void) | null = null;
+
+  document.addEventListener('astro:page-load', () => {
+    const header = document.getElementById('site-header');
+    if (!header) return;
+
+    if (scrollHandler) {
+      window.removeEventListener('scroll', scrollHandler);
+    }
+
+    scrollHandler = () => {
+      if (window.scrollY > 8) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    };
+
+    scrollHandler();
+    window.addEventListener('scroll', scrollHandler, { passive: true });
+  });
+</script>
