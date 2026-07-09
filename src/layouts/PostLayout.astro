@@ -559,11 +559,10 @@ for (const h of headings) {
       flex-direction: column;
     }
 
-    /* Center content in the space to the right of the TOC */
+    /* Narrow content to avoid TOC overlap, margin: 0 auto from .container handles centering */
     .post-header,
     .post-content {
-      margin-left: calc((100vw + 264px + 1.5rem - var(--content-width)) / 2);
-      margin-right: auto;
+      max-width: min(var(--content-width), calc(100vw - 624px));
     }
   }
 

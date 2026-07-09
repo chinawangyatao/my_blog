@@ -17,7 +17,11 @@ const categoryLabels = { tech: '技术', life: '生活', interests: '兴趣' };
 const categoryColors = { tech: '#38BDF8', life: '#FB923C', interests: '#C084FC' };
 const masonryHeights = [520, 360, 460, 580, 380, 500, 420];
 
-const masonryItems = allPosts.slice(0, 7).map((post, i) => ({
+// Featured posts for Masonry (filter by featured, fall back to recent if not enough)
+const featuredPosts = allPosts.filter(post => post.data.featured);
+const masonrySource = featuredPosts.length >= 3 ? featuredPosts : allPosts;
+
+const masonryItems = masonrySource.slice(0, 7).map((post, i) => ({
   id: post.id,
   img: post.data.heroImage || `https://picsum.photos/seed/${post.id}/600/400`,
   url: `/posts/${post.id}`,
