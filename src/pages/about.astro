@@ -1,69 +1,353 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import Badge from '../components/ui/Badge.astro';
+import Separator from '../components/ui/Separator.astro';
+import SectionHeading from '../components/ui/SectionHeading.astro';
+import ProjectShowcase from '../components/react/ProjectShowcase.tsx';
+import type { ProjectItem } from '../components/react/ProjectShowcase.tsx';
+import { Phone, Mail, MapPin, BookOpen, Quote } from '@lucide/astro';
+
+// 自动计算工作年限
+const careerStart = new Date('2019-07');
+const leadStart = new Date('2024-03');
+const now = new Date();
+const totalYears = Math.max(1, Math.round((now - careerStart) / (1000 * 60 * 60 * 24 * 365)));
+const leadYears = Math.max(0, Math.round((now - leadStart) / (1000 * 60 * 60 * 24 * 365)));
 
 const skills = [
-  { category: '前端', items: ['React', 'Vue', 'TypeScript', 'Astro', 'Tailwind CSS', 'Next.js'] },
-  { category: '后端', items: ['Node.js', 'Python', 'PostgreSQL', 'Redis', 'Docker'] },
-  { category: '工具', items: ['Git', 'Figma', 'Vim', 'VS Code'] },
+  {
+    category: 'AI & Agent',
+    items: ['Vercel AI SDK', 'LangChain', 'Dify', 'Hermes Agent', 'DeepSeek API', 'RAG 检索增强', 'ReAct Loop', 'SSE 流式输出', 'Prompt Engineering'],
+  },
+  {
+    category: '前端框架',
+    items: ['React', 'Vue 2/3', 'TypeScript', 'React Router', 'Redux Toolkit', 'Pinia', 'Vue Router', 'Vuex', 'Astro'],
+  },
+  {
+    category: 'UI & 样式',
+    items: ['Element Plus', 'Ant Design', 'TailwindCSS', 'shadcn/ui', 'styled-components', 'SCSS', 'Less', 'uView', 'iView'],
+  },
+  {
+    category: '跨端开发',
+    items: ['Uniapp', 'Taro', 'React Native', 'Flutter', '微信小程序', 'H5'],
+  },
+  {
+    category: '数据可视化',
+    items: ['ECharts', 'Leaflet', '大屏可视化', '地图渲染', '点位聚合', '热力图'],
+  },
+  {
+    category: '工程化 & 构建',
+    items: ['Vite', 'Webpack', 'qiankun 微前端', 'monorepo', 'pnpm', 'yarn', 'bun', 'npm 私包'],
+  },
+  {
+    category: '后端 & 其他',
+    items: ['WebSocket', 'MQTT', 'Axios 二次封装', 'Google ML Kit'],
+  },
 ];
 
-const timeline = [
+const workExperience = [
   {
-    year: '2024',
-    title: '全栈开发者',
-    org: '独立项目',
-    description: '使用 Astro、React 搭建个人博客系统，探索现代 Web 开发最佳实践。',
+    period: '2024.03 - 至今',
+    title: '前端开发主管',
+    org: '华夏票联（北京）',
+    responsibilities: [
+      '负责 Web 页面开发，确保高度还原设计稿，进行 UI 优化和性能优化',
+      '负责团队脚手架：qiankun 基座、维护和开发项目脚手架',
+      '基于 Element Plus 二次封装组件库 h-components（扩展 45+ 组件），以配置化驱动业务开发',
+      '构建前端工具链：Vite 插件、Hooks、npm 包开发、Webpack 转 Vite 等',
+    ],
+    projects: ['崂山购票小程序', '智慧查询机', '名片系统', '智慧文旅云平台', '会员中后台', '权限中心', 'h-components 组件库'],
   },
   {
-    year: '2023',
-    title: '前端工程师',
-    org: '科技公司',
-    description: '负责大型 Web 应用的前端架构设计与性能优化，推动组件库建设。',
+    period: '2022.12 - 2024.03',
+    title: '前端开发工程师',
+    org: '北京柯莱特科技有限公司',
+    responsibilities: [
+      '负责 Web 前端开发，确保高质量的代码实现',
+      '封装良好的前端交互组件，提升用户体验',
+      '进行前端代码优化，确保性能和可维护性',
+    ],
+    projects: ['青岛交通局一体化应用平台', 'H-work 平台（权限管理）'],
   },
   {
-    year: '2022',
-    title: '开始学习编程',
-    org: '自学',
-    description: '从 HTML/CSS 开始，逐步深入 JavaScript、React 和全栈开发。',
+    period: '2019.07 - 2022.11',
+    title: '网站前端开发',
+    org: '广州嘉和医疗科技有限公司',
+    responsibilities: [
+      '负责 PC 端、H5、移动端 Web 前端开发',
+      '封装前端交互组件，优化前端页面性能',
+      '使用 PS/Figma 进行 UI 设计，负责网站日常开发维护',
+      '根据 API 文档与后端对接数据，实现功能',
+    ],
+    projects: ['公司官网及后台管理系统', 'H5 营销页面'],
   },
 ];
 
-const interests = [
-  { name: '手冲咖啡', icon: 'coffee', desc: '每个周末的仪式感' },
-  { name: '胶片摄影', icon: 'camera', desc: '用胶片记录慢生活' },
-  { name: '骑行', icon: 'bike', desc: '城市与远方的探索' },
-  { name: '阅读', icon: 'book', desc: '技术与人文的交汇' },
+const projects: ProjectItem[] = [
+  {
+    id: 'laoshan-agent',
+    name: '崂山 AI Agent 对话机器人',
+    period: '2025.06 - 至今',
+    stack: ['Next.js', 'AI SDK (Vercel)', 'DeepSeek', 'TypeScript', 'TDesign', 'SSE 流式输出'],
+    description: '基于 Vercel AI SDK 构建的崂山风景区 AI 客服 Agent，支持多轮对话、景点介绍、线路推荐、交通指南等智能咨询服务。采用 DeepSeek 大模型驱动，SSE 流式输出实时响应。',
+    details: [
+      '使用 Vercel AI SDK 的 streamText() 实现流式输出，通过 SSE 实时推送文本片段，用户体验流畅',
+      '基于 ReAct Loop 模式构建 Agent 循环，支持工具调用（景点查询、路线规划、天气获取等）',
+      'DeepSeek API 接入，配置 allowSystemInMessages 兼容系统提示词',
+      '自定义工具系统，使用普通对象 + Zod 定义 inputSchema，规避 AI SDK 类型推断问题',
+      'TDesign 组件库蓝色主题（#0052d9），Markdown 渲染支持加粗/列表/标题等富文本',
+      '部署在云服务器，3 个 systemd 实例负载均衡，Nginx 反向代理 8081/8443',
+    ],
+    highlights: [
+      '多轮对话上下文记忆',
+      'ReAct 工具调用循环',
+      'SSE 流式实时输出',
+      'Markdown 富文本渲染',
+      '知识库 RAG 检索增强',
+      '多实例负载均衡部署',
+    ],
+    type: 'ai',
+    link: 'http://182.92.244.79:8081/',
+    linkLabel: '体验崂山 AI Agent',
+  },
+  {
+    id: 'qiankun-base',
+    name: 'qiankun 微前端底座',
+    period: '2024.11 - 至今',
+    stack: ['React 18', 'Vue 3.4', 'Redux', 'TailwindCSS', 'qiankun', 'Vite'],
+    description: '将单点登录转为 qiankun 微前端架构。搭建底座解决样式污染、JS 污染、路由回退 404、动态注册子应用；开发子应用脚手架兼容 vite-plugin-qiankun；Redux 全局状态管理实现用户登录与权限通信。',
+    details: [
+      'qiankun 搭建底座，解决样式污染、JS 污染问题、路由回退 404、动态注册子应用',
+      '子应用脚手架，子应用项目用的 Vite 搭建需用 vite-plugin-qiankun 兼容',
+      '开发环境子应用启动父应用跟着一起启动，方便开发',
+      'Redux 全局状态管理，用户登录，权限获取，将这些权限信息通信到子应用',
+      '部署提示用户刷新页面，平滑过渡',
+    ],
+    type: 'tech',
+  },
+  {
+    id: 'h-components',
+    name: 'h-components 组件库',
+    period: '2024.06 - 2024.10',
+    stack: ['Vue 3', 'Element Plus', 'TypeScript'],
+    description: '简化 Element Plus 开发流程，以配置式驱动业务。对表单、Table 等组件二次封装暴露配置项；封装字典 Hooks、消息 Hooks、Props 拆解 Hooks；已扩展组件数 45+。',
+    details: [
+      '对表单组件、table 组件、以及其他组件进行二次封装，暴露出配置项',
+      '封装字典 hooks、消息 hooks、拆解 props hooks',
+      '封装可选 ts 工具类等',
+      '目前已经扩展 Element Plus 组件数 45+',
+    ],
+    highlights: [
+      '45+ 组件扩展',
+      '配置式业务开发',
+      'Hooks 工具链封装',
+      'TypeScript 类型支持',
+    ],
+    type: 'tech',
+    link: 'http://43.136.184.91/mp/vitepress/',
+    linkLabel: '查看组件库文档',
+  },
+  {
+    id: 'cross-platform',
+    name: '跨端开发 - 智慧查询机',
+    period: '2025.09 - 至今',
+    stack: ['React Native', 'Flutter', 'Uniapp', 'Google ML Kit'],
+    description: '从 Uniapp 迁移到 React Native，集成多目摄像头、DNP 打印机 SDK、惠普串口通信、ML Kit 人脸检测。后续用 Flutter 重构美拍功能，原生层实现打印队列解决打印机卡死问题。',
+    details: [
+      'ML Kit 实现摄像头人像视频流截取，人来即亮人走即灭',
+      'UImage 优化美颜功能',
+      '优化长列表、长图片，虚拟化列表渲染',
+      'WebView 层进行 JS 注入，优化内嵌页面展示效果',
+      '在原生层实现打印队列功能，解决打印机卡死，异步打印',
+      '一周时间从 Uniapp 迁移到 React Native，后续用 Flutter 重构美拍功能',
+    ],
+    highlights: [
+      '多端迁移 (Uniapp->RN->Flutter)',
+      'Google ML Kit 人脸检测',
+      '打印机 SDK 集成',
+      '原生层打印队列',
+    ],
+    type: 'tech',
+  },
+  {
+    id: 'see-monitor',
+    name: 'see 前端监控 SDK',
+    period: '2023.08 - 2024.05',
+    stack: ['TypeScript', 'pnpm monorepo', 'Changesets', 'Vue 2/3', 'React', 'rrweb'],
+    description: '从 0 到 1 搭建的前端监控 SDK，monorepo 架构管理多包。支持代码报错、性能数据、页面录屏、用户行为、白屏检测等全链路监控，兼容 Vue2/Vue3/React 多框架。支持错误去重、多种上报方式、自定义 Hook。',
+    details: [
+      'pnpm + Changesets 搭建 monorepo 架构，核心模块 @see/core + 插件化扩展（@see/performance、@see/recordscreen、@see/miniapp）',
+      '错误捕获：window.onerror、unhandledrejection、资源加载错误、Xhr/Fetch 请求错误，支持 SourceMap 源码定位',
+      '基于 rrweb 实现页面录屏，错误发生时自动上报录屏记录，快速还原用户操作路径',
+      '白屏检测：关键点采样对比 + 白屏修正机制，兼容有/无骨架屏两种场景',
+      '错误去重：根据错误堆栈信息（错误信息+文件+行号）生成 hash，同一会话内重复错误只上报一次',
+      '性能监控：FP/FCP/LCP/CLS/TTFB/FID + Long Task、Memory、首屏加载时间',
+      '多种上报方式：默认 Beacon API，支持图片打点、HTTP POST 降级',
+      '用户行为栈：点击/路由跳转/接口调用/资源加载，maxBreadcrumbs 控制容量，beforePushBreadcrumb 自定义过滤',
+    ],
+    highlights: [
+      'monorepo 多包架构',
+      'rrweb 页面录屏还原',
+      '白屏检测方案',
+      '错误去重机制',
+      '多框架兼容 (Vue2/3/React)',
+      '插件化扩展设计',
+    ],
+    type: 'tech',
+    link: 'https://github.com/chinawangyatao/xc-see',
+    linkLabel: '查看 GitHub 仓库',
+  },
+  {
+    id: 'wave-4.0',
+    name: '浪潮工业互联网 4.0 可视化',
+    period: '2022.04 - 2023.06',
+    stack: ['React 17', 'ECharts', 'Ant Design', 'Redux Toolkit', 'TailwindCSS'],
+    description: '大屏可视化项目，实时监控厂区运行状态。前端对接 6 家供应商数据接口做数据聚合；利用 autofit.js 实现大屏适配；还原设计稿 3D 动效；设计轮询请求优化页面。',
+    details: [
+      '抽离页面网络层，axios 二次封装，前端对接 6 家供应商接口做数据聚合和计算',
+      '利用 autofit.js 实现大屏可视化的适配方案',
+      '利用 TailwindCSS 统一全局主题，与设计同步',
+      '抽离页面逻辑层进行数据计算，然后渲染页面',
+      '还原设计稿 3D 动效效果',
+      '设计轮询请求接口获取数据，优化页面',
+    ],
+    type: 'tech',
+  },
+  {
+    id: 'qingdao-traffic',
+    name: '青岛交通局运行监测系统',
+    period: '2022.12 - 2024.03',
+    stack: ['Vue 2', 'ECharts', 'Leaflet', 'Element UI'],
+    description: '政府交通管理大屏可视化项目。接入宇视视频平台展示机场、公交、地铁实时视频；利用 Leaflet 调用超图接口实现地图打点画线、点位聚合、热力图、动态航线；Vue 3 + TS 开发政务报送系统。',
+    details: [
+      '接入宇视视频平台展示机场、公交车、地铁站、高速实时视频',
+      '调用超图接口利用 Leaflet 进行地图加载，实现打点画线、点位聚合、热力图、动态航线',
+      '对接表单页面接口实现对数据的增删改查',
+      '对部分业务组件进行封装，如表单组件、消息提示组件、上传组件等',
+      '使用 Vue 3 + TypeScript 开发政务报送系统',
+    ],
+    type: 'tech',
+  },
+  {
+    id: 'binzhou-archive',
+    name: '滨州住建局档案管理系统',
+    period: '2023.06 - 2023.10',
+    stack: ['Vue 3', 'TypeScript', 'Pinia', 'Ant Design', 'Uniapp'],
+    description: '小程序端和 Web 端档案管理系统，将线下审批流程线上化。模拟政府红头文件电子版并支持打印；基于审批节点控制流程；Uniapp 开发微信小程序并设计角色权限；Excel 在线读取导出。',
+    details: [
+      '基于 Ant Design 二次封装进行开发，模拟政府红头文件电子版并支持打印',
+      '流程分析，确定状态节点，根据审批节点控制审批流程',
+      'Uniapp 开发微信小程序，设计角色权限',
+      '利用 xlsx 进行 Excel 的在线读取和导出',
+      'ECharts 动态构建驾驶舱',
+    ],
+    type: 'tech',
+  },
 ];
+
+const education = [
+  {
+    period: '2019.09 - 2022.06',
+    school: '广东科技学院',
+    major: '软件工程',
+    degree: '本科',
+    mode: '非全日制',
+  },
+  {
+    period: '2016.06 - 2019.09',
+    school: '潍坊科技学院',
+    major: '计算机应用技术',
+    degree: '大专',
+    mode: '全日制',
+  },
+];
+
+const contactInfo = [
+  { label: '电话', value: '15624181187', icon: 'phone', link: 'tel:15624181187' },
+  { label: '邮箱', value: 'w1176317790@163.com', icon: 'mail', link: 'mailto:w1176317790@163.com' },
+  { label: '所在地', value: '青岛', icon: 'location', link: null },
+  { label: 'GitHub', value: 'chinawangyatao', icon: 'github', link: 'https://github.com/chinawangyatao' },
+  { label: '组件库', value: '在线文档', icon: 'book', link: 'http://43.136.184.91/mp/vitepress/' },
+];
+
+const iconMap: Record<string, any> = {
+  phone: Phone,
+  mail: Mail,
+  location: MapPin,
+  book: BookOpen,
+};
 ---
 
-<Layout title="关于我 - wxc 的博客" description="wxc 的个人简历 - 全栈开发者，热爱技术与生活">
-  <div class="about-page">
+<Layout title="关于我 - 王煦澄的博客" description={`王煦澄 - Web 前端开发工程师，${totalYears} 年开发经验，专注 React/Vue/微前端/跨端开发/AI Agent`}>
+  <div class="pt-6 sm:pt-12">
     <!-- Hero -->
-    <section class="about-hero container">
-      <div class="hero-grid">
-        <div class="hero-left reveal">
-          <div class="avatar">
-            <div class="avatar-inner">w</div>
-            <div class="avatar-ring"></div>
+    <section class="container py-6 sm:py-12">
+      <div class="grid grid-cols-1 md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-center">
+        <!-- Avatar -->
+        <div class="flex justify-center reveal">
+          <div class="relative w-[140px] h-[140px] md:w-[180px] md:h-[180px]">
+            <div class="relative w-full h-full rounded-full flex items-center justify-center font-[var(--font-display)] text-[3.5rem] font-extrabold text-white shadow-lg z-10 bg-gradient-to-br from-[#38BDF8] via-[#C084FC] to-[#FB923C]">
+              王
+            </div>
+            <div class="absolute -inset-2 rounded-full border-2 border-dashed border-[var(--color-accent)] opacity-40 animate-spin" style="animation-duration: 20s;"></div>
           </div>
         </div>
-        <div class="hero-right reveal reveal-delay-1">
-          <span class="about-badge">👋 你好</span>
-          <h1 class="about-name">我是 <span class="text-gradient">wxc</span></h1>
-          <p class="about-role">全栈开发者 · 生活记录者 · 兴趣广泛</p>
-          <p class="about-bio">
-            我是一名热爱技术的开发者，也是一个对生活充满好奇的人。
-            白天用代码构建产品，周末用胶片记录生活。
-            相信技术可以让生活更美好，也相信生活能让代码更有温度。
+        <!-- Info -->
+        <div class="reveal reveal-delay-1">
+          <span class="inline-block px-3 py-1 rounded-full bg-[var(--color-surface)] border border-[var(--color-border)] text-sm mb-3">
+            👋 你好，我是
+          </span>
+          <h1 class="text-4xl sm:text-5xl font-extrabold leading-tight mb-2">
+            <span class="text-gradient">王煦澄</span>
+          </h1>
+          <p class="text-lg text-[var(--color-accent)] font-medium mb-4">
+            Web 前端开发工程师 · {totalYears} 年经验 · 前端开发主管
           </p>
-          <div class="about-cta">
-            <a href="mailto:hello@wxc.dev" class="btn btn-primary">
-              联系我
-            </a>
-            <a href="https://github.com" target="_blank" rel="noopener" class="btn btn-secondary">
-              GitHub
-            </a>
+          <p class="text-base text-[var(--color-text-secondary)] leading-relaxed mb-6 max-w-[540px]">
+            28 岁，专注前端工程化与跨端开发。擅长 React/Vue 技术栈、qiankun 微前端架构、
+            组件库建设与团队工具链构建。从 Web 到 React Native 到 Flutter 到 AI Agent，持续探索技术的边界。
+            善于思考，喜欢迎接新的挑战。
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <Button href="mailto:w1176317790@163.com" variant="default">联系我</Button>
+            <Button href="https://github.com/chinawangyatao" target="_blank" rel="noopener" variant="outline">GitHub</Button>
+            <Button href="http://43.136.184.91/mp/vitepress/" target="_blank" rel="noopener" variant="outline">组件库文档</Button>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Info -->
+    <section class="section">
+      <div class="container">
+        <SectionHeading title="联系方式" subtitle="欢迎随时与我交流" />
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {contactInfo.map((item, index) => {
+            const Icon = iconMap[item.icon];
+            return (
+              <a
+                href={item.link || '#'}
+                target={item.link && item.link.startsWith('http') ? '_blank' : undefined}
+                rel={item.link && item.link.startsWith('http') ? 'noopener' : undefined}
+                class="reveal flex items-center gap-3 px-5 py-4 rounded-xl bg-[var(--color-surface)] border border-[var(--color-border)] transition-all duration-250 hover:border-[var(--color-accent)] hover:shadow-md hover:-translate-y-0.5 no-underline"
+                style={`transition-delay: ${index * 60}ms`}
+              >
+                <div class="flex items-center justify-center w-10 h-10 rounded-lg bg-[var(--color-tech-bg)] text-[var(--color-tech)] flex-shrink-0">
+                  {item.icon === 'github' ? (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                  ) : Icon && <Icon class="w-[22px] h-[22px]" />}
+                </div>
+                <div class="flex flex-col gap-0.5 overflow-hidden">
+                  <span class="text-xs text-[var(--color-text-muted)] font-medium">{item.label}</span>
+                  <span class="text-sm text-[var(--color-text)] font-semibold truncate">{item.value}</span>
+                </div>
+              </a>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -71,89 +355,84 @@ const interests = [
     <!-- Skills -->
     <section class="section">
       <div class="container">
-        <div class="reveal">
-          <h2 class="about-section-title">技能栈</h2>
-          <p class="about-section-subtitle">我用这些工具构建产品和解决问题</p>
-        </div>
-        <div class="skills-grid">
+        <SectionHeading title="技能栈" subtitle="我用这些工具构建产品和解决问题" />
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {skills.map((group, index) => (
-            <div class="skill-card reveal" style={`transition-delay: ${index * 80}ms`}>
-              <h3 class="skill-category">{group.category}</h3>
-              <div class="skill-list">
+            <Card class={`reveal p-6 hover:border-[var(--color-accent)] hover:shadow-md`} style={`transition-delay: ${index * 80}ms`}>
+              <h3 class="text-lg font-bold mb-4 text-[var(--color-accent)]">{group.category}</h3>
+              <div class="flex flex-wrap gap-2">
                 {group.items.map(item => (
-                  <span class="skill-tag">{item}</span>
+                  <Badge variant="secondary" class="text-sm font-medium text-[var(--color-text-secondary)] bg-[var(--color-surface-muted)] border border-[var(--color-border)] hover:text-[var(--color-accent)] hover:border-[var(--color-accent)] transition-all cursor-default">
+                    {item}
+                  </Badge>
                 ))}
               </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Work Experience -->
+    <section class="section">
+      <div class="container">
+        <SectionHeading title="工作经历" subtitle={`${totalYears} 年前端开发，从工程师到开发主管`} />
+        <div class="flex flex-col gap-0">
+          {workExperience.map((item, index) => (
+            <div class="reveal flex gap-4" style={`transition-delay: ${index * 80}ms`}>
+              <div class="flex flex-col items-center flex-shrink-0">
+                <span class="w-3 h-3 rounded-full bg-[var(--color-accent)] border-2 border-[var(--color-bg)] flex-shrink-0" style="box-shadow: 0 0 0 2px var(--color-accent);"></span>
+                {index < workExperience.length - 1 && <span class="w-0.5 flex-1 min-h-[40px] bg-[var(--color-border)] my-1"></span>}
+              </div>
+              <div class="pb-8 flex-1">
+                <span class="text-sm font-bold text-[var(--color-accent)]">{item.period}</span>
+                <h3 class="text-lg font-bold mt-1 mb-0">{item.title}</h3>
+                <span class="text-sm text-[var(--color-text-muted)] block mb-3">{item.org}</span>
+                <ul class="m-0 mb-3 pl-4">
+                  {item.responsibilities.map(resp => (
+                    <li class="text-sm text-[var(--color-text-secondary)] leading-relaxed list-disc mb-1">{resp}</li>
+                  ))}
+                </ul>
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="text-xs text-[var(--color-text-muted)] font-semibold">参与项目：</span>
+                  {item.projects.map(p => (
+                    <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-[var(--color-tech)] bg-[var(--color-tech-bg)] border border-transparent transition-all hover:border-[var(--color-tech)]">{p}</span>
+                  ))}
+                </div>
+              </div>
             </div>
           ))}
         </div>
       </div>
     </section>
 
-    <!-- Timeline -->
+    <!-- Projects -->
     <section class="section">
       <div class="container">
+        <SectionHeading title="项目经历" subtitle="点击项目卡片查看详细技术方案" />
         <div class="reveal">
-          <h2 class="about-section-title">经历</h2>
-          <p class="about-section-subtitle">我的成长路径</p>
-        </div>
-        <div class="timeline">
-          {timeline.map((item, index) => (
-            <div class="timeline-item reveal" style={`transition-delay: ${index * 80}ms`}>
-              <div class="timeline-marker">
-                <span class="timeline-dot"></span>
-                {index < timeline.length - 1 && <span class="timeline-line"></span>}
-              </div>
-              <div class="timeline-content">
-                <span class="timeline-year">{item.year}</span>
-                <h3 class="timeline-title">{item.title}</h3>
-                <span class="timeline-org">{item.org}</span>
-                <p class="timeline-desc">{item.description}</p>
-              </div>
-            </div>
-          ))}
+          <ProjectShowcase client:visible projects={projects} />
         </div>
       </div>
     </section>
 
-    <!-- Interests -->
+    <!-- Education -->
     <section class="section">
       <div class="container">
-        <div class="reveal">
-          <h2 class="about-section-title">兴趣与爱好</h2>
-          <p class="about-section-subtitle">工作之外，这些事情让我快乐</p>
-        </div>
-        <div class="interests-grid">
-          {interests.map((interest, index) => (
-            <div class="interest-card reveal" style={`transition-delay: ${index * 80}ms`}>
-              <div class="interest-icon">
-                {interest.icon === 'coffee' && (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8zM6 1v3M10 1v3M14 1v3"/>
-                  </svg>
-                )}
-                {interest.icon === 'camera' && (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                    <circle cx="12" cy="13" r="4"/>
-                  </svg>
-                )}
-                {interest.icon === 'bike' && (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="5.5" cy="17.5" r="3.5"/>
-                    <circle cx="18.5" cy="17.5" r="3.5"/>
-                    <path d="M15 6a1 1 0 100-2 1 1 0 000 2zm-3 11.5V14l-3-3 4-3 2 3h2"/>
-                  </svg>
-                )}
-                {interest.icon === 'book' && (
-                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 016.5 17H20M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-                  </svg>
-                )}
+        <SectionHeading title="教育经历" subtitle="持续学习，不断成长" />
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {education.map((edu, index) => (
+            <Card class={`reveal p-6 hover:border-[var(--color-accent)] hover:shadow-md`} style={`transition-delay: ${index * 80}ms`}>
+              <div class="text-sm font-bold text-[var(--color-accent)] mb-2">{edu.period}</div>
+              <h3 class="text-lg font-bold mb-1">{edu.school}</h3>
+              <div class="flex flex-wrap items-center gap-2 text-sm text-[var(--color-text-muted)]">
+                <span>{edu.major}</span>
+                <span class="text-[var(--color-border-strong)]">·</span>
+                <span>{edu.degree}</span>
+                <span class="text-[var(--color-border-strong)]">·</span>
+                <span>{edu.mode}</span>
               </div>
-              <h3 class="interest-name">{interest.name}</h3>
-              <p class="interest-desc">{interest.desc}</p>
-            </div>
+            </Card>
           ))}
         </div>
       </div>
@@ -162,410 +441,19 @@ const interests = [
     <!-- Quote -->
     <section class="section">
       <div class="container">
-        <div class="quote-card reveal">
-          <svg class="quote-mark" width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1zM12 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/>
-          </svg>
-          <p class="quote-text">
-            代码是写给机器的诗歌，生活是写给自己的故事。
-            两者兼修，方得自在。
+        <div class="reveal text-center py-12 rounded-2xl text-white" style="background: linear-gradient(135deg, #38BDF8 0%, #C084FC 50%, #FB923C 100%);">
+          <Quote class="w-12 h-12 text-white/30 mx-auto mb-4" />
+          <p class="text-xl sm:text-2xl font-semibold leading-relaxed text-white mb-4 max-w-[600px] mx-auto">
+            学习能力强，为人谦和，有团队意识。<br />
+            善于思考，能通过多种途径寻求解决问题的方案。<br />
+            喜欢迎接新的挑战。
           </p>
-          <p class="quote-author">— wxc</p>
+          <p class="text-sm text-white/70 font-medium">- 王煦澄</p>
         </div>
       </div>
     </section>
   </div>
 </Layout>
-
-<style>
-  .about-page {
-    padding-top: var(--space-12);
-  }
-
-  /* Hero */
-  .about-hero {
-    padding: var(--space-12) 0;
-  }
-
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-8);
-    align-items: center;
-  }
-
-  @media (min-width: 768px) {
-    .hero-grid {
-      grid-template-columns: auto 1fr;
-      gap: var(--space-12);
-    }
-  }
-
-  .hero-left {
-    display: flex;
-    justify-content: center;
-  }
-
-  .avatar {
-    position: relative;
-    width: 140px;
-    height: 140px;
-  }
-
-  @media (min-width: 768px) {
-    .avatar {
-      width: 180px;
-      height: 180px;
-    }
-  }
-
-  .avatar-inner {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: var(--radius-full);
-    background: var(--gradient-hero);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-size: 3.5rem;
-    font-weight: 800;
-    color: #fff;
-    box-shadow: var(--shadow-lg);
-    z-index: 1;
-  }
-
-  .avatar-ring {
-    position: absolute;
-    inset: -8px;
-    border-radius: var(--radius-full);
-    border: 2px dashed var(--color-accent);
-    opacity: 0.4;
-    animation: spin 20s linear infinite;
-  }
-
-  @keyframes spin {
-    to { transform: rotate(360deg); }
-  }
-
-  .about-badge {
-    display: inline-block;
-    padding: 0.3rem 0.8rem;
-    border-radius: var(--radius-full);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    font-size: var(--text-sm);
-    margin-bottom: var(--space-3);
-  }
-
-  .about-name {
-    font-size: var(--text-4xl);
-    font-weight: 800;
-    line-height: var(--leading-tight);
-    margin-bottom: var(--space-2);
-  }
-
-  @media (min-width: 640px) {
-    .about-name {
-      font-size: var(--text-5xl);
-    }
-  }
-
-  .about-role {
-    font-size: var(--text-lg);
-    color: var(--color-accent);
-    font-weight: 500;
-    margin-bottom: var(--space-4);
-  }
-
-  .about-bio {
-    font-size: var(--text-base);
-    color: var(--color-text-secondary);
-    line-height: var(--leading-relaxed);
-    margin-bottom: var(--space-6);
-    max-width: 540px;
-  }
-
-  .about-cta {
-    display: flex;
-    gap: var(--space-3);
-  }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-    padding: 0.6rem 1.25rem;
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    transition: all var(--duration-normal) var(--ease-out);
-    cursor: pointer;
-  }
-
-  .btn-primary {
-    background: var(--color-text);
-    color: var(--color-bg);
-  }
-
-  .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-  }
-
-  .btn-secondary {
-    background: var(--color-surface);
-    color: var(--color-text);
-    border: 1px solid var(--color-border);
-  }
-
-  .btn-secondary:hover {
-    border-color: var(--color-text);
-  }
-
-  /* Section titles */
-  .about-section-title {
-    font-size: var(--text-2xl);
-    font-weight: 800;
-    margin-bottom: var(--space-1);
-  }
-
-  @media (min-width: 640px) {
-    .about-section-title {
-      font-size: var(--text-3xl);
-    }
-  }
-
-  .about-section-subtitle {
-    font-size: var(--text-base);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-8);
-  }
-
-  /* Skills */
-  .skills-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-4);
-  }
-
-  @media (min-width: 768px) {
-    .skills-grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
-  }
-
-  .skill-card {
-    padding: var(--space-6);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    transition: all var(--duration-normal) var(--ease-out);
-  }
-
-  .skill-card:hover {
-    border-color: var(--color-accent);
-    box-shadow: var(--shadow-md);
-  }
-
-  .skill-category {
-    font-size: var(--text-lg);
-    font-weight: 700;
-    margin-bottom: var(--space-4);
-    color: var(--color-accent);
-  }
-
-  .skill-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .skill-tag {
-    display: inline-block;
-    padding: 0.3rem 0.7rem;
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
-    font-weight: 500;
-    color: var(--color-text-secondary);
-    background: var(--color-surface-muted);
-    border: 1px solid var(--color-border);
-    transition: all var(--duration-fast) var(--ease-out);
-  }
-
-  .skill-tag:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-  }
-
-  /* Timeline */
-  .timeline {
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-  }
-
-  .timeline-item {
-    display: flex;
-    gap: var(--space-4);
-  }
-
-  .timeline-marker {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .timeline-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: var(--radius-full);
-    background: var(--color-accent);
-    border: 2px solid var(--color-bg);
-    box-shadow: 0 0 0 2px var(--color-accent);
-    flex-shrink: 0;
-  }
-
-  .timeline-line {
-    width: 2px;
-    flex: 1;
-    min-height: 40px;
-    background: var(--color-border);
-    margin: var(--space-1) 0;
-  }
-
-  .timeline-content {
-    padding-bottom: var(--space-8);
-  }
-
-  .timeline-year {
-    font-size: var(--text-sm);
-    font-weight: 700;
-    color: var(--color-accent);
-  }
-
-  .timeline-title {
-    font-size: var(--text-lg);
-    font-weight: 700;
-    margin: var(--space-1) 0;
-  }
-
-  .timeline-org {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    margin-bottom: var(--space-2);
-    display: block;
-  }
-
-  .timeline-desc {
-    font-size: var(--text-sm);
-    color: var(--color-text-secondary);
-    line-height: var(--leading-normal);
-  }
-
-  /* Interests */
-  .interests-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4);
-  }
-
-  @media (min-width: 768px) {
-    .interests-grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  .interest-card {
-    padding: var(--space-5);
-    border-radius: var(--radius-lg);
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    text-align: center;
-    transition: all var(--duration-normal) var(--ease-out);
-  }
-
-  .interest-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-interest);
-  }
-
-  .interest-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 48px;
-    height: 48px;
-    border-radius: var(--radius-md);
-    background: var(--color-interest-bg);
-    color: var(--color-interest);
-    margin-bottom: var(--space-3);
-  }
-
-  .interest-name {
-    font-size: var(--text-base);
-    font-weight: 700;
-    margin-bottom: var(--space-1);
-  }
-
-  .interest-desc {
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-  }
-
-  /* Quote */
-  .quote-card {
-    text-align: center;
-    padding: var(--space-12);
-    border-radius: var(--radius-2xl);
-    background: var(--gradient-hero);
-    color: #fff;
-  }
-
-  .quote-mark {
-    color: rgba(255, 255, 255, 0.3);
-    margin: 0 auto var(--space-4);
-  }
-
-  .quote-text {
-    font-size: var(--text-xl);
-    font-weight: 600;
-    line-height: var(--leading-relaxed);
-    color: #fff;
-    margin-bottom: var(--space-4);
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  @media (min-width: 640px) {
-    .quote-text {
-      font-size: var(--text-2xl);
-    }
-  }
-
-  .quote-author {
-    font-size: var(--text-sm);
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 500;
-  }
-
-  /* Reveal */
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px);
-    transition: opacity var(--duration-slow) var(--ease-out),
-                transform var(--duration-slow) var(--ease-out);
-  }
-
-  .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-  }
-</style>
 
 <script>
   document.addEventListener('astro:page-load', () => {

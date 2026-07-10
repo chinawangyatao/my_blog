@@ -1,0 +1,16 @@
+---
+import { type HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'div'> {
+  class?: string;
+}
+
+const { class: className = '', ...props } = Astro.props;
+---
+
+<div
+  class={`rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text)] shadow-sm transition-all duration-300 ${className}`}
+  {...props}
+>
+  <slot />
+</div>

@@ -1,6 +1,10 @@
 ---
 import Lightfall from './react/Lightfall.tsx';
 import CountUp from './react/CountUp.tsx';
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+const postCount = allPosts.length;
 ---
 
 <section class="hero">
@@ -60,7 +64,7 @@ import CountUp from './react/CountUp.tsx';
 
     <div class="hero-stats reveal reveal-delay-4">
       <div class="stat">
-        <span class="stat-value"><CountUp client:load to={7} duration={2} delay={0.3} />+</span>
+        <span class="stat-value"><CountUp client:load to={postCount} duration={2} delay={0.3} />+</span>
         <span class="stat-label">篇文章</span>
       </div>
       <div class="stat-divider"></div>

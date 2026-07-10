@@ -5,6 +5,7 @@
 
 /* --- Tailwind CSS v4 --- */
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /* Dark mode: use data-theme attribute instead of prefers-color-scheme */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
@@ -76,45 +77,68 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  /* shadcn/ui semantic colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-shadcn: var(--accent);
+  --color-accent-shadcn-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border-shadcn: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
-/* --- CSS Reset --- */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* --- CSS Reset (in @layer base so Tailwind utilities can override) --- */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-html {
-  -webkit-text-size-adjust: 100%;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
-  text-rendering: optimizeLegibility;
-}
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+  }
 
-img, picture, video, canvas, svg {
-  display: block;
-  max-width: 100%;
-}
+  img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
 
-input, button, textarea, select {
-  font: inherit;
-}
+  input, button, textarea, select {
+    font: inherit;
+  }
 
-button {
-  cursor: pointer;
-  border: none;
-  background: none;
-}
+  button {
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
 
-ul, ol {
-  list-style: none;
+  ul, ol {
+    list-style: none;
+  }
 }
 
 /* ============================================
@@ -235,6 +259,28 @@ ul, ol {
   --duration-slow: 400ms;
   --duration-slower: 600ms;
 
+  /* --- shadcn/ui tokens (mapped to existing design system) --- */
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-text);
+  --primary-foreground: var(--color-bg);
+  --secondary: var(--color-surface-muted);
+  --secondary-foreground: var(--color-text-secondary);
+  --muted: var(--color-surface-muted);
+  --muted-foreground: var(--color-text-muted);
+  --accent: var(--color-surface-muted);
+  --accent-foreground: var(--color-text);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: #ffffff;
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-accent);
+  --radius: 0.625rem;
+
   /* --- Z-index --- */
   --z-base: 1;
   --z-dropdown: 10;
@@ -279,131 +325,135 @@ ul, ol {
 /* ============================================
    Base Styles
    ============================================ */
-body {
-  font-family: var(--font-sans);
-  font-size: var(--text-base);
-  line-height: var(--leading-normal);
-  color: var(--color-text);
-  background-color: var(--color-bg);
-  min-height: 100vh;
-  overflow-x: hidden;
-  transition: background-color var(--duration-normal) var(--ease-out),
-              color var(--duration-normal) var(--ease-out);
-}
-
-/* Add padding for bottom nav on mobile */
-body {
-  padding-bottom: var(--bottom-nav-height);
-}
-
-@media (min-width: 768px) {
+@layer base {
   body {
-    padding-bottom: 0;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background-color var(--duration-normal) var(--ease-out),
+                color var(--duration-normal) var(--ease-out);
   }
-}
 
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-text);
-}
+  /* Add padding for bottom nav on mobile */
+  body {
+    padding-bottom: var(--bottom-nav-height);
+  }
 
-h1 { font-size: var(--text-4xl); }
-h2 { font-size: var(--text-3xl); }
-h3 { font-size: var(--text-2xl); }
-h4 { font-size: var(--text-xl); }
+  @media (min-width: 768px) {
+    body {
+      padding-bottom: 0;
+    }
+  }
 
-p {
-  line-height: var(--leading-relaxed);
-  color: var(--color-text-secondary);
-}
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-tight);
+    color: var(--color-text);
+  }
 
-a {
-  color: var(--color-accent);
-  transition: color var(--duration-fast) var(--ease-out);
-}
+  h1 { font-size: var(--text-4xl); }
+  h2 { font-size: var(--text-3xl); }
+  h3 { font-size: var(--text-2xl); }
+  h4 { font-size: var(--text-xl); }
 
-a:hover {
-  color: var(--color-accent-hover);
-}
+  p {
+    line-height: var(--leading-relaxed);
+    color: var(--color-text-secondary);
+  }
 
-code {
-  font-family: var(--font-mono);
-  font-size: 0.875em;
-  background: var(--color-surface-muted);
-  padding: 0.15em 0.4em;
-  border-radius: var(--radius-sm);
-  color: var(--color-text);
-}
+  a {
+    color: var(--color-accent);
+    transition: color var(--duration-fast) var(--ease-out);
+  }
 
-pre {
-  background: var(--color-surface-muted);
-  padding: var(--space-4);
-  border-radius: var(--radius-md);
-  overflow-x: auto;
-  margin: var(--space-4) 0;
-  border: 1px solid var(--color-border);
-}
+  a:hover {
+    color: var(--color-accent-hover);
+  }
 
-pre code {
-  background: none;
-  padding: 0;
-}
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--color-surface-muted);
+    padding: 0.15em 0.4em;
+    border-radius: var(--radius-sm);
+    color: var(--color-text);
+  }
 
-blockquote {
-  border-left: 3px solid var(--color-accent);
-  padding-left: var(--space-4);
-  margin: var(--space-4) 0;
-  color: var(--color-text-secondary);
-  font-style: italic;
+  pre {
+    background: var(--color-surface-muted);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin: var(--space-4) 0;
+    border: 1px solid var(--color-border);
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+  }
+
+  blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--space-4);
+    margin: var(--space-4) 0;
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
 }
 
 /* ============================================
-   Utility Classes
+   Utility Classes (in @layer components so Tailwind utilities win)
    ============================================ */
-.container {
-  width: 100%;
-  max-width: var(--container-max);
-  margin: 0 auto;
-  padding: 0 var(--space-4);
-}
-
-@media (min-width: 768px) {
+@layer components {
   .container {
-    padding: 0 var(--space-6);
+    width: 100%;
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 var(--space-4);
   }
-}
 
-.container-narrow {
-  max-width: var(--content-width);
-}
+  @media (min-width: 768px) {
+    .container {
+      padding: 0 var(--space-6);
+    }
+  }
 
-.section {
-  padding: var(--space-16) 0;
-}
+  .container-narrow {
+    max-width: var(--content-width);
+  }
 
-@media (min-width: 768px) {
   .section {
-    padding: var(--space-24) 0;
+    padding: var(--space-16) 0;
   }
+
+  @media (min-width: 768px) {
+    .section {
+      padding: var(--space-24) 0;
+    }
+  }
+
+  .text-gradient {
+    background: var(--gradient-hero);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-tech { color: var(--color-tech); }
+  .text-life { color: var(--color-life); }
+  .text-interest { color: var(--color-interest); }
+
+  .bg-tech { background-color: var(--color-tech-bg); }
+  .bg-life { background-color: var(--color-life-bg); }
+  .bg-interest { background-color: var(--color-interest-bg); }
 }
-
-.text-gradient {
-  background: var(--gradient-hero);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.text-tech { color: var(--color-tech); }
-.text-life { color: var(--color-life); }
-.text-interest { color: var(--color-interest); }
-
-.bg-tech { background-color: var(--color-tech-bg); }
-.bg-life { background-color: var(--color-life-bg); }
-.bg-interest { background-color: var(--color-interest-bg); }
 
 /* ============================================
    Animation Keyframes
@@ -479,23 +529,25 @@ blockquote {
 }
 
 /* --- Scroll Reveal --- */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity var(--duration-slow) var(--ease-out),
-              transform var(--duration-slow) var(--ease-out);
-}
+@layer utilities {
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity var(--duration-slow) var(--ease-out),
+                transform var(--duration-slow) var(--ease-out);
+  }
 
-.reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
 
-.reveal-delay-1 { transition-delay: 80ms; }
-.reveal-delay-2 { transition-delay: 160ms; }
-.reveal-delay-3 { transition-delay: 240ms; }
-.reveal-delay-4 { transition-delay: 320ms; }
-.reveal-delay-5 { transition-delay: 400ms; }
+  .reveal-delay-1 { transition-delay: 80ms; }
+  .reveal-delay-2 { transition-delay: 160ms; }
+  .reveal-delay-3 { transition-delay: 240ms; }
+  .reveal-delay-4 { transition-delay: 320ms; }
+  .reveal-delay-5 { transition-delay: 400ms; }
+}
 
 /* --- Reduced Motion --- */
 @media (prefers-reduced-motion: reduce) {
@@ -515,36 +567,38 @@ blockquote {
 /* ============================================
    Selection & Scrollbar
    ============================================ */
-::selection {
-  background: var(--color-tech);
-  color: #fff;
-}
+@layer base {
+  ::selection {
+    background: var(--color-tech);
+    color: #fff;
+  }
 
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
 
-::-webkit-scrollbar-track {
-  background: var(--color-surface-muted);
-}
+  ::-webkit-scrollbar-track {
+    background: var(--color-surface-muted);
+  }
 
-::-webkit-scrollbar-thumb {
-  background: var(--color-border-strong);
-  border-radius: var(--radius-full);
-}
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-strong);
+    border-radius: var(--radius-full);
+  }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted);
-}
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
 
-/* ============================================
-   Focus States
-   ============================================ */
-:focus-visible {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
+  /* ============================================
+     Focus States
+     ============================================ */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
 }
 
 /* ============================================
