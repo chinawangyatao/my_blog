@@ -168,7 +168,7 @@ class _TaskScreenState extends State<TaskScreen> {
     );
   }
 }
-```dart
+```
 
 运行后，分别点击两个按钮执行任务，效果如下：
 
@@ -192,7 +192,7 @@ void doCPUTask() async {
     })
   );
 }
-```dart
+```
 
 🤣 抱歉，一样卡死，尽管使用了**异步Future**，但 **同步和计算密集型的代码** 依旧会在单一的isolate上运行，Event Loop依旧需要等待这段同步代码执行完毕后，才能继续处理其它事件。为了解决这个问题，可以把 **计算密集型任务** 丢到 **新的isolate** 中运行，计算完毕后再通过端口发送回主isolate，并更新UI。具体代码如下：
 
@@ -217,7 +217,7 @@ void doCPUTask() async {
     text = "计算结果：$sum";
   });
 }
-```dart
+```
 
 😁 修改后运行，此时发现执行计算密集型任务也不会导致UI卡顿啦！关于概念的东西就了解到这吧，接着具体讲下Dart的异步编程API~
 
@@ -236,7 +236,7 @@ Future<String> fetchData() {
     return "Hello Flutter!";
   });
 }
-```dart
+```
 
 😁然后是获取异步返回结果的两种方式~
 
@@ -254,7 +254,7 @@ Future<void> printData() async {
   var result = await fetchData();
   print(result);
 }
-```dart
+```
 
 另外，建议对异步操作中可能出现的错误进行处理，直接使用 **try-catch** 关键字进行异常捕获：
 
@@ -271,7 +271,7 @@ Future<void> printData() async {
       print("异常与否最终都要执行的代码块");
     }
   }
-```dart
+```
 
 对了，还有一点要注意：**使用await会等待，直到异步操作完成才继续往下执行代码**，比如这样的代码：
 
@@ -291,7 +291,7 @@ Future<void> doTasks() async {
   var endTime = DateTime.now().second;
   print(endTime - startTime);	// 输出：6
 }
-```dart
+```
 
 因为等待，所以总的运行时间为：1+2+3=6s，如果想三个请求同时执行，可以改下写法：
 
@@ -307,7 +307,7 @@ Future<void> doTasks() async {
   var endTime = DateTime.now().second;
   print(endTime - startTime);	// 输出：3
 }
-```dart
+```
 
 也可以用下下面提到的Future.wait()方法来实现多个耗时任务并行。
 
@@ -325,13 +325,13 @@ void printData() {
     print("无论是否捕获异常，都会执行的代码块");
   });
 }
-```dart
+```
 
 Future 的 then() 方法代码如下：
 
 ```dart
 Future<R> then<R>(FutureOr<R> onValue(T value), {Function? onError})
-```dart
+```
 
 返回一个Future，所以在处理连续请求时，可以 **连续追加多个then** 来规避回调地狱，伪代码如下：
 
@@ -341,7 +341,7 @@ fetchData()
     .then((value) => "刷新UI")
     .then((value) => "埋点上报")
     .catchError((error, stackTrace) => print("stackTrace"));
-```dart
+```
 
 #### 2.1.3. FutureBuilder
 
@@ -440,7 +440,7 @@ class _UserListPageState extends State<UserListPage> {
     );
   }
 }
-```dart
+```
 
 运行后控制台输出结果如下：
 
@@ -468,7 +468,7 @@ Future<void> doTasks() async {
     print('Error: $error');
   }
 }
-```dart
+```
 
 #### 2.1.5. Future.delayed()
 
@@ -489,7 +489,7 @@ Future<void> doTasks() async {
   Future.sync(() => print(11));
 }
 // 输出结果：11、9、10
-```dart
+```
 
 #### 2.1.7. Future.value() & Future.error()
 
@@ -509,7 +509,7 @@ Future<String> fetchRemoteData() {
     // return Future.error(Exception('Failed to fetch remote data'));
   });
 }
-```dart
+```
 
 #### 2.1.8. Future.any()
 
@@ -532,7 +532,7 @@ void main() {
     });
 }
 // 输出：The first future to complete is: Second Future Completed
-```dart
+```
 
 #### 2.1.9. Future.forEach
 
@@ -556,7 +556,7 @@ void main() {
     print("All numbers processed");
   });
 }
-```dart
+```
 
 #### 2.1.10. Future.doWhile()
 
@@ -586,7 +586,7 @@ Future<void> asyncLooper() async {
   // 当循环结束时，这里的代码会执行
   print('Done looping');
 }
-```dart
+```
 
 ### 2.2. Stream (流)
 
@@ -623,7 +623,7 @@ void testStream() {
       .listen((event) => print(event)); // 输出(间隔1s)：0、1、2、3、4
   Stream.fromFuture(fetchAsyncData()).listen((event) => print(event));  // 输出：Future Fetched data
 }
-```dart
+```
 
 ② 使用 **async** + **yield** 或 **yield** 创建
 
@@ -669,7 +669,7 @@ void main() async {
 // Got a number from replicatedNumberStream: 1
 // Got a number from replicatedNumberStream: 2
 // Got a number from replicatedNumberStream: 3
-```dart
+```
 
 ③ 使用 **StreamController** 创建
 
@@ -720,7 +720,7 @@ void main() {
 // Error occurred: Something went wrong
 // Received data: 3
 // Stream is closed
-```dart
+```
 
 有些读者可能会疑惑：没有定义StreamSubscription变量兜住listen()的返回值，然后调用cancel() 取消订阅不会**内存泄露** 吗？
 
@@ -842,7 +842,7 @@ class _UserListPageState extends State<UserListPage> {
     );
   }
 }
-```dart
+```
 
 运行后控制台输出结果如下：
 
@@ -912,7 +912,7 @@ Future<List<T>> toList();
 
 //将Stream整理成一个Future集合。
 Future<Set<T>> toSet();
-```dart
+```
 
 #### 2.2.4. 修改 Stream 的API
 
@@ -961,7 +961,7 @@ Stream<T> timeout(Duration timeLimit,
 
 // 使用指定的流转换器转换流。
 Stream<S> transform<S>(StreamTransformer<T, S> streamTransformer);
-```dart
+```
 
 😑 折腾 Stream流 的 **API/操作符** 太多了，限于篇幅，这里只是简述函数作用，具体使用示例可以看下张风捷特烈大佬的**《【Flutter 异步编程 - 玖】 | 学习 Stream 的元素转换操作》**~
 
@@ -1014,7 +1014,7 @@ Stream<S> transform<S>(StreamTransformer<T, S> streamTransformer);
       print("ReceivePort 关闭");
     });
   }
-```dart
+```
 
 😭 这里有个小坑务必注意！！！我想把 spawn()的第一个函数抽取成一个单独的函数：
 
@@ -1036,13 +1036,13 @@ void echo(SendPort sendPort) {
 
 // 创建并启动一个新的Isolate，它将并行执行累加操作
 final isolate = await Isolate.spawn(echo, receivePort.sendPort);
-```dart
+```
 
 结果一直报这个错；
 
 ```dart
 Unhandled Exception: Invalid argument(s): Illegal argument in isolate message: object is unsendable - Library:'dart:async' Class: _AsyncCompleter@4048458 (see restrictions listed at `SendPort.send()` documentation for more
-```dart
+```
 
 搜了一圈网上的文档，都说 sendPort.send() 试图 **发送一个不可发送的对象**，只能发送简单的值类型，但是我发送的对象都是可以传递的，更玄学的是我把send()部分的代码注释了，还是报这个错。最后发现报错的真正原因： isolate.spawn() 是一个 **静态方法**，这个函数必须为 **静态或顶级函数**！！！只需要改下echo()函数的位置，就TM好了💀...
 

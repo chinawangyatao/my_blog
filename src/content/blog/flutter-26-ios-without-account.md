@@ -48,14 +48,14 @@ heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 
 ```dart
 git clone https://github.com/配套示例源码.git
-```dart
+```
 
 然后，因为的flutter项目用到了 **json_serializable** 库，需要用到运行时代码生成，所以要执行下生成命令：
 
 ```dart
 cd van_android_getx
 flutter pub run build_runner build --delete-conflicting-outputs
-```dart
+```
 
 执行完，打开「**ios**」目录，双击打开「**Runner.xcworkspace**」自动唤起「**XCode**」：
 
@@ -80,7 +80,7 @@ cd ios
 flutter clean
 flutter pub get
 pod install
-```dart
+```
 
 如果执行中途出现这样的报错：
 
@@ -94,7 +94,7 @@ brew install cocoapods
 brew link cocoapods
 pod repo update
 pod install
-```dart
+```
 
 ### 2.5. 插手机 & 打开开发者模式
 
@@ -178,7 +178,7 @@ echo "The .ipa file has been created at: $(pwd)/$appName.ipa"
 
 # Exit successfully
 exit 0
-```dart
+```
 
 保存为 **app_to_ipa.sh** 后，执行下脚本，可以看到生成的 **ipa** 文件路径：
 
@@ -186,7 +186,7 @@ exit 0
 
 ```dart
 chmod +x app_to_ipa.sh
-```dart
+```
 
 🎉 再次运行脚本就可以啦~
 

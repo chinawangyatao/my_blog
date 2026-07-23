@@ -43,7 +43,7 @@ Navigator.push(
 
 // 💡 关闭页面
 Navigator.pop(context);
-```dart
+```
 
 🤔 可以看到除了BuildContext外，**匿名路由** 还需要传入一个 **Route** 类型的参数，这里用的是 **MaterialPageRoute**，它可以使用与对应平台风格一致的 **切换动画**，Android 上是上下滑动切换，iOS 上是左右滑动切换，如果想实现全平台的左右滑动，可以使用 **CupertinoPageRoute**。
 
@@ -72,7 +72,7 @@ Navigator.of(context).push(PageRouteBuilder(
       child: child,
     );
 }));
-```dart
+```
 
 然后是 **页面传参** & **数据回传**，前者通过 **新页面的构造函数传递**，后者通过 **pop()** 方法回传，写个简单的选颜色例子，先是第一个页面：
 
@@ -129,7 +129,7 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 然后是跳转的选择颜色页：
 
@@ -207,7 +207,7 @@ class _ColorChoosePageState extends State<ColorChoosePage> {
         ),
       );
 }
-```dart
+```
 
 **运行看看效果**：
 
@@ -275,7 +275,7 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 然后是选择颜色页：
 
@@ -347,7 +347,7 @@ class ColorChoosePage extends StatelessWidget {
         ),
       );
 }
-```dart
+```
 
 😄 另外，实际开发中，通常会把 **注册路由** 部分的代码单独抽离出来 **动态生成**，然后通过 **onGenerateRoute** 属性传入，改下上面的Demo试试：
 
@@ -389,7 +389,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 ### 2.3. 路由操作
 
@@ -414,7 +414,7 @@ Navigator.of(context).pushReplacementNamed("/replace");
 
 // 💡 命名路由替换，先 pop 再 push 新页面
 Navigator.of(context).pushReplacementNamed("/replace");
-```dart
+```
 
 #### 2.3.2. 新路由入栈+移除之前的路由，直到条件满足
 
@@ -434,7 +434,7 @@ Navigator.of(context).pushAndRemoveUntil(
   MaterialPageRoute(builder: (context) => NewPage()),
   (Route<dynamic> route) => route.isFirst, // 保留直到第一个路由（即主页）
 );
-```dart
+```
 
 #### 2.3.3. 路由出栈，直到条件满足
 
@@ -445,7 +445,7 @@ Navigator.of(context).pushAndRemoveUntil(
 Navigator.of(context).popUntil((Route<dynamic> route) => route.isFirst);
 Navigator.of(context).popUntil((Route<dynamic> route) => route.settings.name = "/");
 Navigator.of(context).popUntil(ModalRoute.withName("/"));
-```dart
+```
 
 关于 **路由出栈**，Flutter 还提供了这两个API：
 
@@ -469,7 +469,7 @@ if (route != null) {
 if (route != null) {
   Navigator.of(context).removeRouteBelow(route);
 }
-```dart
+```
 
 😄 关于Flutter路由的用法就讲解到这~
 
@@ -566,7 +566,7 @@ Route<T?>? _routeNamed<T>(String name, { required Object? arguments, bool allowN
   }
   return route;
 }
-```dart
+```
 
 看下 **onGenerateRoute** 的定义：
 
@@ -716,7 +716,7 @@ void finalizeRoute(Route<dynamic> route) {
 void finalize() {
   currentState = _RouteLifecycle.dispose;
 }
-```dart
+```
 
 行吧，就动画执行完后会销毁出栈的Route，路由成功弹出往下走：
 

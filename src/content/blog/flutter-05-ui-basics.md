@@ -131,7 +131,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 **运行效果**：
 
@@ -141,7 +141,7 @@ class MyApp extends StatelessWidget {
 
 使用代码示例如下：
 
-```dart
+```yaml
 Container(
   width: 120.0,
   height: 120.0,
@@ -151,7 +151,7 @@ Container(
     child: FlutterLogo(size: 60),
   ),
 )
-```dart
+```
 
 ### 4.3. Flex (弹性布局)
 
@@ -210,7 +210,7 @@ class MyFlexApp extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 运行效果：
 
@@ -299,7 +299,7 @@ class MyHomePage extends StatelessWidget {
     return containerList;
   }
 }
-```dart
+```
 
 运行效果：
 
@@ -368,7 +368,7 @@ class CrossFlowDelegate extends FlowDelegate {
   @override
   bool shouldRepaint(CrossFlowDelegate oldDelegate) => false;
 }
-```dart
+```
 
 运行效果：
 
@@ -390,7 +390,7 @@ Padding(
 ),
 // 水平和垂直方向：EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0)
 // 上下左右单独设置内边距：EdgeInsets.only(left: 10.0, top: 20.0)
-```dart
+```
 
 ### 4.10. Divder、VerticalDivider (水平/垂直分割线)
 
@@ -426,7 +426,7 @@ ListView(
     ListTile(title: Text('Item 3')),
   ],
 );
-```dart
+```
 
 #### 4.11.2. ListView.builder
 
@@ -439,7 +439,7 @@ ListView.builder(
     return ListTile(title: Text('Item $index'));
   },
 )
-```dart
+```
 
 #### 4.11.3. **ListView.separated**
 
@@ -453,7 +453,7 @@ ListView.separated(
   },
   separatorBuilder: (context, index) => Divider(height: .5),
 )
-```dart
+```
 
 #### 4.11.4. ListView.custom
 
@@ -469,7 +469,7 @@ ListView.custom(
     ],
   ),
 )
-```dart
+```
 
 🐶 常用的布局组件就学到这吧，其它的用到再学，接着用Flutter写一个简陋的掘金静态首页练练手吧~
 
@@ -540,7 +540,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-```dart
+```
 
 运行看看效果：
 
@@ -558,7 +558,7 @@ class _MyHomePageState extends State<MyHomePage> {
     ));
   }
 }
-```dart
+```
 
 不得不说 **热重载真香**，代码保存后，界面自动就刷新了：
 
@@ -625,7 +625,7 @@ class _ContentWidgetState extends State<ContentWidget>
       );
   }
 }
-```dart
+```
 
 运行后，底部直接出现黑黄警告条：
 
@@ -658,7 +658,7 @@ class _ContentWidgetState extends State<ContentWidget>
       ),
     );
   }
-```dart
+```
 
 保存看看效果：
 
@@ -693,7 +693,11 @@ class ContentListWidget extends StatelessWidget {
                   children: [
                     Expanded(
                         child: Text(
+```
+
                             '时代峰峻了思考的放开了教师节快乐地方就是看漏点击福克斯搭建开发手机打开发送点击开发技术的开发律师代理费是劳动法',
+
+```dart
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis))
                   ],
@@ -731,7 +735,7 @@ class ContentListWidget extends StatelessWidget {
         itemCount: 20);
   }
 }
-```dart
+```
 
 运行看看效果：
 
@@ -772,7 +776,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
     );
   }
 }
-```dart
+```
 
 最后把这个Widget也加上，看看运行效果：
 
@@ -953,7 +957,11 @@ class ContentListWidget extends StatelessWidget {
                   children: [
                     Expanded(
                         child: Text(
+```
+
                             '时代峰峻了思考的放开了教师节快乐地方就是看漏点击福克斯搭建开发手机打开发送点击开发技术的开发律师代理费是劳动法',
+
+```dart
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis))
                   ],

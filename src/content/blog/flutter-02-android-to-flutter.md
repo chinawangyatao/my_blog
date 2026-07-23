@@ -39,7 +39,7 @@ bt.setOnClickListener {
         bt.text = "显示文本"
     }
 }
-```dart
+```
 
 需要先找到控件，然后 **主动** 设置控件的属性，再看看Flutter怎么写：
 
@@ -68,7 +68,7 @@ class _TestPageState extends State<MyHomePage> {
     );
   }
 }
-```dart
+```
 
 不用关心具体的设置细节，只需 **配置好状态(数据) 和 界面(控件) 的关系**，Flutter 会根据状态变化 **自动更新UI**。一个通俗易懂的比喻😝：**命令式** → 你让TA动，**声明式** → TA自己动。
 
@@ -158,7 +158,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     );
   }
 }
-```dart
+```
 
 ### 2.5. Widget 如何实现动画
 
@@ -209,7 +209,7 @@ class _MyFadeTest extends State<MyFadeTest> with TickerProviderStateMixin {
     );
   }
 }
-```dart
+```
 
 通过上述代码，总结下Flutter Widget动画的基本玩法：
 
@@ -243,7 +243,7 @@ Widget build(BuildContext context) {
     child: CustomButton('Hello'),
   );
 }
-```dart
+```
 
 ### 2.7. 常用View对应的Widget
 
@@ -270,7 +270,7 @@ Widget build(BuildContext context) {
     ],
   );
 }
-```dart
+```
 
 **运行效果：**
 
@@ -305,7 +305,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     return widgets;
   }
 }
-```dart
+```
 
 **如何知道点击了哪个列表项？**
 
@@ -348,7 +348,7 @@ Widget getRow(int i) {
     ),
   );
 }
-```dart
+```
 
 #### 2.7.4. ScrollView
 
@@ -381,7 +381,7 @@ class SampleTapApp extends StatelessWidget {
       );
     }
   }
-```dart
+```
 
 除了OnTap还，GestureDetector 还可以监听非常多的手势：
 
@@ -442,7 +442,7 @@ class SignaturePainter extends CustomPainter {
   bool shouldRepaint(SignaturePainter oldDelegate) =>
       oldDelegate.points != points;
 }
-```dart
+```
 
 ## 3. Activity、Fragment、Intent
 
@@ -473,7 +473,7 @@ Navigator.of(context).pushNamed('/b');
 /// 弹栈并返回结果，类似于startActivityForResult()
 Object? coordinates = await Navigator.of(context).pushNamed('/location');
 Navigator.of(context).pop({'lat': 43.821757, 'long': -79.226392});
-```dart
+```
 
 ### 3.2. 如何处理从外部应用接收到Intent
 
@@ -485,7 +485,7 @@ Navigator.of(context).pop({'lat': 43.821757, 'long': -79.226392});
   <category android:name="android.intent.category.DEFAULT" />
   <data android:mimeType="text/plain" />
 </intent-filter>
-```dart
+```
 
 在这个原生Activity中处理Intent，提取出所需数据，然后 Flutter 再通过使用 **MethodChannel** 获取这个数据：
 
@@ -521,7 +521,7 @@ public class MainActivity extends FlutterActivity {
               );
     }
 }
-```dart
+```
 
 当Widget渲染时，从Flutter端请求数据：
 
@@ -552,7 +552,7 @@ class _SampleAppPageState extends State<SampleAppPage> {
     }
   }
 }
-```dart
+```
 
 **小疑问**：
 
@@ -588,7 +588,7 @@ Future<void> loadData() async {
     widgets = jsonDecode(response.body);
   });
 }
-```dart
+```
 
 运行上述代码要先添加http依赖，直接命令行执行：**flutter pub add http**：
 
@@ -648,7 +648,7 @@ Future sendReceive(SendPort port, msg) {
   port.send([msg, response.sendPort]);
   return response.first;
 }
-```dart
+```
 
 **总结一下**：
 

@@ -46,7 +46,7 @@ heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 
 ```dart
 abstract class Element extends DiagnosticableTree implements BuildContext
-```dart
+```
 
 往上看 **BuildContext** 的其它注释，还能了解到这些信息：
 
@@ -96,7 +96,7 @@ abstract class Element extends DiagnosticableTree implements BuildContext
      )
    );
  }
-```dart
+```
 
 然后是 **常用的属性与方法**：
 
@@ -130,7 +130,7 @@ abstract class Element extends DiagnosticableTree implements BuildContext
 ```dart
 Navigator.of(context).push(MaterialPageRoute(builder: (context) => NewPage()));
 Navigator.of(context).pop()
-```dart
+```
 
 调用 **Navigator.of(context)** 实际上是请求当前 BuildContext 所在位置向上查找最新的 **NavigatorState**：
 
@@ -146,7 +146,7 @@ Navigator.of(context).pop()
 ThemeData theme = Theme.of(context);
 Color primaryColor = Theme.of(context).primaryColor;
 Color accentColor = Theme.of(context).colorScheme.secondary;
-```dart
+```
 
 ### 3.3. 媒体查询
 
@@ -169,7 +169,7 @@ double topPadding = MediaQuery.of(context).padding.top;
 
 // 获得底部安全区域的高度：对于一些设备，底部可能有虚拟按键或者圆角，底部安全区域指的是不被这些元素遮挡且可用于显示内容的区域的高度。
 double bottomPadding = MediaQuery.of(context).padding.bottom;
-```dart
+```
 
 **注**：需要确保MediaQuery.of()用到的context是在 **MaterialApp/WidgetsApp/CupertinoApp** 构建的Widget树中，因为它依赖到这些顶层Widget提供的 **MediaQueryData**，找不到会抛 **NoSuchMethodError**。
 
@@ -183,7 +183,7 @@ Locale locale = Localizations.localeOf(context);
 
 // 使用获取的Locale信息
 Text('Current Locale: ${myLocale.languageCode}-${myLocale.countryCode}')
-```dart
+```
 
 ### 3.5. 弹窗和对话框
 
@@ -216,7 +216,7 @@ showBottomSheetExample(BuildContext context) {
     },
   );
 }
-```dart
+```
 
 ### 3.6. 状态管理
 
@@ -228,7 +228,7 @@ final myModel = Provider.of(context);
 
 // InheritedWidget
 InheritedMyModel data = context.dependOnInheritedWidgetOfExactType();
-```dart
+```
 
 ### 3.7. 访问 Scaffold
 
@@ -236,7 +236,7 @@ InheritedMyModel data = context.dependOnInheritedWidgetOfExactType();
 
 ```dart
 ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Hello")));
-```dart
+```
 
 ### 3.8. 获取 Form 状态
 
@@ -244,7 +244,7 @@ ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Hello")));
 
 ```dart
 FormState formState = Form.of(context);
-```dart
+```
 
 ### 3.9. 资源读取
 

@@ -41,7 +41,7 @@ class UserVM extends _$UserVM {
     state = state.copyWith(tags: tags);
   }
 }
-```dart
+```
 
 ② 写个动态判断的方法，因为Flutter禁了反射，只能传属性的字符串，然后写if-else或switch判断。(🙂 复杂对象维护成本高)
 
@@ -61,7 +61,7 @@ class UserVM extends _$UserVM {
     );
     state = updatedUser;
   }
-```dart
+```
 
 ③ **函数闭包**，抽取更新状态的行为作为函数传递：
 
@@ -79,7 +79,7 @@ class UserVM extends _$UserVM {
 
 调用处：
 vm.update((state) => state.name = getTimestamp("Name"))
-```dart
+```
 
 😂 感觉「**③ 函数闭包**」应该是最优解了吧，有更好的答案欢迎评论区指出。😏 这周大部分时间是改BUG摸🐟，寻思着深度体验下 **GetX** 吧，毕竟亲身尝试是获取知识的最佳方式，也方便以后跟别人Battle。😄 本节学习路线：**强撸官方文档** (用自己喜欢的方式解读) + **项目实战** (用GetX重写之前的Van♂Android项目)。
 
@@ -138,7 +138,7 @@ class OtherPage extends StatelessWidget {
     return Scaffold(body: Center(child: Text("${c.count}")));
   }
 }
-```dart
+```
 
 **运行结果如下**：
 
@@ -176,7 +176,7 @@ final boolRx3 = RxBool(true);
 final doubleRx3 = RxDouble(0.01);
 final listRx3 = RxList<String>(["字符串"]);
 final mapRx3 = RxMap<String,int>({"key": 1});
-```dart
+```
 
 通过调用 **.value** 来获取值，如：**strRx1.value**，但，有一点要注意：
 
@@ -209,7 +209,7 @@ user(User(name: 'João', age: 35));
 Obx(()=> Text("Name ${user.value.name}: Age: ${user.value.age}"));
 // 不使用.value
 user().name;
-```dart
+```
 
 还有，自定义类实例是响应式的，但里面的属性却不是，修改属性不会触发Widget重建，你需要手动通知改变：
 
@@ -223,7 +223,7 @@ user.refresh()
 user.update((value){
   value.name = "Roi";
 })
-```dart
+```
 
 定义了 **响应式变量**，还需要在 **响应式组件** 中使用，变量更新才会触发UI的重建~
 
@@ -294,7 +294,7 @@ class MyAppWithGetX extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 #### 2.2.3. 更精细的更新控制-GetBuilder
 
@@ -341,7 +341,7 @@ GetBuilder<CartController>(
     );
   },
 )
-```dart
+```
 
 #### 2.2.4. 局部状态组件-ObxValue & ValueBuilder
 
@@ -354,7 +354,7 @@ ObxValue(
   // 要监听的Rx变量
   false.obs
 ),
-```dart
+```
 
 **ValueBuilder**：像ObxValue一样管理局部状态，但基于 **setState回调** 实现，而非Rx变量，使用代码示例如下：
 
@@ -373,7 +373,7 @@ ValueBuilder<bool>(
   // 当ValueBuilder从Widget树中移除并开始销毁过程时回调
   onDispose: () => print("Widget unmounted"),
 ),
-```dart
+```
 
 不理解？就一个简化版的StatefulWidget而已，看下它的实现代码就懂了：
 
@@ -405,7 +405,7 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 }
-```dart
+```
 
 **GetWidget**：类似于GetView，但它是为了与 **Get.create()** 一起使用，每次都创建一个新的Controller实例。使用代码示例如下：
 
@@ -430,7 +430,7 @@ class UniqueHomeScreen extends GetWidget<UniqueHomeController> {
     );
   }
 }
-```dart
+```
 
 **GetxService**：创建 **在应用的整个生命周期中持续存在的类**，它不会像控制器那样随着页面销毁而销毁，适用于需要跨页面共享或持久存在的功能，如用户认证、主题管理等，使用代码实例如下：
 
@@ -463,7 +463,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 #### 2.2.6. 变量变化回调-Workers
 
@@ -500,7 +500,7 @@ class CounterController extends GetxController {
 
   void increment() => count++;
 }
-```dart
+```
 
 允许开发者在 **不依赖响应式变量** 的情况下，手动控制何时更新UI。适用于状态变化不频繁或不需要全局监听的场景，通过调用Controller中的 **update()** ，可以精确控制哪个 **GetBuilder** 组件需要重建。
 
@@ -539,7 +539,7 @@ class CountWidget extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 🤷‍♀️ 感觉关于GetX状态管理的API大概就这些了，接着刷下路由管理~
 
@@ -583,7 +583,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 ### 2.3. 路由管理
 
@@ -626,7 +626,7 @@ navigator.push(
 
 // 😄 对比之下的
 Get.to(HomePage());
-```dart
+```
 
 #### 2.3.2. 别名路由
 
@@ -679,7 +679,7 @@ print(Get.parameters['id']);
 Get.toNamed("/second/34954?flag=true")
 print(Get.parameters['user']);
 print(Get.parameters['flag']);
-```dart
+```
 
 #### 2.3.3. 中间件/监听
 
@@ -720,7 +720,7 @@ void main() {
     ),
   );
 }
-```dart
+```
 
 #### 2.3.4. 免context导航
 
@@ -777,7 +777,7 @@ Get.bottomSheet(
     ),
   )
 );
-```dart
+```
 
 #### 2.3.5. 嵌套导航
 
@@ -829,7 +829,7 @@ Navigator(
     }
   },
 )
-```dart
+```
 
 而使用Get来实现嵌套导航的话，无需context，直接通过ID可以找到特定的导航栈：
 
@@ -871,7 +871,7 @@ Navigator(
     }
   }
 ),
-```dart
+```
 
 😊 GetX的路由管理API也很简洁啊，再往下刷下依赖管理~
 
@@ -902,7 +902,7 @@ S put<S>(
       builder: builder ?? (() => dependency));
   return find<S>(tag: tag);
 }
-```dart
+```
 
 #### 2.4.2. Get.lazyPut()
 
@@ -928,7 +928,7 @@ void lazyPut<S>(
     fenix: fenix ?? Get.smartManagement == SmartManagement.keepFactory,
   );
 }
-```dart
+```
 
 #### 2.4.3. Get.putAsync()
 
@@ -945,7 +945,7 @@ Future<S> putAsync<S>(
 }) async {
   return put<S>(await builder(), tag: tag, permanent: permanent);
 }
-```dart
+```
 
 #### 2.4.4. Get.create()
 
@@ -967,7 +967,7 @@ void create<S>(
     permanent: permanent,
   );
 }
-```dart
+```
 
 #### 2.4.5. 获取 & 使用注入的实例
 
@@ -995,7 +995,7 @@ GetMaterialApp(
   smartManagement: SmartManagement.onlyBuilders // 修改销毁模式
   home: Home(),
 )
-```dart
+```
 
 #### 2.4.6. Bindings
 
@@ -1018,7 +1018,7 @@ getPages: [
 // 正常路由
 Get.to(Home(), binding: HomeBinding());
 Get.to(DetailsView(), binding: DetailsBinding())
-```dart
+```
 
 不想自定义Bindings类，也可以使用「**BindingsBuilder**」 回调函数来实例化实例，代码示例如下：
 
@@ -1033,7 +1033,7 @@ getPages: [
     }),
   ),
 ]
-```dart
+```
 
 ### 2.5. 其它
 
@@ -1067,7 +1067,7 @@ Get.updateLocale(Locale('en', 'US')); // 切换到英文
 
 /// 💡 4、使用翻译：通过'键名'.tr来获取当前语言下对应的翻译文本
 Text('hello'.tr) // 根据当前语言显示对应的文本
-```dart
+```
 
 #### 2.5.2. 改变主题
 
@@ -1090,7 +1090,7 @@ ElevatedButton(
   },
   child: Text("切换主题"),
 )
-```dart
+```
 
 #### 2.5.3. GetConnect (http & websocket)
 
@@ -1153,7 +1153,7 @@ class MyApiClient extends GetConnect {
   }
 
 }
-```dart
+```
 
 #### 2.5.4. GetPage中间件-GetMiddleware
 
@@ -1167,7 +1167,7 @@ final middlewares = [
   GetMiddleware(priority: 4),
   GetMiddleware(priority: -8),
 ];
-```dart
+```
 
 接着是 **GetMiddleware** 的几个 **生命周期回调函数**：
 
@@ -1218,7 +1218,7 @@ class MyPageMiddleware extends GetMiddleware {
     print('Page is being disposed');
   }
 }
-```dart
+```
 
 🤷‍♀️ 关于GetX的文档暂且撸到这里，剩下的API就懒得CV了，GetX 给我的感觉就一个字——**全**，瑞士军刀式护航的Flutter开发体验果然不是吹的， 这也让我想起以前很火的Android开发的脚手架 → [xUtils3](https://github.com/wyouflf/xUtils3)。😏 只撸文档可不行，接着用GetX写个项目实战下，毕竟 **实践才是检验真理的唯一标准**~
 
@@ -1238,7 +1238,7 @@ class TestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container();
 }
-```dart
+```
 
 🤷‍♀️ 懒得自己每次重复创建相关文件的还，可以试下 [Idea插件-GetX](https://plugins.jetbrains.com/plugin/15919-getx)，使用指南 → **《GetX插件功能讲解》**，就自动创建模板文件，以及输入关键字生成快捷代码片段，应该能提高不少的开发效率~
 
@@ -1261,7 +1261,7 @@ class ApiClient extends GetConnect {
     httpClient.findProxy = (url) => "PROXY 192.168.102.117:8888";
     super.onInit();
   }
-```dart
+```
 
  结果抓不到包，之前用dio时类似的配置确实正常的，暂时没找到解法，先用 **Flutter DevTools** 应付下：
 
@@ -1288,7 +1288,7 @@ In case you don't want to do that, you should call onInit in your class's constr
 
 ```dart
 httpClient.addResponseModifier((request, response) => {LogUtil.e("${response.body}")});
-```dart
+```
 
 然后一请求，控制台就报错：
 
@@ -1348,7 +1348,7 @@ class ListResponse<T> {
 // 使用泛型方法将实例转换为Json
   Map<String, dynamic> toJson(dynamic Function(T value) toJsonT) => _$ListResponseToJson(this, toJsonT);
 }
-```dart
+```
 
 然后是请求返回响应数据的 **统一解析+异常处理**，继承 **GetConnect**，里面有同名函数，所以在函数名后加个X：
 
@@ -1425,7 +1425,7 @@ class ApiClient extends GetConnect {
           D Function(dynamic json)? fromJsonT}) =>
       _performRequestX(() => get(url, contentType: contentType, headers: headers, query: query), fromJsonT);
 }
-```dart
+```
 
 接着是注入这个 **ApiClient** 实例，自定义一个 **Bindings**：
 
@@ -1436,7 +1436,7 @@ class HomeBindings extends Bindings {
     Get.lazyPut(() => ApiClient());
   }
 }
-```dart
+```
 
 直接通过 **GetMaterialApp** 的 **initialBinding** 属性传入：
 
@@ -1448,7 +1448,7 @@ void main() {
     home: const MyHomePage())
   );
 }
-```dart
+```
 
 👏 而且，通过注入保证了 **单例**，为了利用Dart的 **类型推导**，不用写繁琐的类型转换，定义一个API类：
 
@@ -1461,7 +1461,7 @@ class AccountApi {
           query: req.toJson(), fromJsonT: (json) => AccountInfo.fromJson(json)
       );
 }
-```dart
+```
 
 写下登录页的VM：
 
@@ -1497,7 +1497,7 @@ class LoginVM extends GetxController {
     passwordController.dispose();
   }
 }
-```dart
+```
 
 然后登录页UI：
 
@@ -1559,7 +1559,7 @@ class LoginPage extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 运行看下效果：
 
@@ -1594,7 +1594,7 @@ void showLoadingDialog({bool canPop = true}) {
           )),
       barrierDismissible: false);
 }
-```dart
+```
 
 **调用处**：
 

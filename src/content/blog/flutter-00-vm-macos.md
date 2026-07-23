@@ -155,7 +155,7 @@ export PUB_HOSTED_URL=https://pub.flutter-io.cn
 export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
 export FLUTTER_HOME=/Users/pig/flutter
 export PATH=$FLUTTER_HOME/bin:$PATH
-```dart
+```
 
 保存后，执行 **source ~/.bash_profile** 刷新当前命令行窗口，可以键入 **which flutter** 检查命令是否可用。对了，上面前两行的作用是 **将安装源替换为国内镜像**，原安装源没科学上网，Flutter下依赖会有点慢。
 
@@ -172,13 +172,13 @@ export ANDROID_HOME=/Users/pig/android_sdk
 export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
 export PATH=$ANDROID_HOME/build-tools:$PATH
 export PATH=$ANDROID_HOME/platform-tools:$PATH
-```dart
+```
 
 执行 **source ~/.bash_profile** 刷新当前命令行窗口，键入 **sdkmanager --list** 可以查看都有哪些包及版本。这里直接下三个东西： **build-tools;30.0.2** + **platform-tools + platforms;android-30**，终端键入：
 
 ```dart
 sdkmanager "build-tools;30.0.2" "platform-tools" "platforms;android-30"
-```dart
+```
 
 等待安装完成。此时再执行 flutter doctor，一般就这几个错误或警告：
 
@@ -194,7 +194,7 @@ sdkmanager "build-tools;30.0.2" "platform-tools" "platforms;android-30"
 
 ```dart
 flutter create --project-name hello_flutter --org cn.coderpig --platforms=android,ios hello_flutter
-```dart
+```
 
 创建完后，cd 到 **hello_flutter** 目录下，接个 **Android手机**，接着输入 **flutter run** 即可在手机上运行Flutter程序。在iOS设备上运行需要开发者账号，目前还有，有需要的留意后续的打包章节吧😄~
 

@@ -42,7 +42,7 @@ heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 
 打开 pubspec.yaml 引用 [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) 插件：
 
-```dart
+```yaml
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -52,14 +52,14 @@ flutter_icons:
   image_path: "assets/images/icon.png"
   android: "ic_launcher"	# 指定生成的图标名
   ios: true
-```dart
+```
 
 保存后，终端键入下述命令 **生成及替换图标**：
 
 ```dart
 flutter pub get
 flutter pub run flutter_launcher_icons:main
-```dart
+```
 
 注：源图 → 格式：32-bit PNG，分辨率：1024x1024
 
@@ -92,7 +92,7 @@ keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000
 
 # Windows
 keytool -genkey -v -keystore c:\Users\USER_NAME\key.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias key
-```dart
+```
 
 **自动签名**：android 目录下新建 **keystore.properties** 文件 (不是规定，习惯性命名) 填入秘钥相关信息：
 
@@ -101,7 +101,7 @@ keyAlias=xxx
 storeFile=../xxx.jks
 keyPassword=123456
 storePassword=123456
-```dart
+```
 
 打开 **build.gradl**e 文件，在 **android代码块前** 添加下述代码，用于加载 keystore.properties 文件：
 
@@ -113,7 +113,7 @@ keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 android {
 	//...
 }
-```dart
+```
 
 在 **signingConfigs** 代码块中定义签名对象存储签名信息，然后在release打包时引用：
 
@@ -134,7 +134,7 @@ android {
        }
   }
 }
-```dart
+```
 
 配置完毕，键入 **flutter build apk --release** 打包，然后可以使用 jarsigner 检查签名状态 → **jarsigner -verify -verbose -certs xxx.apk**，来验证是否签名成功：
 
@@ -151,7 +151,7 @@ android {
     }
     ...
 }
-```dart
+```
 
 另外，还可以指定APK支持的CPU指令集 ([ABI](https://developer.android.com/ndk/guides/abis?hl=zh-cn)) 来减少apk体积，Flutter 默认支持arm和x86两种ABI：
 
@@ -167,7 +167,7 @@ Flutter 提供了 **--dart-define** 参数，该参数可以传递到 **Flutter 
 
 ```dart
 flutter run --dart-define=APP_NAME=hello_flutter_遥遥领先 --dart-define=APP_CHANNEL=Huawei
-```dart
+```
 
 在 Dart 代码中可以这样拿到参数：
 
@@ -180,7 +180,7 @@ class EnvironmentConfig {
 
 // 获取值显示
 const Text('${EnvironmentConfig.APP_NAME} = ${EnvironmentConfig.APP_CHANNEL}')
-```dart
+```
 
 运行结果如下：
 
@@ -206,13 +206,13 @@ if (project.hasProperty('dart-defines')) {
 // 打印看下能否获取到属性
 println project.hasProperty('dart-defines')
 println dartEne
-```dart
+```
 
 键入下述命令，将编译日志输出到文件中：
 
 ```dart
 flutter run --dart-define=APP_NAME=hello_flutter_遥遥领先 --dart-define=APP_CHANNEL=Huawei -v > log.txt
-```dart
+```
 
 打开log.txt，搜索 huawei，可以看到 **渠道命令参数** 都已经拿到啦~
 
@@ -254,7 +254,7 @@ evaluate(new File(
     settingsDir.parentFile, // flutter_module和原生项目处于同一层级，这里获取父层级
     'flutter_module/.android/include_flutter.groovy'
 ))
-```dart
+```
 
 这段代码的作用：**将gradle环境传到include_flutter.groovy中**，打开看下脚本文件：
 
@@ -286,7 +286,7 @@ def flutterSdkPath = properties.getProperty("flutter.sdk")
 assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
 // 通过apply语句引入 module_plugin_loader.gradle 脚本
 gradle.apply from: "$flutterSdkPath/packages/flutter_tools/gradle/module_plugin_loader.gradle"
-```dart
+```
 
 这段代码的作用：**添加 flutter module到Android主工程** + **导入 module_plugin_loader.gradle 脚本**，打开看下导入的脚本文件：
 
@@ -352,7 +352,7 @@ gradle.getGradle().projectsLoaded { g ->
         }
     }
 }
-```dart
+```
 
 **Tips**：上面提到的评估阶段，发生在项目构建前，这个阶段Gradle会对根项目进行一系列的检查和计算，已确定项目的构建顺序、依赖关系和其它配置信息。
 
@@ -371,7 +371,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 // 打开flutter.gradle文件
 def pathToThisDirectory = buildscript.sourceFile.parentFile
 apply from: "$pathToThisDirectory/src/main/groovy/flutter.groovy"
-```dart
+```
 
 这个 flutter.groovy 中的代码有点长，就不贴了，后续会专门读下源码，大概知道Flutter引擎和Dart代码是在这里加到Android主项目就行了。
 
@@ -379,7 +379,7 @@ apply from: "$pathToThisDirectory/src/main/groovy/flutter.groovy"
 
 ```dart
 Caused by: org.gradle.api.internal.plugins.PluginApplicationException: Failed to apply plugin class 'FlutterPlugin'.
-```dart
+```
 
 解法：**setting.gradle** 里的 **RepositoriesMode** 模式从 **FAIL_ON_PROJECT_REPOS** 改为 **PREFER_PROJECT**
 
@@ -394,9 +394,11 @@ dependencyResolutionManagement {
 
 # 三种模式解释
 # FAIL_ON_PROJECT_REPOS → 工程或工程的插件设置了仓库，构建直接报错抛异常
+```
+
 # PREFER_PROJECT → 工程设置了仓库优先使用工程配置的，忽略settings
+
 # PREFER_SETTINGS → 通过工程单独设置或插件设置的仓库，都会被忽略
-```dart
 
 点Sync Now，跑完会自动生成引用信息：
 
@@ -404,7 +406,7 @@ dependencyResolutionManagement {
 
 ```dart
 implementation project(':flutter_module')
-```dart
+```
 
 再点Sync Now，跑完，打开 **AndroidManifest.xml** 清单文件加下 **FlutterActivity**：
 
@@ -414,7 +416,7 @@ implementation project(':flutter_module')
     android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
     android:hardwareAccelerated="true"
     android:windowSoftInputMode="adjustResize" />
-```dart
+```
 
 接着在原生MainActivity.kt加个按钮点击跳转Flutter模块：
 
@@ -426,7 +428,7 @@ myButton.setOnClickListener {
         FlutterActivity.createDefaultIntent(this)
     )
 }
-```dart
+```
 
 附：Gradle Build 下东西很慢又没代理，可以在settings.gradle添加这几个镜像源：
 
@@ -435,7 +437,7 @@ maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
 maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
 maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
 maven { url 'https://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
-```dart
+```
 
 ## 4. 混合开发-产物(AAR)集成
 
@@ -443,7 +445,7 @@ maven { url 'https://maven.aliyun.com/nexus/content/repositories/gradle-plugin' 
 
 ```dart
 flutter create -t module <module_name>
-```dart
+```
 
 然后可以在Android Studio中依次点击 **Build → Flutter → Build AAR** 来生成AAR，也可以执行下述命令：
 
@@ -458,7 +460,7 @@ flutter build aar
 
 # 指定目标平台(支持的abi架构，用逗号分隔)
 flutter build aar --target-platform android-arm64
-```dart
+```
 
 执行后，控制台会输出aar的生成路径，还贴心地给出了如何引用生成aar的示例：
 

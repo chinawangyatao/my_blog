@@ -45,7 +45,7 @@ void main() {
   String jsonString = jsonEncode(userMap);
   print(jsonString); // 输出：{"name":"John","age":30}
 }
-```dart
+```
 
 当然，实际开发中很少这样直接解析Json，通常会根据字段写一个Model类，然后定义两个方法来 **序/反序列化**，通常命名为 **fromJson()** 和 **toJson()** 。注意！只是 **约定俗成** 的命名，非强制，你硬要定义成**decodeFromJson()** 和 **encodeToJson()** 也是可以的。但还是建议这样命名，特别是 **toJson()** ：
 
@@ -64,7 +64,7 @@ void main() {
   "type": 0,
   "url": "https://www.wanandroid.com/blog/show/3352"
 }
-```dart
+```
 
 序列化和反序列化的代码示例如下：
 
@@ -133,7 +133,7 @@ void main() {
   String jsonString = json.encode(banner);
   print(jsonString);
 }
-```dart
+```
 
 ### 2.3. 为啥Flutter中处理Json这么麻烦？
 
@@ -159,7 +159,7 @@ void main() {
 
 添加库依赖的方式二选一：
 
-```dart
+```yaml
 # 方式一：终端直接键入下述命令安装
 flutter pub add json_annotation dev:build_runner dev:json_serializable
 
@@ -174,7 +174,7 @@ flutter_test:
   sdk: flutter
 build_runner: ^2.4.7
 json_serializable: ^6.7.1
-```dart
+```
 
 ### 3.2. 基本使用
 
@@ -214,7 +214,7 @@ class Banner {
   // 5、序列化，固定写法：_${类名}ToJson(this)
   Map<String, dynamic> toJson() => _$BannerToJson(this);
 }
-```dart
+```
 
 编写完上述代码，编译器会报_BannerFromJson和_BannerToJson找不到，没关系，只要确定没拼写错误就行，直接执行下述命令生成对应的序列化代码：
 
@@ -222,9 +222,11 @@ class Banner {
 flutter pub run build_runner build --delete-conflicting-outputs
 
 # 后面的 --delete-conflicting-outputs 是可选的，作用是：
+```
+
 # 自动删除任何现存的，与即将生成的输出文件冲突的文件，然后继续构建过程。
+
 # 这样可以清理由于老版本或不同构建配置造成的遗留文件
-```dart
 
 命令执行完，原先的报错就消失了，而且会在 **同级目录** 生成一个 **xxx.g.dart** 的文件：
 
@@ -300,7 +302,7 @@ void main() {
   List<List<List<String>>> list = [];
   print("${list.runtimeType}"); // 输出：List<List<List<String>>>
 }
-```dart
+```
 
 除此之外，还可以通过 **显式传递类型信息** 来实现 **运行时获取泛型的类型信息**，简单代码示例：
 
@@ -327,7 +329,7 @@ class Box<T> {
   final Type type;	// 显式传递类型信息
   Box({required this.type});
 }
-```dart
+```
 
 💁‍♂️ 扯得有点远了，收一下。**data字段** 返回的数据类型可能是 **对象** 或 **列表**，需要定义两个Model类，让他们支持泛型只需两步：
 
@@ -370,7 +372,7 @@ class ListResponse<T> {
 
   Map<String, dynamic> toJson(dynamic Function(T value) toJsonT) => _$ListResponseToJson(this, toJsonT);
 }
-```dart
+```
 
 执行 **flutter pub run build_runner build** 生成完.g.dart文件后，写下简单的测试代码：
 
@@ -415,7 +417,7 @@ void main() {
   );
   print("${listResponse.runtimeType} → ${listResponse.data}");
 }
-```dart
+```
 
 运行输出结果如下：
 
@@ -458,7 +460,7 @@ void main() {
   }, (json) => (json as List).map((e) => User.fromJson(e)).toList()); // ！！！返回类型需要与泛型一致
   print("${listResponse.runtimeType} → ${listResponse.data?[0].name}");
 }
-```dart
+```
 
 运行输出结果如下：
 
@@ -470,7 +472,7 @@ List<T> parseList<T>(dynamic json, T Function(Map<String, dynamic>) fromJson) =>
 
 // 调用处
 (json) => parseList(json, User.fromJson));
-```dart
+```
 
 #### 3.3.2. 用 build.yaml 减少重复属性设置
 
@@ -491,7 +493,7 @@ targets:
         options:
           explicit_to_json: true  # toJson()时将嵌套的对象也转换为Map类型而非引用
           include_if_null: false  # toJson()时忽略值为null的字段
-```dart
+```
 
 更多可选配置可见： [json_serializable build configuration](https://pub.dev/packages/json_serializable#build-configuration)
 
@@ -525,7 +527,7 @@ void main() {
   print(user.toJson());
   print(User.fromJson(user.toJson()).timestamp);
 }
-```dart
+```
 
 运行输出结果如下：
 
@@ -586,7 +588,7 @@ void main() {
   print(model.toJson());
   print(MyModel.fromJson(model.toJson()).dayOfWeek);
 }
-```dart
+```
 
 运行输出结果如下：
 
@@ -602,7 +604,7 @@ void main() {
 
 ```dart
 flutter packages pub run build_runner watch
-```dart
+```
 
 如果你使用的IDE是 **VSCode** 的话，可以在 **tasks.json** 文件中配置下这个命令，方便快速执行：
 
@@ -623,7 +625,7 @@ flutter packages pub run build_runner watch
         }
     ]
 }
-```dart
+```
 
 然后就可以在命令行面板找到这个任务啦，你还可以为其设置一个快捷键，打开命令面板，输入 **Preferences: Open Keyboard Shortcuts (JSON)** 并选中，在打开的 **keybindings.json** 文件中新增一个绑定，如：
 
@@ -633,7 +635,7 @@ flutter packages pub run build_runner watch
     "command": "workbench.action.tasks.runTask",
     "args": "Flutter Build Runner Watch"	// 任务名称
 }
-```dart
+```
 
 保存后，使用你设置的快捷键就能快速执行上述任务啦~
 

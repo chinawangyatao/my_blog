@@ -28,7 +28,7 @@ enum LoadingStatus {
   disconnect, // 无网络
   error // 错误
 }
-```dart
+```
 
 接着是切换加载状态的核心逻辑：
 
@@ -91,7 +91,7 @@ Widget _generateStatusWidget() {
         return Container();
     }
 }
-```dart
+```
 
 然后是对应状态Widget动态生成的方法：
 
@@ -180,7 +180,7 @@ Widget _errorStatusWidget() {
     )
   ]);
 }
-```dart
+```
 
 再接着用 **GridView** 展示下不同加载状态的效果图：
 
@@ -204,7 +204,7 @@ Widget testLoadingStatusWidget() {
                     contentWidget: enumList[index] != LoadingStatus.content ? null : const Text("显示内容")));
           }));
 }
-```dart
+```
 
 运行看看效果：
 
@@ -286,7 +286,7 @@ class _IndexPageState extends State<IndexPage> {
         ])));
   }
 }
-```dart
+```
 
 运行看看效果 (有网点击请求，打开飞行模式断网再请求)：
 
@@ -365,7 +365,7 @@ class FBLoadingStatusWidget extends StatelessWidget {
         });
   }
 }
-```dart
+```
 
 调用处代码：
 
@@ -404,7 +404,7 @@ Widget build(BuildContext context) {
                 }))
       ])));
 }
-```dart
+```
 
 运行效果和上面的 setState() 效果一致，然后有个问题：
 
@@ -436,7 +436,7 @@ Widget build(BuildContext context) {
                   asyncTask: _future,
     //...
 }
-```dart
+```
 
 👏还是比较简单的，组件使用时需要：
 
@@ -468,7 +468,7 @@ Widget _generateStatusWidget() {
         }
       }
   }
-```dart
+```
 
 😶 运行效果，和上面的 setState() 效果一致，用法和 **FutureBuilder** 基本一样。不过写法并没有体验到Stream流的特性，接着改下代码，使得变得更加灵活~
 
@@ -481,7 +481,7 @@ class LoadingStatusModel {
 
   LoadingStatusModel(this.status, {this.data});
 }
-```dart
+```
 
 接着继承StatefulWidget，定义一个StreamController的变量，在initState()处初始化，在dispose()处close()，在build()处根据异步任务的执行状态往Stream发送不同的加载状态信息，StreamBuilder的builder属性处，根据不同的加载状态信息，返回对应的Widget：
 
@@ -570,7 +570,7 @@ class _SBLoadingStatusWidgetState extends State<SBLoadingStatusWidget> {
     });
   }
 }
-```dart
+```
 
 有需要的话，这个StreamController还可以由外部传入，父容器直接往Stream里塞消息，连 **setState()** 都不用~
 

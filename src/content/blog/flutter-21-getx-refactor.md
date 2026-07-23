@@ -120,7 +120,7 @@ registerPasswordController.dispose();
 registerReUserNameController.dispose();
 }
 }
-```dart
+```
 接着是侧滑页，获取AccountVM实例，给需要观查登录状态的Widget套个「**Obx**」就完事了：
 ```dart
 class DrawerPage extends StatelessWidget {
@@ -183,7 +183,7 @@ onTap: accountVM.logout,
 );
 }
 }
-```dart
+```
 **代码运行效果如下**：
 
 😏 不知道细心的读者有没有发现一个问题：
@@ -211,7 +211,7 @@ mainPageController.dispose();
 super.onClose();
 }
 }
-```dart
+```
 **IndexBottomBarWidget** 代码改动如下：
 
 **IndexContainerWidget** 代码如下：
@@ -262,7 +262,7 @@ fetchArticleList(isRefresh: true);
 });
 }
 }
-```dart
+```
 然后是 **HomePage** 的代码：
 ```dart
 class HomePage extends StatelessWidget {
@@ -300,7 +300,7 @@ return ArticleItemWidget(articleInfo: vm.homeArticleInfoItems[index - 1]);
 }));
 }
 }
-```dart
+```
 **运行效果如下**：
 
 ### 5.3. PageView 切换页面后重新加载的问题
@@ -358,7 +358,7 @@ Icon(Icons.directions\_bike),
 );
 }
 }
-```dart
+```
 代码运行效果如下：
 
 用法非常简单，不过没有暴露 **Tab点击监听** 的属性，如果需要监听，得做下改动，代码示例如下：
@@ -411,7 +411,7 @@ void dispose() {
 super.dispose();
 }
 }
-```dart
+```
 #### 5.4.3. Get 提供的 GetSingleTickerProviderStateMixin
 😄 不想用 **DefaultTabController**，也不想使用 **StatefulWidget**，能不能直接在GetXController中使用？可以，混入GetX给我们提供的「**GetSingleTickerProviderStateMixin**」就行啦，使用代码示例如下：
 
@@ -448,7 +448,7 @@ tabController?.dispose();
 super.onClose();
 }
 }
-```dart
+```
 然后是页面，**TabController** 的长度初始化后就无法修改，一种解法是在需要更新长度时，旧的TabController实例调用 **dispose()** ，然后给变量赋值一个新的TabController实例。但在我们的场景，它的长度其实只会初始化一次，而如果给 **TabBar** 的 **controller属性** 赋值null的话会报错「**No TabController for TabBar**」，所以这里做下判断，有数据了才初始化Tab：
 ```dart
 class WxPage extends StatelessWidget {
@@ -476,7 +476,7 @@ children: vm.wxAccounts.map((e) => e.id).map((id) => Text(wxId: "${id!}")).toLis
 });
 }
 }
-```dart
+```
 运行看下效果：
 
 可以，接着整下微信文章列表页，和首页文章列表页基本相同，就是多一个wxId的字段：
@@ -501,7 +501,7 @@ random.nextInt(256), // Blue
 1, // Alpha
 );
 }
-```dart
+```
 直接写出生成导航列表项的代码：
 ```dart
 // 生成导航列表项
@@ -541,7 +541,7 @@ if (null != e.link) Get.to(BrowserPage(url: e.link!));
 ],
 );
 }
-```dart
+```
 😄 好，页面写完，说下这个 **网页无法打开** 怎么解？报错信息「**ERROR_CLEARTEXT_NOT_PERMITTED**」
 Android 9 (API 28) 及以上版本 **默认阻止明文流量**，当你尝试还在一个 **HTTP URL** 时就会报错。
 解法就是：**修改应用的网络安全配置，允许特定或所有域名的明文流量**，具体配置步骤如下：
@@ -552,7 +552,7 @@ network_security_config.xml 文件示例如下：
 ```xml
 xml version="1.0" encoding="utf-8"?
 
-```dart
+```
 引用网络安全配置：
 
 再次运行，就可以访问http协议的url啦~
@@ -588,7 +588,7 @@ const Icon(Icons.chevron\_right)
 ]),
 onTap: () {});
 }
-```dart
+```
 ## 6. 设置-主题切换
 🤔 感觉基本的页面都写得差不多了，在搞下设置页吧，弄下非常常见的 **主题切换/换肤**，就预置几套主题，然后可以用户点击切换主题，然后整个APP的样式(如颜色)都统一切换。这里简单整两套主题，蕾姆蓝 和 拉姆粉，为了方便演示，只有 **primaryColor** 是不同的：
 ```dart
@@ -615,7 +615,7 @@ fontSize: 20,
 ),
 ),
 );
-```dart
+```
 接着定义一个用于主题切换的VM，里面定义一个 **ThemeData** 类型的可观察变量：
 ```dart
 class ThemeVM extends GetxController {
@@ -624,7 +624,7 @@ void changeTheme(ThemeData theme) {
 currentTheme.value = theme;
 }
 }
-```dart
+```
 再接着修改下 **main.dart**，用 **Obx** 包裹 **GetMaterialApp**，在主题切换时触发重建：
 ```dart
 void main() async {
@@ -633,7 +633,7 @@ final themeVM = Get.put(ThemeVM());
 runApp(Obx(
 () => GetMaterialApp(theme: themeVM.currentTheme.value, initialBinding: MainBindings(), home: const MainPage())));
 }
-```dart
+```
 然后简单写下设置页面：
 ```dart
 class SettingPage extends StatelessWidget {
@@ -678,7 +678,7 @@ vm.changeTheme(laMuPinkTheme);
 );
 }
 }
-```dart
+```
 最后是Widget响应主题变化刷新，如果是使用 **Get.theme** 来获取当前主题的颜色或属性，需要使用 **Obx** 或 **GetX** 来包裹组件，否则是不会重建刷新的。如果是使用 **Theme.of(context)** 来获取主题的话，Widget重建时都会获取当前的主题数据。运行看看效果：
 
 🎉 Nice，得益于GetX，我们轻松实现了主题切换~
@@ -722,7 +722,7 @@ IndexBottomBarWidget(),
 drawer: const DrawerPage()));
 }
 }
-```dart
+```
 运行后，当用户来到首页，按回退按钮就会弹窗：
 
 😄 然后 **WillPopScope** 组件已经被标注为 **deprecated**(废弃)，官方推荐使用更灵活的 **PopScope** 组件代替，它允许开发者通过这两个属性来更精细地处理页面关闭逻辑。
@@ -755,7 +755,7 @@ IndexBottomBarWidget(),
 ),
 drawer: const DrawerPage()));
 }
-```dart
+```
 点击返回键，确认弹窗是有了，但是点击确定，直接就回退到黑屏页面了，还得按多一次返回键，才能关闭页面。在 flutter 官方仓库，找到的同样问题的 **issue** → [PopScope cannot exit the app](https://github.com/flutter/flutter/issues/145287)，close了，但没有给出具体的解决方案，其中一个成员让我们去看官方文档：
 
 我的flutter版本是 3.16.1，enableOnBackInvokedCallback 这个属性也配了，但并没什么卵用。打开 **Flutter DevTools**，可以看到调用了 Navigator.of(context).pop() 后 GetMaterialApp 还在：

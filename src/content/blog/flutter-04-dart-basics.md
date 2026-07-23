@@ -102,7 +102,7 @@ void main() {
   });
   headers.remove('Content-Type'); // 删除键值对
 }
-```dart
+```
 
 **补充**：
 
@@ -116,7 +116,7 @@ final String name;  // 可以延迟赋值，但只能赋值一次
 name = 'test';
 
 const int y = 10; // 编译时常量，声明时就要赋值
-```dart
+```
 
 ## 3. 流程控制语句
 
@@ -133,7 +133,7 @@ const int y = 10; // 编译时常量，声明时就要赋值
 void printMessage(String message) {
   print(message);
 }
-```dart
+```
 
 ### 4.2. 可选参数
 
@@ -159,7 +159,7 @@ void greet(String name, [String? gender]) {
 void introduce({required String name, int? age}) {
   print("My name is $name, and I'm $age years old");
 }
-```dart
+```
 
 上述用到的 **?** 问号修饰符，简称 **nullable** 修饰符，用于修饰可选参数，表示此参数是可选的。在处理 **空值场景**，经常和 **??** 、 **??=** 这两个操作符一起出现：
 
@@ -173,7 +173,7 @@ int b = a ?? 0;
 
 // ??= 操作符：赋值，在变量为null时，给它赋予一个默认值
 a ??= 0
-```dart
+```
 
 另外，**可选参数** 还支持设置 **默认值**。
 
@@ -183,7 +183,7 @@ a ??= 0
 
 ```dart
 int add(int a, int b) => a + b;
-```dart
+```
 
 ### 4.4. 函数作为参数
 
@@ -194,7 +194,7 @@ void performOperation(int a, int b, Function operation) {
   var result = operation(a, b);
   print("The result is $result");
 }
-```dart
+```
 
 ### 4.5. 函数作为返回值
 
@@ -210,7 +210,7 @@ Function calculator(String operator) {
     return null;
   }
 }
-```dart
+```
 
 ## 5. 类
 
@@ -225,7 +225,7 @@ void main() {
   var test = Test();
   print(test._name);	// 输出：Test
 }
-```dart
+```
 
 **Tips**：Dart有 **@protected** 注解，但仅用于标记和文档化，不会真正限制访问。
 
@@ -250,7 +250,7 @@ class Account {
 // 可以使用new关键字创建对象，也可以省略
 var account = Account("","35");
 account.showInfo();
-```dart
+```
 
 ### 5.2. 构造函数
 
@@ -262,13 +262,13 @@ account.showInfo();
 
 ```dart
 Account(this.name, this.age);
-```dart
+```
 
 上述代码用 **语法糖** 简化了成员变量的赋值。然后是 **命名构造函数**，就是用 **类名.修饰符** 定义的函数：
 
 ```dart
 Account.simple(String name): this(name, 18)
-```dart
+```
 
 可以使用命名构造函数为类提供多个构造函数，不过有一点要记住：**命名构造函数不可继承**。
 
@@ -280,7 +280,7 @@ class Circle {
   const Circle(this.radius); // 常量构造函数
   double get area => 3.14 * radius * radius; // 计算圆的面积
 }
-```dart
+```
 
 最后是 **工厂构造函数**，就是定义私有构造函数，然后使用 **factory** 关键字进行定义，根据不同情况创建不同的对象返回，简易代码示例如下：
 
@@ -310,7 +310,7 @@ void main() {
   var obj2 = MyClass('invalid');
   print(obj2); // 输出: null
 }
-```dart
+```
 
 ### 5.3. get/set修饰符
 
@@ -328,7 +328,7 @@ class Example {
     _value = newValue;
   }
 }
-```dart
+```
 
 ### 5.4. 对象操作符
 
@@ -348,7 +348,7 @@ if(account is Account) {
 account
   ..name = "小猪"
   ..age = 18;
-```dart
+```
 
 ### 5.5. 继承
 
@@ -361,7 +361,7 @@ class Orbiter extends Spacecraft {
 	/// 定义一个构造函数，用于初始化时从父类继承的属性
   Orbiter(super.name, DateTime super.launchDate, this.altitude);
 }
-```dart
+```
 
 ### 5.6. 接口和抽象类
 
@@ -395,7 +395,7 @@ public class HelloWorld {
 		c.test();
     }
 }
-```dart
+```
 
 回到Dart这边，没有 **interface** 关键字，**所有类都被隐式定义成一个接口**，**任何类都可以作为接口被实现**。那Dart是如何解决多继承/实现的二义性问题的？**子类必须将父类中所有属性和方法全部重写**。代码示例如下：
 
@@ -424,7 +424,7 @@ void main() {
   C c = C();
   c.printTest();
 }
-```dart
+```
 
 如果想实现Java中那种 **通过接口来定义标准** 的方式，可以使用 **抽象类 (使用abstract修饰)** 来实现。Dart中的抽象类不能被实例化，可以包含 **抽象方法** (没有方法体) 和 **非抽象方法** (有方法体)，代码示例如下：
 
@@ -486,13 +486,13 @@ void main() {
   player.pause(); // 输出：音乐播放器暂停了...
   player.destory(); // 输出：播放器销毁了
 }
-```dart
+```
 
 不难看出上述代码并不够优雅，destory() 方法体内容一样的，应该进行 **复用**，使用 **继承extends** 即可解决：
 
 ```dart
 class MusicPlayer extends PlayerController implements VolumeController { /* ... */ }
-```dart
+```
 
 ### 5.7. Mixins（混入）
 
@@ -522,7 +522,7 @@ void main() {
   duck.fly();   // 输出：能飞翔
   duck.swim();  // 输出：能游泳
 }
-```dart
+```
 
 ### 5.8. 枚举和密封类
 
@@ -537,7 +537,7 @@ void main() {
     print("${element.index}=${element.name}");  // 输出：0=morning
   }
 }
-```dart
+```
 
 枚举支持 **扩展方法**，如给定索引值，获取对应的枚举类型，代码示例如下：
 
@@ -550,7 +550,7 @@ void main() {
   var type = TimeSlotType.getTypeFormIndex(1);
   print(type); // 输出：TimeSlot.afternoon
 }
-```dart
+```
 
 **增强型枚举**，就是让枚举包含其它数据类型，代码示例如下：
 
@@ -574,7 +574,7 @@ enum Week {
 void main() {
   print(Week.friday.cnStr); // 输出：周五
 }
-```dart
+```
 
 😄 Dart竟然和Kotlin一样有 **密封类**：**限制类的结构层次**，确保所有子类都被显示列出，在处理复杂状态、模式匹配和不处理不完整数据时非常有用。使用 sealed 关键字进行修饰，使用代码示例如下：
 
@@ -596,7 +596,7 @@ String getStatusString(RequestStatus status) {
 void main() {
   print(getStatusString(RequestSuccess())); // 输出请求成功
 }
-```dart
+```
 
 ## 6. 异步
 
@@ -622,7 +622,7 @@ Future<void> loadData() async {
     widgets = jsonDecode(response.body);
   });
 }
-```dart
+```
 
 ### 6.2. Isolate-多线程
 
@@ -674,7 +674,7 @@ Future sendReceive(SendPort port, msg) {
   port.send([msg, response.sendPort]);
   return response.first;
 }
-```dart
+```
 
 **总结一下**：
 
@@ -706,6 +706,6 @@ void main() {
     print("执行结束");  // 输出：执行结束
   }
 }
-```dart
+```
 
  感觉基础的语法就这些，过完应该可以比较流畅地开发Flutter了，实际开发中遇到不懂的知识点再突击下~

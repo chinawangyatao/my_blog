@@ -56,7 +56,7 @@ final String result = await platform.invokeMethod('showToast', 'Flutter调原生
 print(result);
 }
 }
-```dart
+```
 **Android端**：
 ```kotlin
 import android.widget.Toast
@@ -86,7 +86,7 @@ result.success("Toast showed")
 }
 }
 }
-```dart
+```
 **运行结果如下**：
 
 **梳理下使用流程**：
@@ -132,7 +132,7 @@ static Future showDialog(String message) => invokeMethod('showDialog', message);
 // 获取原生设备信息
 static Future getDeviceInfo() => invokeMethod('getDeviceInfo');
 }
-```dart
+```
 **调用处**：
 
 **Android** 端：
@@ -167,7 +167,7 @@ static Future getDeviceInfo() => invokeMethod('getDeviceInfo');
 "msg": "错误请求参数",
 "data": {}
 }
-```dart
+```
 这样做的好处是，**Flutter 端** 可以对响应结果进行 **统一解析处理**。
 #### 2.1.4. Android 调 Flutter 端
 💁‍♂️ 有时可能有 **Android端主动调Flutter端** 的需求，也顺带写下代码示例，先是 **Android** 端：
@@ -229,7 +229,7 @@ GYROSCOPE\_CHANNEL
 ).setStreamHandler(GyroscopeEventChannelHandler(this))
 }
 }
-```dart
+```
 **Flutter** 端：
 ```dart
 // 💡 初始化监听Channel + 监听原生端传过来的数据
@@ -293,7 +293,7 @@ child: \_gyroscopeData == null
 );
 }
 }
-```dart
+```
 **运行结果如下**：
 
 **梳理下使用步骤**：
@@ -361,7 +361,7 @@ child: const Text('发送消息'),
 );
 }
 }
-```dart
+```
 **Android** 端：
 ```kotlin
 class MainActivity : FlutterActivity() {
@@ -385,7 +385,7 @@ reply.reply("未知消息")
 }
 }
 }
-```dart
+```
 **运行结果如下**：
 
 **梳理下使用步骤**：
@@ -423,7 +423,7 @@ throw MissingPluginException('No implementation found for method $method on chan
 // 💡 平台端返回结果不为null，调用【codec.decodeEnvelope】解码结果，并转换为期望类型T?
 return codec.decodeEnvelope(result) as T?;
 }
-```dart
+```
 🤔 逻辑还是比较清晰的，依次看看涉及到的类~
 #### 3.1.2. MethodCall
 从类结构不难看出它的作用 → **封装方法调用的信息 (方法名+参数)** ：

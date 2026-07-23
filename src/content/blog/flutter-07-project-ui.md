@@ -20,7 +20,7 @@ heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 
 在[《三、纯Flutter项目打包 & 混合开发[Android]》]( "")有提过这一点了，建议直接使用Flutter插件 [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) 来 **自动处理所有平台的图标生成和替换**，需要一张至少 **512x512** 像素的 **图标源图**！！！打开 **pubspec.yaml** 引用插件，并指定 **源图** 及 **生成的图标名**：
 
-```dart
+```yaml
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -30,14 +30,14 @@ flutter_icons:
   image_path: "assets/images/icon.png"
   android: "ic_launcher"	# 指定生成的图标名
   ios: true	# iOS是否也生成图标
-```dart
+```
 
 保存后，执行下述命令： **添加插件依赖** 及 **生成并替换图标**：
 
 ```dart
 flutter pub get
 flutter pub run flutter_launcher_icons
-```dart
+```
 
 即可实现图标替换，接着，顺手修改下 **APP名称**，定位到 **android/app/src/main/AndroidManifest.xml** 文件，修改 **android:label** 标签的值为你的应用名称，也支持通过 **strings.xml** 索引字符串资源的写法：
 
@@ -48,7 +48,7 @@ flutter pub run flutter_launcher_icons
   android:icon="@mipmap/ic_launcher">
   ...
 </application>
-```dart
+```
 
 都修改完，运行看看效果：
 
@@ -72,7 +72,7 @@ Column(
       ),)
     ],
 )
-```dart
+```
 
 运行效果如下：
 
@@ -90,10 +90,15 @@ Flutter中，**字体图标** 相比 **图片** 的优势：
 
 ```dart
 fonts:
+```
+
   - family: customIcon	# 指定字体名
-    fonts:
-      - asset: assets/fonts/iconfont.ttf
+
 ```dart
+    fonts:
+```
+
+      - asset: assets/fonts/iconfont.ttf
 
 然后可以就通过 **IconData** 来引用我们的自定义图标啦：
 
@@ -104,7 +109,7 @@ Icon(
   size: 26,
   color: Colors.yellow,
 )
-```dart
+```
 
 **运行效果图**：
 
@@ -119,7 +124,7 @@ class CustomIcons {
 
 // 使用
 Icon(CustomIcons.xiao, size: 26,color: Colors.yellow,)
-```dart
+```
 
 😁再安利两个图标工具站点：[fluttericon.com](https://www.fluttericon.com/) 和 [fluttericon.cn](https://www.fluttericon.cn/)
 
@@ -133,7 +138,7 @@ Icon(CustomIcons.xiao, size: 26,color: Colors.yellow,)
 
 😜这里直接用Flutter插件 [flutter_native_splash](https://pub.dev/packages/flutter_native_splash) 来快速设置，打开 **pubspec.yaml** 文件引用插件，并 **指定颜色及图片**：
 
-```dart
+```yaml
 dev_dependencies:
 	flutter_native_splash: ^2.3.8
 
@@ -146,7 +151,7 @@ flutter_native_splash:
   android_12:
     icon_background_color: "79B4EB"
     image: assets/images/icon.png
-```dart
+```
 
 保存后，执行下述命令： **添加插件依赖** 及 **生成并配置启动页**：
 
@@ -156,7 +161,7 @@ flutter pub run flutter_native_splash:create
 
 # 如果想去掉自定义闪屏页，可以使用下述命令
 # flutter pub run flutter_native_splash:remove
-```dart
+```
 
 编译运行后打开APP看看闪屏效果 (Android 12会裁剪图片中间的圆形部分)：
 
@@ -193,7 +198,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-```dart
+```
 
 然后在 main.dart 中优先显示 SplashScreen：
 
@@ -222,7 +227,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 ## 3. 首页草图
 
@@ -288,7 +293,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
     );
   }
 }
-```dart
+```
 
 运行代码后，从左侧划出抽屉看看效果：
 
@@ -436,7 +441,7 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-```dart
+```
 
 ### 5.4. Toast (提示)
 
@@ -476,7 +481,7 @@ class ToastUtil {
         fontSize: fontSize);
   }
 }
-```dart
+```
 
 照葫芦画瓢，顺手把注册页UI也画出来：
 
@@ -526,7 +531,7 @@ class ListResponse<T> {
   // 使用泛型方法将实例转换为Json
   Map<String, dynamic> toJson(dynamic Function(T value) toJsonT) => _$ListResponseToJson(this, toJsonT);
 }
-```dart
+```
 
 ### 5.6. 定义积分Model类
 
@@ -564,13 +569,13 @@ class Integral extends Object {
 
   Map<String, dynamic> toJson() => _$IntegralToJson(this);
 }
-```dart
+```
 
 然后执行下述命令生成对应的序列化和反序列化代码：
 
 ```dart
 flutter pub run build_runner build --delete-conflicting-outputs
-```dart
+```
 
 生成的 **integral.g.dart** 文件内容如下：
 
@@ -596,7 +601,7 @@ class OtherException implements Exception {
 
   OtherException(this.message);
 }
-```dart
+```
 
 然后 **工厂单例**，封装下请求，根据不同的 errorCode 决定正确响应，以及抛哪种类型的异常，并提供一个更新请求头中Cookie的方法：
 
@@ -671,7 +676,7 @@ class DioClient {
     _dio.options.headers.remove("Cookie");
   }
 }
-```dart
+```
 
 然后在 **main.dart** 执行 **runApp()** 函数前，调用下 **DioClient.init()** 设置下 **请求域名**：
 
@@ -680,7 +685,7 @@ void main() {
   DioClient.init("https://www.wanandroid.com/");
   runApp(const MyApp());
 }
-```dart
+```
 
 ### 5.8. 请求积分接口并刷新UI
 
@@ -709,7 +714,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   }
   //...
 }
-```dart
+```
 
 然后在 **build()** 方法中，对应组件获取到 **_integral 属性**，显示不同的文本和交互，关键代码如下：
 
@@ -742,7 +747,7 @@ ListTile(
   // 不为空显示积分
   title: Text('我的积分${(_integral != null ? _integral!.coinCount : "")}'),
 ),
-```dart
+```
 
 😁当 **_integral** 为空时，点击去登录，通过 **Navigator.push()** 跳转到登录页，接着要完善登录页的逻辑：
 
@@ -819,7 +824,7 @@ void showLoadingDialog(BuildContext context, {bool canPop = true}) {
     },
   );
 }
-```dart
+```
 
 运行看看效果：
 
@@ -875,7 +880,7 @@ class SharedPreferencesUtil {
 
   Future<bool> clear() => _preferences.clear();
 }
-```dart
+```
 
 接着补全下登录部分的代码：
 
@@ -914,7 +919,7 @@ class SharedPreferencesUtil {
       Fluttertoast.showToast(msg: "用户名或密码不能为空");
     }
   }
-```dart
+```
 
 输入正确账号密码，点击登录，登录成功后，登录页自动关闭，**手动关闭侧滑导航**，**再次点开**，可以看到用户名和积分都显示出来了：
 
@@ -939,19 +944,19 @@ class LoginStatus extends ChangeNotifier {
     notifyListeners()；
   }
 }
-```dart
+```
 
 监听者们会在这个方法被调用时得到通知，在顶层 **main.dart** 文件中，设置 **Provider**：
 
 ```dart
 runApp(ChangeNotifierProvider(create: (context) => LoginStatus(), child: const MyApp()));
-```dart
+```
 
 **登录页**，登录成功时调用updateLoginStatus() 通知更新：
 
 ```dart
 Provider.of<LoginStatus>(context, listen: false).updateLoginStatus(true);
-```dart
+```
 
 **侧滑导航**，可以使用 **Consumer** 或 **Provider.of()** 来监听数据变化：
 
@@ -980,7 +985,7 @@ Provider.of<LoginStatus>(context, listen: false).updateLoginStatus(true);
       }
     });
   }
-```dart
+```
 
 运行后，登录成功，登录自动关闭，侧滑导航自动拉取积分接口，nice😁。当然，侧滑这里其实没必要每次展开都拉取的，后续再优化下细节~
 
@@ -999,7 +1004,7 @@ void main() {
   });
   runApp(ChangeNotifierProvider(create: (context) => LoginStatus(), child: const MyApp()));
 }
-```dart
+```
 
 😑 侧滑导航就折腾到这吧，接着折腾底部Tab~
 
@@ -1048,7 +1053,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
     );
   }
 }
-```dart
+```
 
 ### 9.2. PageView (切页)
 
@@ -1088,7 +1093,7 @@ class _ContentPageViewState extends State<ContentPageView> {
     );
   }
 }
-```dart
+```
 
 ### 9.3. 底部Tab + PageView 联动
 
@@ -1148,7 +1153,7 @@ class _MyHomePageState extends State<MyHomePage> {
         drawer: const DrawerScreen());
   }
 }
-```dart
+```
 
 运行看看效果：
 
@@ -1252,7 +1257,7 @@ class _AutoScrollBannerWidgetState extends State<AutoScrollBannerWidget> {
     );
   }
 }
-```dart
+```
 
  这部分的代码多看几遍就懂了~
 
@@ -1317,7 +1322,7 @@ class _ArticleItemWidgetState extends State<ArticleItemWidget> {
     );
   }
 }
-```dart
+```
 
 ### 10.4. 滑动到底部加载更多
 
@@ -1330,7 +1335,7 @@ class _ArticleItemWidgetState extends State<ArticleItemWidget> {
       _requestArticleList();
     }
   });
-```dart
+```
 
 ### 10.5. 组合封装
 
@@ -1429,7 +1434,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 }
-```dart
+```
 
 运行看下效果：
 
@@ -1458,7 +1463,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
  	@override
   bool get wantKeepAlive => true;
 }
-```dart
+```
 
 😁 通过上述配置，切去别的页面再切回来，页面内容也不会重新加载啦。
 
@@ -1527,7 +1532,7 @@ class _WxArticleScreenState extends State<WxArticleScreen> with SingleTickerProv
   @override
   bool get wantKeepAlive => true;
 }
-```dart
+```
 
 封装下 **TabBar** 写个组件：
 
@@ -1552,7 +1557,7 @@ class _BlogTabBarWidgetState extends State<BlogTabBarWidget> {
     );
   }
 }
-```dart
+```
 
 **TabBarView** 的子项同样封装成一个组件：
 
@@ -1631,7 +1636,7 @@ class _WxArticleListWidgetState extends State<WxArticleListWidget> with Automati
   @override
   bool get wantKeepAlive => true;
 }
-```dart
+```
 
 列表项的话，直接复用首页文章列表的组件，改下数据结构就完事了，运行看下效果：
 
@@ -1716,7 +1721,7 @@ class _BrowserPageScreenState extends State<BrowserPageScreen> {
     );
   }
 }
-```dart
+```
 
 运行后可能会报错：
 
@@ -1739,7 +1744,7 @@ Clipboard.setData(ClipboardData(text: '这里是要复制的文字'));
 // 读取剪切板数据
 final ClipboardData data = await Clipboard.getData('text/plain');
 String pastedText = data.text;
-```dart
+```
 
 顺带完善下，上面的 **_copyUrlToClipboard()** 方法：
 
@@ -1749,7 +1754,7 @@ void _copyUrlToClipboard() {
   // 底部弹出一个SnackBar告知用户
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('链接已复制到剪贴板')));
 }
-```dart
+```
 
 ### 12.3. 跳转手机浏览器
 
@@ -1766,7 +1771,7 @@ void _openBrowser() async {
     throw 'Could not launch $uri';
   }
 }
-```dart
+```
 
 运行看看最终效果：
 

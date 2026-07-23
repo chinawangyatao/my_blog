@@ -60,7 +60,7 @@ abstract class Widget extends DiagnosticableTree {
 
   //其它与调试相关的方法...
 }
-```dart
+```
 
 **源码解读**：
 
@@ -92,7 +92,7 @@ abstract class StatelessWidget extends Widget {
   @override
   StatelessElement createElement() => StatelessElement(this);
 }
-```dart
+```
 
 **源码解读**：
 
@@ -117,7 +117,7 @@ class StatelessElement extends ComponentElement {
     rebuild(force: true);
   }
 }
-```dart
+```
 
 **源码解读**：
 
@@ -173,7 +173,7 @@ Widget build(BuildContext context) {
     },
   );
 }
-```dart
+```
 
 ## 4. StatefulWidget
 
@@ -192,7 +192,7 @@ abstract class StatefulWidget extends Widget {
   @factory
   State createState();
 }
-```dart
+```
 
 **源码解读**：
 
@@ -271,7 +271,7 @@ class StatefulElement extends ComponentElement {
     _didChangeDependencies = true;
   }
 }
-```dart
+```
 
 **源码解读**：
 
@@ -367,7 +367,7 @@ void markNeedsBuild() {
     }());
   }
 }
-```dart
+```
 
 **源码解读**：
 
@@ -397,7 +397,7 @@ abstract class ProxyWidget extends Widget {
   const ProxyWidget({ super.key, required this.child });
   final Widget child;
 }
-```dart
+```
 
 😳 就一个child属性，也忒简洁了吧，通常不会直接使用它，而是使用它的两个子类 → **InheritedWidget** 和**ParentDataWidget**，本节主要了解前者~
 
@@ -508,7 +508,7 @@ class MyApp extends StatelessWidget {
 void main() {
   runApp(MyApp());
 }
-```dart
+```
 
 **运行输出结果**：
 
@@ -523,7 +523,7 @@ void main() {
 dependOnInheritedWidgetOfExactType()
 // 改为：
 getElementForInheritedWidgetOfExactType<ThemeInheritedWidget>()!.widget as ThemeInheritedWidget
-```dart
+```
 
 具体原理，等下看源码你就知道了~
 
@@ -539,7 +539,7 @@ abstract class InheritedWidget extends ProxyWidget {
   @protected
   bool updateShouldNotify(covariant InheritedWidget oldWidget);
 }
-```dart
+```
 
 **源码解读**：
 
@@ -595,7 +595,7 @@ abstract class ProxyElement extends ComponentElement {
   @protected
   void notifyClients(covariant ProxyWidget oldWidget);
 }
-```dart
+```
 
 **源码解读**：
 
@@ -628,7 +628,7 @@ InheritedElement? getElementForInheritedWidgetOfExactType<T extends InheritedWid
   final InheritedElement? ancestor = _inheritedElements == null ? null : _inheritedElements![T];
   return ancestor;
 }
-```dart
+```
 
 可以看到前者多调了一个 **dependOnInheritedElement()** ，在其中注册了依赖关系，这就是为啥使用后者就不会回调 **didChangeDependencies()** 的原因。
 

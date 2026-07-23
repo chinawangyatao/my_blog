@@ -95,7 +95,7 @@ class LoginStatusModel extends ChangeNotifier {
     notifyListeners();  // 通知监听者数据变化
   }
 }
-```dart
+```
 
 #### 2.1.2. 提供状态数据
 
@@ -110,7 +110,7 @@ void main() {
     ),
   );
 }
-```dart
+```
 
 #### 2.1.3. 使用状态数据
 
@@ -131,7 +131,7 @@ class TextWidget extends StatelessWidget {
 
 // 也可以使用  Provider.of() 来获取：
 Text('${Provider.of<LoginStatusModel>(context, listen: false).isLogin}')
-```dart
+```
 
 #### 2.1.4. 多个需要共享的数据模型
 
@@ -150,7 +150,7 @@ void main() {
     ),
   );
 }
-```dart
+```
 
 #### 2.1.5. 处理异步数据
 
@@ -166,7 +166,7 @@ FutureProvider<String>(
     },
   ),
 )
-```dart
+```
 
 ### 2.2. 一点细节
 
@@ -202,7 +202,7 @@ return Scaffold(
     ),
   ),
 );
-```dart
+```
 
 #### 2.2.3. 更细粒度的刷新-Selector
 
@@ -238,7 +238,7 @@ Selector<UserModel, String>(
     return Text(name);
   },
 )
-```dart
+```
 
 **Tips**：Selector 也有 **Widget? child** 参数，可用于设置不需要更新的Widget，提高性能
 
@@ -278,7 +278,7 @@ mixin class ChangeNotifier implements Listenable {
   void notifyListeners() { /* 通知所有注册的监听器，即遍历调用监听器注册的回调函数 */  }
   void dispose() { /* 当对象不再需要调用时调用，它会移除所有监听器并释放资源 */ }
 }
-```dart
+```
 
 基于 **观察者模式** 实现，数据模型变化的方法中调用 **notifyListeners()** 通知所有监听器。那是啥时候添加和移除监听器的呢？看了下 **ChangeNotifierProvider** 没有找到相关调用，它继承了 **ListenableProvider**，在此找到了方法调用：
 
@@ -309,7 +309,7 @@ class ListenableProvider<T extends Listenable?> extends InheritedProvider<T> {
     return () => value?.removeListener(e.markNeedsNotifyDependents);
   }
 }
-```dart
+```
 
 然后 **_startListening()** 作为参数 **startListening** 传递给父类 **InheritedProvider** 的构造方法，点开父类发现它竟是 **所有 Provider的父类**，源码注释中这样描述它：**InheritedWidget的泛型实现**。简化版源码如下：
 
@@ -389,7 +389,7 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
     );
   }
 }
-```dart
+```
 
 🤔 定义了三种构造 **InheritedProvider实例** 的方法，差异点在于 **_delegate属性** 的赋值，依次为： **_CreateInheritedProvider** (数据对象随Provider创建而创建)、 **_ValueInheritedProvider** (对已有的数据对象进行共享)、直接传入delegate实例。
 
@@ -426,7 +426,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
   // 根据提供的数据和状态构建UI或执行逻辑，isBuildFromExternalSources参数用于指示构建是否由外部源 (如数据变化) 触发
   void build({required bool isBuildFromExternalSources}) {}
 }
-```dart
+```
 
 😳 哈？这 **_Delegate** 和 **_DelegateState** 跟 **Widget 和 State** 的关系有点像啊！这里是通过 **代理** 的方式来操作状态对象。接着依次看下 **_DelegateState** 的两个子类，先是 **_CreateInheritedProviderState**：
 
@@ -517,7 +517,7 @@ class _CreateInheritedProviderState<T>
   @override
   bool get hasValue => _didInitValue;
 }
-```dart
+```
 
 不难发现 _**value** 做了 **懒加载**，在值需要用的的时候才调用create()初始化。然后build()中的逻辑：
 
@@ -574,7 +574,7 @@ class _ValueInheritedProviderState<T>
   @override
   bool get hasValue => true;
 }
-```dart
+```
 
 大概流程和前者类似，代码简单多了，不过到此，我们还没看到 **InheritedWidget** 的身影，它在哪呢？
 
@@ -604,7 +604,7 @@ class _InheritedProviderScope<T> extends InheritedWidget {
     return _InheritedProviderScopeElement<T>(this);
   }
 }
-```dart
+```
 
 😄 嘿，**InheritedWidget** 不就在这吗？通过构造方法传入一个 **InheritedProvider** 的引用，这货来看是充当 **状态管理中数据传递的桥梁** 啊。然后 **updateShouldNotify()** 原本的作用：
 
@@ -749,7 +749,7 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
     return super.dependOnInheritedElement(ancestor, aspect: aspect);
   }
 }
-```dart
+```
 
 😐 不难看出这个类的主要作用就是 **负责管理和通知依赖项的更新**，回顾下原 **InheritedElement** 依赖项更新的方法调用流程：
 
@@ -776,7 +776,7 @@ abstract class InheritedContext<T> extends BuildContext {.
 
   bool get hasValue;
 }
-```dart
+```
 
 **简单翻译下**：
 
@@ -795,7 +795,7 @@ static T of<T>(BuildContext context, {bool listen = true}) {
   final value = inheritedElement?.value;
   return value as T;
 }
-```dart
+```
 
 **dependOnInheritedWidgetOfExactType()** 上节讲过，获取最近的 **_InheritedProviderScope<T?>** 实例，其中会调用 **dependOnInheritedElement()** 注册依赖关系，然后会回调 **didChangeDependencies()** 触发重建，这就是 **listen参数设置为false** 可以减少不必要重建的原因，最后返回了当前的状态数据。然后看下**Consumer**：
 
@@ -823,7 +823,7 @@ class Consumer<T> extends SingleChildStatelessWidget {
     );
   }
 }
-```dart
+```
 
 继承了 **SingleChildStatefulWidget**，内部还是调用的 **Provider.of()** 来更新访问状态数据，Selector 也是类似，就不再复述了。
 

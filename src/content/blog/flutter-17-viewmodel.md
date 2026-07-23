@@ -50,7 +50,7 @@ class UserModel {
     );
   }
 }
-```dart
+```
 
 ### 2.2. ViewModel
 
@@ -70,7 +70,7 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 }
-```dart
+```
 
 ### 2.3. View
 
@@ -111,7 +111,7 @@ class UserView extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 **运行输出结果如下**：
 

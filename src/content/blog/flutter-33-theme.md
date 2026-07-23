@@ -120,7 +120,7 @@ class MyWidget extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 ### 2.2. ThemeData - 主题数据核心
 
@@ -202,7 +202,7 @@ ThemeData(
   ),
   useMaterial3: true,
 )
-```dart
+```
 
 #### 2.2.1. ColorScheme - 配色
 
@@ -283,7 +283,7 @@ ColorScheme.fromSeed(
   seedColor: Colors.deepPurple,
   brightness: Brightness.light,
 )
-```dart
+```
 
 #### 2.2.2. TextTheme - 文本样式
 
@@ -351,7 +351,7 @@ const TextTheme(
     color: Colors.grey,
   ),
 )
-```dart
+```
 
 #### 2.2.3. AppBarTheme - 应用栏
 
@@ -396,7 +396,7 @@ const AppBarTheme(
     fontWeight: FontWeight.bold,
   ),
 )
-```dart
+```
 
 #### 2.2.4. ElevatedButtonThemeData - 凸起按钮
 
@@ -486,7 +486,7 @@ ElevatedButtonThemeData(
     ),
   ),
 )
-```dart
+```
 
 #### 2.2.5. 其它重要主题类
 
@@ -554,7 +554,7 @@ class TabBarTheme {
     this.mouseCursor,           // 鼠标指针
   });
 }
-```dart
+```
 
 #### 2.2.6. ThemeExtension - 自定义主题扩展
 
@@ -626,7 +626,7 @@ ThemeData(
 // 🎯 获取自定义主题扩展
 final customTheme = Theme.of(context).extension<CustomThemeExtension>();
 final successColor = customTheme?.successColor;
-```dart
+```
 
 ## 3. 应用示例
 
@@ -643,7 +643,7 @@ return ThemeData(
   brightness: Brightness.light,
   // 需要手动配置所有属性
 );
-```dart
+```
 
 ### 3.2. 方式二：基于系统主题扩展
 
@@ -685,7 +685,7 @@ ThemeData _customizeTheme(ThemeData baseTheme, bool isDark, CustomThemeStyle cus
     ),
     // 其它配置
 }
-```dart
+```
 
 ### 3.3. 方式三：基于Material Design 3 的 ColorScheme
 
@@ -699,7 +699,7 @@ ThemeData _buildMaterial3Theme() {
     colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
   );
 }
-```dart
+```
 
 ### 3.4. 🌰 主题切换代码示例
 
@@ -811,7 +811,7 @@ Widget build(BuildContext context) {
     ),
   );
 }
-```dart
+```
 
 **运行效果**：
 

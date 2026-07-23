@@ -218,7 +218,7 @@ class _AnimatedBoxState extends State<AnimatedBox> with SingleTickerProviderStat
     );
   }
 }
-```dart
+```
 
 **运行看下效果**：
 
@@ -234,7 +234,7 @@ _animation.addStatusListener((status) {
     _controller.forward();
   }
 });
-```dart
+```
 
 **运行效果如下**：
 
@@ -251,7 +251,7 @@ _animation.addStatusListener((status) {
       _controller.forward();
     }
   });
-```dart
+```
 
 **运行效果如下**：
 
@@ -265,7 +265,7 @@ _animation.addStatusListener((status) {
 _animation = Tween(begin: 0.0, end: 200.0).animate(
     CurvedAnimation(parent: _controller, curve: Curves.easeInOut)
 );
-```dart
+```
 
 **运行效果如下**：
 
@@ -284,7 +284,7 @@ class DampingCurve extends Curve {
 _animation = Tween(begin: 0.0, end: 200.0).animate(
     CurvedAnimation(parent: _controller, curve: DampingCurve())
 );
-```dart
+```
 
 **运行效果如下**：
 
@@ -339,7 +339,7 @@ class _AnimatedBoxState extends State<AnimatedBox> with SingleTickerProviderStat
     );
   }
 }
-```dart
+```
 
 **运行效果如下：**
 
@@ -378,7 +378,7 @@ Widget build(BuildContext context) {
     );
   });
 }
-```dart
+```
 
 **运行效果如下**：
 
@@ -401,7 +401,7 @@ _parabolicAnimation =
   parent: _controller,
   curve: const Interval(0.5, 1.0, curve: Curves.easeInOut),
 ));
-```dart
+```
 
 **运行效果如下**：
 
@@ -409,7 +409,7 @@ _parabolicAnimation =
 
 ```dart
 AnimatedBuilder(animation: Listenable.merge([_sizeController, _rotationController, _parabolicController])
-```dart
+```
 
 不过，当其中 **任意一个AnimationController发生变化**，**AnimatedBuilder** 都会重新构建其子树，在某些场景，为了避免不必要的刷新，可以将不同的动画分离到不同的 **AnimatedBuilder** 中。
 
@@ -461,7 +461,7 @@ Matrix4.lerp(a, b, t);
 Radius.lerp(a, b, t);
 // 形状边框
 ShapeBorder.lerp(a, b, t);
-```dart
+```
 
 计算公式一般遵循：**返回值 = a + (b - a) ** t** 。写个简单的颜色插值的简单示例：
 
@@ -515,7 +515,7 @@ void main() {
     ),
   ));
 }
-```dart
+```
 
 **运行效果如下**：
 
@@ -528,7 +528,7 @@ _colorAnimation = _controller.drive(
     end: Colors.blue,
   ),
 );
-```dart
+```
 
 点开 **ColorTween** 源码内部，其实还是调用的 **Color.lerp()** ：
 
@@ -582,7 +582,7 @@ class TranslateTransition extends AnimatedWidget {
     );
   }
 }
-```dart
+```
 
 **调用处代码**：
 
@@ -629,7 +629,7 @@ class _AnimatedBoxState extends State<AnimatedBox> with SingleTickerProviderStat
     );
   }
 }
-```dart
+```
 
 😄 然后就实现了例子里同样的动画效果啦~
 
@@ -693,7 +693,7 @@ class _AnimatedTranslateState extends AnimatedWidgetBaseState<AnimatedTranslate>
     );
   }
 }
-```dart
+```
 
 然后 **隐式动画** 无法主动控制动画的开始和暂停，必须重建组件才能执行动画，是的，需要手动触发 **setState()** ❗️ 这里加个按钮点击触发动画值的变化，具体代码如下：
 
@@ -737,7 +737,7 @@ class _AnimatedBoxState extends State<AnimatedBox> with SingleTickerProviderStat
     );
   }
 }
-```dart
+```
 
 **代码运行效果** (快速点击按钮还会切换动画的执行方向🤣)：
 
@@ -818,7 +818,7 @@ class SecondPage extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 **运行效果如下**：
 
@@ -949,7 +949,7 @@ class _DraggableCardState extends State<DraggableCard> with SingleTickerProvider
     );
   }
 }
-```dart
+```
 
 **代码运行效果**：
 

@@ -31,7 +31,7 @@ heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 
 **😄开发阶段**，改动频繁，自然是采取「**源码集成**」的方式，在原生项目的 **settings.gradle** 中添加下 **Flutter项目** 的配置：
 
-```dart
+```groovy
 // 创建一个新的Binding，并将当前的Gradle对象绑定到变量gradle上
 setBinding(new Binding([gradle: this]))
 
@@ -44,7 +44,7 @@ evaluate(new File(
     settingsDir.parentFile,
     'flutter模块/.android/include_flutter.groovy'
 ))
-```dart
+```
 
 😄 就执行下 **include_flutter.groovy** 脚本，打开看看做了啥：
 
@@ -68,7 +68,7 @@ assert flutterSdkPath != null, "flutter.sdk not set in local.properties"
 
 // ④ 应用其中的 module_plugin_loader.gradle 脚本，完成Flutter插件的加载
 gradle.apply from: "$flutterSdkPath/packages/flutter_tools/gradle/module_plugin_loader.gradle"
-```dart
+```
 
 😀 include包含Flutter项目，读取 **.android/local.properties** 获取flutter sdk路径，应用其中的 **module_plugin_loader.gradle** 脚本。代码懒得贴了，直接描述下这个脚本的大概逻辑：
 
@@ -89,20 +89,20 @@ gradle.apply from: "$flutterSdkPath/packages/flutter_tools/gradle/module_plugin_
 dependencies {
     implementation project(':flutter')
 }
-```dart
+```
 
 ⚠️ 另外，新版Android Studio创建的Android项目默认使用 **gradle.kts** 作为构建语言，没法直接添加上述的Flutter项目配置，要么删掉它改为 **settings.gradle**。要么新建一个脚本文件，如：**flutter_settings.gradle**，把配置内容丢里头，然后 **settings.gradle.kts** 使用 apply 进行引入：
 
 ```dart
 apply { from("flutter_settings.gradle") }
-```dart
+```
 
 ⚠️ 还有，如果编译过程报下下述错误：
 
 ```dart
 Caused by: org.gradle.api.InvalidUserCodeException: Build was configured to prefer settings repositories over project repositories but repository ‘maven’ was added by plugin class ‘FlutterPlugin’
 Caused by: org.gradle.api.internal.plugins.PluginApplicationException: Failed to apply plugin class ‘FlutterPlugin’.
-```dart
+```
 
 打开 **settings.gradle** (或kts)，把：**RepositoriesMode.FAIL_ON_PROJECT_REPOS** 改为 **RepositoriesMode.PREFER_PROJECT** 就好了~
 
@@ -116,7 +116,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-```dart
+```
 
 然后 **项目级别的build.gradle** 加下仓库配置 (🤫阿里云镜像源是可选的哈~)：
 
@@ -131,7 +131,7 @@ allprojects {
         mavenCentral()
     }
 }
-```dart
+```
 
 搞完，**Gradle Sync** 没报错，就可以在原生中使用Flutter啦，打开 **AndroidManifest.xml** 注册下 **FlutterActivity**：
 
@@ -141,7 +141,7 @@ allprojects {
   android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
   android:hardwareAccelerated="true"
   android:windowSoftInputMode="adjustResize"/>
-```dart
+```
 
 接着整个Button点击跳 **FlutterActivity**：
 
@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-```dart
+```
 
 🤣 然后你会发现，点击按钮后，得等一会儿才跳转FlutterActivity，这是因为：
 
@@ -179,13 +179,13 @@ class MyApp : Application() {
         FlutterEngineCache.getInstance().put("my_engine_id", flutterEngine)
     }
 }
-```dart
+```
 
 接着调用处 **withCachedEngine()** 使用 "my_engine_id" 对应的已预热Flutter引擎实例：
 
 ```dart
 startActivity(FlutterActivity.withCachedEngine("my_engine_id").build(this))
-```dart
+```
 
 编译运行，再次启动 **FlutterActivity**，页面打开速度快了不少。另外，**withNewEngine()** 使用新引擎，可以通过 **initialRoute()** 设置 **初始路由 (Flutter应用启动时显示哪个页面)** ：
 
@@ -196,13 +196,13 @@ startActivity(
     .initialRoute("/my_route") //设置初始路由
     .build(this)
 )
-```dart
+```
 
 改为 **withCachedEngine()** 使用缓存引擎后，就不能设置初始路由了，因为已经在引擎预热时设置过了，默认为 **"/"** 。如果Flutter项目中没有显式设置路由表 (使用 **MaterialApp** 的 **routes** 或 **onGenerateRoute** 参数)，将会加载 **MaterialApp** 的 **home** 参数所指定的页面，如：**MaterialApp(home: MyHomePage())** ，运行后会加载 **MyHomePage**。可以通过下述代码来设置初始路由：
 
 ```dart
 flutterEngine.navigationChannel.setInitialRoute("your/route/here");
-```dart
+```
 
 然后是 **FlutterFragment**，需要添加到 **宿主Activity** 中才能使用：
 
@@ -253,7 +253,7 @@ class MyActivity : FragmentActivity() {
     )
   }
 }
-```dart
+```
 
 新建 **FlutterFragment** 实例默认会创建新的引擎实例，同样可以调用 **withCachedEngine()** 使用缓存引擎。默认使用 **SurfaceView** 来渲染Flutter内容，也可以切换为 **TextureView** 进行渲染 (前者性能更优)。注：**SurfaceView** 不能交错再View层次结构的中间，要么最底部，要么最顶部，不然会导致视觉的异常，如遮挡问题或渲染顺序问题。
 
@@ -261,7 +261,7 @@ class MyActivity : FragmentActivity() {
 val flutterFragment = FlutterFragment.withNewEngine()
     .renderMode(FlutterView.RenderMode.texture) // 使用TextureView渲染
     .build()
-```dart
+```
 
 最后，还有一个 **FlutterView**，相比 **FlutterActivity** 和 **FlutterFragment** 的用法要复杂多了，得手动创建一系列的自定义绑定，如：
 
@@ -283,7 +283,7 @@ val flutterFragment = FlutterFragment.withNewEngine()
 
 ```dart
 flutter build aar --no-debug --no-profile --target-platform android-arm,android-arm64 --build-number 0.0.1
-```dart
+```
 
 打包完成，控制台会输出AAR的路径信息，以及如何集成：
 
@@ -295,7 +295,7 @@ repositories {
     maven(uri("E:\Code\Android\hybrid_flutter\build\host\outputs\repo"))
     maven(uri("$storageUrl/download.flutter.io"))
 }
-```dart
+```
 
 添加完aar依赖，Sync Projct不报错，就可以正常运行了~
 
@@ -362,7 +362,7 @@ ElevatedButton(
   },
   child: Text('Open Native Activity'),
 )
-```dart
+```
 
 😄 了解完页面怎么互跳，接着捋下市面上的常见混合栈管理方案~
 
@@ -388,7 +388,7 @@ class App : Application() {
         engines = FlutterEngineGroup(this)
     }
 }
-```dart
+```
 
 接着定义了一个 **Flutter和Android共享** 的单例/可观察的DataModel：
 
@@ -416,7 +416,7 @@ class DataModel {
         }
     }
 }
-```dart
+```
 
 然后是最核心的 **EngineBindings** ，在Android和Flutter端搭一个条"**桥**"，使得两端能够互相通信和数据同步：
 
@@ -484,7 +484,7 @@ class EngineBindings(activity: Activity, delegate: EngineBindingsDelegate, entry
         channel.invokeMethod("setCount", newCount)
     }
 }
-```dart
+```
 
 接着是使用 **FlutterActivity** 来展示 Fluttre页面 → **SingleFlutterActivity**：
 
@@ -517,7 +517,7 @@ class SingleFlutterActivity : FlutterActivity(), EngineBindingsDelegate {
         startActivity(flutterIntent)
     }
 }
-```dart
+```
 
 接着是使用两个垂直显示的 **FlutterFragment** 来展示Flutter页面 → **DoubleFlutterActivity**
 
@@ -600,7 +600,7 @@ class DoubleFlutterActivity : FragmentActivity(), EngineBindingsDelegate {
         startActivity(flutterIntent)
     }
 }
-```dart
+```
 
 MainActivity启动这两个Activity就不用说了，看下Flutter端打开Activity的相关代码：
 
@@ -654,7 +654,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     //...
 }
-```dart
+```
 
 🤔 然后有个问题：Flutter通过Channel与原生通信，每个端都需要维护一套 **协议规范**，多端协作容易出问题，比如某个MethodCall，Android实现了，iOS没实现，Flutter端调用就会报平台方法未定义的异常。对此，官方发布了 [pigoen](https://pub-web.flutter-io.cn/packages/pigeon/install) 库来帮我们解决这个问题 → **通过一套协议生成多端协议代码**。
 
@@ -663,7 +663,7 @@ class _MyHomePageState extends State<MyHomePage> {
 ```dart
 dev_dependencies:
   pigeon: ^20.0.2
-```dart
+```
 
 然后创建一个 **桥配置文件**，如 **pigeons/messages.dart**：
 
@@ -735,7 +735,7 @@ abstract class MessageHostApi {
 abstract class MessageFlutterApi {
   String flutterMethod(String? aString);
 }
-```dart
+```
 
 执行 **dart run pigeon --input pigeons/message_api.dart** 生成相关文件，比如上面配置的Kotlin文件：
 
@@ -834,7 +834,7 @@ class _TestWidgetState extends State<TextWidget> with TimerMixin {
     startTimer(() => saveData());
   }
 }
-```dart
+```
 
  然后 **主项目** 一运行，BUG就来了：
 
@@ -868,7 +868,7 @@ class SingletonTimer {
     _timer?.cancel();
   }
 }
-```dart
+```
 
 🤷‍♀️ 再次运行，还是同样的结果，然后单独运行 **Flutter模块**，定时器又能正常工作，em... 那大概率就是 **flutter_boost** 的坑了，在它的Github仓库搜了下issues，关键词：timer、定时器等，没有找到相关的话题，自己又改Flutter代码、断点、打Log，折腾了好一阵子都没定位到原因。
 
@@ -898,7 +898,7 @@ fun Context.getCurrentProcessName(): String? {
 if(this.isMainProcess()) {
   // 执行flutter_boost的初始化
 }
-```dart
+```
 
 😐 这样改，**创建多个定时器实例** 的问题是解决了，但 **刚打开App计时** 的问题依旧存在。一时也没啥方向，于是翻起了官方issues，然后看到了这个：[为什么应用初始化的时候默认会先生成一个空路由呢](https://github.com/alibaba/flutter_boost/issues/1521)：
 
@@ -937,7 +937,7 @@ class CounterModel {
     _counter++;
   }
 }
-```dart
+```
 
 接着是 **ViewModel**，这里不使用 **ChangeNotifier**，而是手动管理监听器：
 
@@ -965,7 +965,7 @@ class CounterViewModel {
     _onChanged = null;
   }
 }
-```dart
+```
 
 最后是 **View** → 用 StatefulWidget 来管理 ViewModel实例，并在合适的时机调用 **setState()** 来更新 UI：
 
@@ -1030,7 +1030,7 @@ class _CounterPageState extends State<CounterPage> {
     );
   }
 }
-```dart
+```
 
 当然，上述代码只是用于演示，实际开发中妥妥得上 **状态管理库**，这里我们选的 [Riverpod](https://riverpod.dev/)，主要还是组员更熟悉这个库🐶，虽然官方文档写得有点乱，但不妨碍这个库的好用，前提是你弄清楚具体怎么用🤷‍♀️。想了解这个状态管理库的童鞋，墙裂建议阅读下我之前些的**《十五、玩转状态管理之——Riverpod使用详解》**和 **《十七、实战进阶-用 ViewModel 来分离 UI & 逻辑》**。😄 分享两个遇到的UI问题，感觉读者也可能会遇到~
 
@@ -1173,7 +1173,7 @@ class _TestListRefreshState extends ConsumerState<TestListRefreshPage> {
     );
   }
 }
-```dart
+```
 
 运行效果如下：
 
@@ -1193,7 +1193,7 @@ class TestListModel {
 
 // 调用处
 state = state.copyWith(list: state.list);
-```dart
+```
 
 😆 当对象属性很多时，手写copyWith()同样会写到头皮发麻🤣，建议搭配 [freezed](https://pub.dev/packages?q=freezed) 库来简化Model类的定义，它可以自动生成==、hashCode()、toString()、copyWith() 等方法，极大减少了样板代码的数量。改改Model类：
 
@@ -1223,7 +1223,7 @@ class ListItemVM extends _$ListItemVM {
     state = state.copyWith(subTitle: "${DateTime.now().millisecondsSinceEpoch}");
   }
 }
-```dart
+```
 
 修改下构建列表项处的代码：
 
@@ -1264,8 +1264,9 @@ Android Studio 打开「**Flutter模块**」的代码，下断点，然后点击
 
 😆 这种集成方式，如果能在手机上运行，**本地手动打包** 基本是没问题的，就是麻烦，可以安排下 **CI(持续集成)** 自动打包，在编译主项目前，先拉取下最新的 **flutter模块代码** 执行相关进行构建，最后再编译主项目。大概的脚本如下：
 
-```dart
 # 获取当前脚本的绝对路径及父目录
+
+```dart
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_PARENT_DIR=$(dirname "$SCRIPT_PATH")
 
@@ -1289,7 +1290,7 @@ $FLUTTER_CMD pub get && $FLUTTER_CMD  pub run build_runner build --delete-confli
 cd "$SCRIPT_PATH/主项目"
 bash gradlew clean
 bash gradlew assemble
-```dart
+```
 
 ### 6.2. AAR集成
 
@@ -1310,7 +1311,11 @@ flutter build aar
 ROOT_PROJECT_PATH=$(cd "$(dirname "$0")"; pwd)
 # repo目录
 REPO_DIR=$ROOT_PROJECT_PATH/build/host/outputs/repo
+```
+
 # 初始化一个空数组来存储匹配的文件路径
+
+```dart
 aar_files=()
 
 # 查找并处理匹配的文件
@@ -1334,7 +1339,7 @@ for aar_file in "${aar_files[@]}"; do
         -Dpackaging=aar \
         -Durl=file://$LOCAL_REPO_PATH
 done
-```dart
+```
 
 #### 6.2.2. 把多个AAR包打成一个
 

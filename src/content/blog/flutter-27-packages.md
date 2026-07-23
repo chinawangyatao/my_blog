@@ -87,7 +87,7 @@ heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ```dart
 dependency_overrides:
   provider: ^6.0.0
-```dart
+```
 
 对于 **特定平台库** 的冲突处理则需要遵循 **对应平台的构建系统的规则** 来更改，如 **Android端** 需要在 **android/build.gradle** 中通过 **resolutionStrategy** 强制指定版本，示例如下：
 
@@ -97,7 +97,7 @@ configurations.all {
         force 'com.google.guava:guava:28.0-android'
     }
 }
-```dart
+```
 
 ### 4.2. build-构建工具
 
@@ -110,7 +110,7 @@ targets:
       <builder_name>:
         options:
           <option_key>: <option_value>
-```dart
+```
 
 * **targets**: 定义构建目标，通常使用 $default 作为默认目标。
 * **builders**: 列出要使用的构建器。
@@ -127,7 +127,7 @@ targets:
         options:
           explicit_to_json: true  # toJson()时将嵌套的对象也转换为Map类型而非引用
           include_if_null: false  # toJson()时忽略值为null的字段
-```dart
+```
 
 通过 **flutter pub run build_runner build** (或 **watch监听文件变化**) 命令来执行构建任务。
 
@@ -141,7 +141,7 @@ targets:
 
 ```dart
 flutter create --template=plugin --platforms=android,ios cp_toast_plugin
-```dart
+```
 
 打开后可以看到项目结构和普通Flutter项目基本一样：
 
@@ -175,7 +175,7 @@ flutter create --template=plugin --platforms=android,ios cp_toast_plugin
 
 ```dart
 dart create -t package-simple to_string_generator
-```dart
+```
 
 打开看下项目结构：
 
@@ -185,7 +185,7 @@ dart create -t package-simple to_string_generator
 
 ① **pubspec.yaml** 添加下依赖：
 
-```dart
+```yaml
 dependencies:
   source_gen: ^1.5.0
   analyzer: ^6.2.0
@@ -193,7 +193,7 @@ dependencies:
 
 dev_dependencies:
   build_runner: ^2.4.7
-```dart
+```
 
 ① 定义下 **注解类**，用于标记需要生成 toString() 方法的类：
 
@@ -202,7 +202,7 @@ dev_dependencies:
 class ToStr {
   const ToStr();
 }
-```dart
+```
 
 ② 创建 **生成器类**，继承 **GeneratorForAnnotation**，并重写 **generateForAnnotatedElement**()：
 
@@ -251,7 +251,7 @@ extension ${className}ToStr on $className {
     ''';
   }
 }
-```dart
+```
 
 ③ 创建触发器的 **Builder**：
 
@@ -263,7 +263,7 @@ import 'to_string_generator.dart';
 
 Builder toStrBuilder(BuilderOptions options) =>
     LibraryBuilder(ToStrGenerator());
-```dart
+```
 
 ④ 配置 **build.yaml**
 
@@ -279,7 +279,11 @@ builders:
     # 构建器工厂函数的名称列表
     builder_factories: ["toStrBuilder"]
 
+```
+
     # 指定输入和输出文件扩展名映射关系
+
+```dart
     build_extensions: {".dart": [".g.dart"]}
 
     # 构建器自定应用的范围：none(不自动应用)、dependents(依赖包)、root_package(当前包)、all_packages(所有包)
@@ -290,7 +294,7 @@ builders:
 
     # 应用的其它构建器列表
     applies_builders: ["source_gen"]
-```dart
+```
 
 接着在保重随便建一个文件，如：
 
@@ -308,7 +312,7 @@ builders:
 
 我们平时的 **依赖方式** 都是依赖的Google官方 [Pub仓库](https://pub.dev/)，可以在上面查找需要的库，也可以发布自己的库。如何发布pub.dev可以参考：[《官方文档：Publishing packages》](https://dart.dev/tools/pub/publishing)还有视频讲解，非常细了。**私服** 搭建一般用的 [pub_server](https://github.com/dart-archive/pub_server) 或 [unpub](https://github.com/pd4d10/unpub)，有搭建需要的可以参考：**《Flutter 搭建私有 Pub 仓库 Docker 部署》**。提下另外两种常见的依赖方式：**本地包** & **Git**，示例如下：
 
-```dart
+```yaml
 # 依赖本地包
 dependencies:
   to_string_generator:
@@ -325,7 +329,7 @@ dependencies:
   to_string_generator:
     git: git://github.com/配套示例源码.git
     path: packages/to_string_generator
-```dart
+```
 
 更多依赖方式可自行参阅：[《官方文档：Package dependencies》](https://dart.dev/tools/pub/dependencies)
 

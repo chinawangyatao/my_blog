@@ -168,7 +168,7 @@ final position = renderBox.localToGlobal(Offset.zero);
 
 // 获取屏幕尺寸
 final screenSize = MediaQuery.of(context).size;
-```dart
+```
 
 **获取context** 这个有些讲究，**BuildContext** 在之前的章节**《十八、进阶：🔍探探 BuildContext》**有讲过：
 
@@ -185,7 +185,7 @@ Builder(
     return Container();
   },
 );
-```dart
+```
 
 ② **GlobalKey**：使用它可以在任何地方获取与之关联的Widget的BuildContext。
 
@@ -197,7 +197,7 @@ Widget myWidget = Container(key: myKey);
 
 // 通过GlobalKey获取BuildContext
 BuildContext? context = myKey.currentContext;
-```dart
+```
 
 🤷‍♀️ 当然，你还可以参考各种 **Xxx.of()** 的写法，自己进行遍历，查找文本匹配 Text 的代码示例：
 
@@ -229,7 +229,7 @@ if (textElement != null) {
 } else {
   print('Text widget not found');
 }
-```dart
+```
 
 ### 3.2. 例子：简单的"米"字弹窗
 
@@ -345,7 +345,7 @@ void paint(PaintingContext context, Offset offset) {
     );
   }
 }
-```dart
+```
 
 跟下这两个实现 "**跟随**" 效果的 **Layer** 类，先是记录 "**领导者**" 的位置和变换信息的 **LeaderLayer**：
 
@@ -367,7 +367,7 @@ class LeaderLayer extends ContainerLayer {
     super.remove();
   }
 }
-```dart
+```
 
 然后是记录 "**跟随者**" 对象的 **FollowerLayer**，它会根据 LeaderLayer 的位置和变换信息来调整自己的位置和变换，从而实现跟随效果。
 
@@ -412,7 +412,7 @@ class FollowerLayer extends ContainerLayer {
     }
   }
 }
-```dart
+```
 
 🤏 行吧，一句话概括原理：**利用底层渲染层的变换，无需频繁重建Widget或进行复杂的状态管理**。
 

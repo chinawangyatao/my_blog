@@ -35,7 +35,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 🤔 在学习了更多 **Widget** 后，我知道了：给 **溢出的Text** 套个 **Expanded** 或 **Flexible** 就能解决这个问题：
 
@@ -111,7 +111,7 @@ class HomePage extends StatelessWidget {
         ));
   }
 }
-```dart
+```
 
 😁 你觉得运行后的效果会是怎样？**蓝色大正方形在下，红色小正方形在上**？不好意思，只有红色大正方形：
 
@@ -163,7 +163,7 @@ Widget build(BuildContext context) {
         ),
       ));
 }
-```dart
+```
 
 运行结果和布局层次如下：
 
@@ -179,7 +179,7 @@ Widget build(BuildContext context) {
 void main() {
   runApp(Container(color: Colors.blue));
 }
-```dart
+```
 
 **Flutter Inspector** 看下布局层级：
 

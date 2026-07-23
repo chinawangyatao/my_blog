@@ -75,7 +75,7 @@ void main() {
   s1.incrementCounter();
   print(s2.counter);  // 输出：1
 }
-```dart
+```
 
 **单例** 指的是 **一个类只能创建一个实例**，对应的 **多例** 则是：**一个类能创建多个实例**，**但数量是有限的**。实现方法很简单，核心就是用一个 **Map** 来存实例，每个实例对应一个 **特定的Key**，请求相同的Key返回同一个实例。实现多例的简单代码示例如下：
 
@@ -103,7 +103,7 @@ void main() {
   print(identical(m1, m2)); // 输出结果：false
   print(identical(m1, m3)); // 输出结果：true
 }
-```dart
+```
 
 ### 3.2. 编译时代码生成
 
@@ -122,7 +122,7 @@ void main() {
 class ToString {
   const ToString();
 }
-```dart
+```
 
 然后是 **生成器 → lib/to_string_generator.dart**：
 
@@ -176,7 +176,7 @@ extension ToString${classElement.name} on ${classElement.name} {
     ''';
   }
 }
-```dart
+```
 
 接着添加 **本地依赖**：
 
@@ -185,11 +185,11 @@ dev_dependencies:
   build_runner: ^2.1.4
   to_string_generator:
     path: ../to_string_generator
-```dart
+```
 
 在 **build.yam**l 中配置下 **生成器**：
 
-```dart
+```yaml
 builders:
   # 构建器标识符
   to_string_generator:
@@ -199,13 +199,17 @@ builders:
     builder_factories: ["ToStringGenerator"]
     # 输入和输出文件的扩展名映射
     build_extensions: {".dart": [".g.dart"]}
+```
+
     # 控制构建器的应用范围，这里设置 dependents 表示将自动应用于依赖当前包的其他包中的文件
+
+```yaml
     auto_apply: dependents
     # 生成文件的存储位置
     build_to: cache
     # 当前构建器依赖的其它构建器
     applies_builders: ["source_gen"]
-```dart
+```
 
 然后给类添加上@ToString()注解：
 
@@ -221,7 +225,7 @@ class Person {
 
   Person(this.name, this.age);
 }
-```dart
+```
 
 最后，执行 **flutter pub run build_runner build** 即可生成代码~
 
@@ -261,7 +265,7 @@ void main() {
   List<List<List<String>>> list = [];
   print("${list.runtimeType}"); // 输出：List<List<List<String>>>
 }
-```dart
+```
 
 除此之外，还可以通过 **显式传递类型信息** 来实现 **运行时获取泛型的类型信息**，简单代码示例：
 
@@ -288,7 +292,7 @@ class Box<T> {
   final Type type;	// 显式传递类型信息
   Box({required this.type});
 }
-```dart
+```
 
 然后，在提下讲泛型必提的 "**三变**" 在Dart中的表现，以父类-Aniaml、子类-Dog 为例：
 
@@ -302,7 +306,7 @@ void main() {
   // List 类型是不变的，下面的代码会报错
   // dogs = animals; // 错误：类型 'List<Animal>' 不能赋值给 'List<Dog>'
 }
-```dart
+```
 
 ② **协变**：**Dart中的函数返回类型**
 
@@ -315,7 +319,7 @@ void main() {
   Animal Function() animalGetter = getDog; // 这是允许的
   print(animalGetter() is Dog); // 输出：true
 }
-```dart
+```
 
 ③ **逆变**：**Dart中的函数参数**
 
@@ -331,7 +335,7 @@ void main() {
   void Function(Dog) dogTaker = takeAnimal; // 这是允许的
   dogTaker(Dog()); // 实际调用 takeAnimal，但这里传递的是 Dog 类型
 }
-```dart
+```
 
 ### 3.4. 函数闭包 (Closure)
 
@@ -352,7 +356,7 @@ void main() {
 }
 
  var a = 0;
-```dart
+```
 
 然后，在一个词法作用域 **内部** 可以能访问到 **外部** 词法作用域中定义的变量：
 
@@ -365,7 +369,7 @@ void main() {
 
   print(name); // ❎ 外部不能访问内部，Error：Undefined name 'name'
 }
-```dart
+```
 
 报 **未定义该变量的错误警告**，说明 print() 中定义的变量对于 main() 中的变量是不可见的。Dart 和 JavaScript 一样具有 **链式作用域** → **子作用域** 可以访问 **父/祖先作用域** 中的变量，而反过来不行。
 
@@ -409,7 +413,7 @@ void printNumber(){
   num ++;
   print(num);
 }
-```dart
+```
 
 然后是 **闭包在Flutter中的应用** 示例：
 
@@ -421,7 +425,7 @@ Text((){
     print(data);
     return data;
 }())
-```dart
+```
 
 ② **实现策略模式**
 
@@ -445,7 +449,7 @@ int sum(int a, int b) => a + b;
 int sub(int a, int b) => a - b;
 
 typedef NumberOp = Function (int a, int b);
-```dart
+```
 
 ③ **实现Builder模式/懒加载**
 
@@ -459,7 +463,7 @@ ListView.builder({
 // 接收 BuildContext 和 int 作为参数，返回一个内部Widget，这样外部Scpoe也能访问
 // IndexedWidgetBuilder 的scope内部定义的Widget，从而实现builder模式，而且还自带懒加载
 typedef IndexedWidgetBuilder = Widget Function(BuildContext context, int index);
-```dart
+```
 
 ### 3.5. 混入 (Mixin)
 
@@ -480,7 +484,7 @@ class _Intermediate3 extends _Intermediate2 with C { }
 class D extends _Intermediate3 {
   // 可以添加自己的成员和方法
 }
-```dart
+```
 
 从伪代码不难看出 **混入是线性的**，优先级高于 **继承**，后面的混入类会覆盖前面的 **同名方法**，所以下面的代码：
 
@@ -496,7 +500,7 @@ class D with A,B,C {
 void main(List<String> args) {
   D().printName();	// 输出：C
 }
-```dart
+```
 
 输出结果是"C"，如果想实现 **每个混入类的同名方法都被调用 (链式调用)** ，只需简单四步：
 
@@ -537,7 +541,7 @@ class D extends Parent with A,B,C {
 void main(List<String> args) {
   D().printName();  // 输出：ABC
 }
-```dart
+```
 
 > **Tips**：源码 **runApp()** → **WidgetsFlutterBinding** → **BaseBinding** 中对应的应用~
 
@@ -575,7 +579,7 @@ extension FileTypeExtensions on FileType {
     }
   }
 }
-```dart
+```
 
 扩展本质上是通过 **静态方法** 来实现的，如果 **扩展属性/方法名与目标类现有同名**，扩展的定义不会被调用，**原始类的实现具有更高的优先级**。
 
@@ -602,7 +606,7 @@ void main() {
 
   print(myObject.property); // 输出: value
 }
-```dart
+```
 
 然后是 **展开操作符(...)** → 用于 **将一个集合中所有元素插入刀另一个集合中**。代码示例：
 
@@ -624,7 +628,7 @@ Widget build(BuildContext context) {
     ],
   );
 }
-```dart
+```
 
 🤷‍♂️ 关于Flutter中的常用封装伎俩就介绍到这，欢迎评论区补充，接着着手思考下，网络请求这块具体怎么封装~
 
@@ -709,7 +713,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-```dart
+```
 
 点击两个按钮分别发起GET和POST请求，并将响应结果显示到Text上，**运行结果如下**：
 
@@ -813,7 +817,7 @@ class ApiClient {
         data: data, queryParameters: queryParameters, options: options, cancelToken: cancelToken);
   }
 }
-```dart
+```
 
 然后是拦截器相关的代码 → **interceptors.dart**：
 
@@ -845,7 +849,7 @@ HttpClient localProxyHttpClient() {
   // 抓包工具一般会提供一个自签名的证书，会通不过证书校验，这里需要禁用下，直接返回true
     ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
 }
-```dart
+```
 
 接着调用下试试，修改 **main.dart** 的代码，先调 **init()** 初始化 **ApiClient**：
 
@@ -872,7 +876,7 @@ Future<Response> testGet(TestGetRef ref) => ApiClient.instance.get("/testGet");
 @riverpod
 Future<Response> testPost(TestPostRef ref, int page) =>
     ApiClient.instance.post("/testPost", data: {'page': page, "keyword": "${DateTime.now().millisecondsSinceEpoch}"});
-```dart
+```
 
 执行 **flutter pub run build_runner build** 生成 Provider 变量，修改下调用处的代码：
 
@@ -937,7 +941,7 @@ class UserWidget extends ConsumerWidget {
     );
   }
 }
-```dart
+```
 
 🤔 em... 从 **职责分离** 的角度，这样做确实有意义，而且可以建多个Repository来分离不同业务的 **API请求**，便于管理维护。当然，要不要这样搞看自己哈，反正我的小项目是直接Providre一把梭滴🤣~
 
@@ -1065,7 +1069,7 @@ class ErrorResponseFormatException extends ApiException {
 class NotKnowResponseTypeException extends ApiException {
   NotKnowResponseTypeException(super.code, super.message);
 }
-```dart
+```
 
 然后是请求方法 (**api_client.dart**)：
 
@@ -1145,7 +1149,7 @@ class NotKnowResponseTypeException extends ApiException {
               cancelToken: cancelToken),
           fromJsonT);
 }
-```dart
+```
 
 接着改下**provider**，主要是指定 **两个泛型**：
 
@@ -1165,7 +1169,7 @@ class TestPost extends _$TestPost {
         data: {'page': curPage, "keyword": "${DateTime.now().millisecondsSinceEpoch}"});
   }
 }
-```dart
+```
 
 修改下调用处，因为是直接抛异常，所以需要 **捕获下异常**，不然报错直接 **崩(红屏)** ，UI界面一般会用到异常信息，如果直接在provider中捕获，抛异常不会奔溃，但信息没法向外传递，这种写法不太行🤷‍♂️：
 

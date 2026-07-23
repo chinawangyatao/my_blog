@@ -105,7 +105,7 @@ Listener(
   },
   child: Container(/* ... */),
 )
-```dart
+```
 
 ### 3.2. GestureDecotor 组件
 
@@ -212,7 +212,7 @@ typedef GestureScaleEndCallback = void Function(ScaleEndDetails details);
 // 💡 ScaleUpdateDetails 属性：focalPoint、localFocalPoint、pointerCount、scale-缩放比例
 // 		horizontalScale-水平缩放比例、verticalScale-垂直缩放比例、rotation-旋转角度(弧度)
 // 💡 ScaleEndDetails 属性：velocity-速度信息、pointerCount-触点个数
-```dart
+```
 
 没啥复杂，就是 **重写关注手势对应的回调方法**，写个不同手势行为打印日志的代码示例【--->[c34/gesture_detector_demo.dart](https://github.com/配套示例源码/blob/master/lib/c34/gesture_detector_demo.dart)<---】，运行效果：
 
@@ -301,7 +301,7 @@ Stack(
     ),
   ],
 )
-```dart
+```
 
 ### 3.4. InkWell & InkResponse
 
@@ -484,7 +484,7 @@ Material(
     ),
   ),
 )
-```dart
+```
 
 💁‍♂️ 了解完API，接着开始讲原理咯~
 
@@ -624,7 +624,7 @@ return RawGestureDetector(
   excludeFromSemantics: excludeFromSemantics,
   child: child,
 );
-```dart
+```
 
 😄 把里面涉及到的 **两个类的核心代码** 拎出来讲一讲，这种 "**延迟加载**" 的玩法值得借鉴：
 
@@ -688,7 +688,7 @@ void _syncAll(Map<Type, GestureRecognizerFactory> gestures) {
     }
   }
 }
-```dart
+```
 
 上面的 **GestureDecotor.build()** 最终返回一个 **RawGestureDetector** 对象，它是Flutter手势系统的 "**基石**"，而 **GestureDetector** 其实是基于它的一层封装，旨在提供更便捷的 API 供开发者使用。
 
@@ -707,7 +707,7 @@ class RawGestureDetector extends StatefulWidget {
     this.semantics,               // 🎭 语义化手势代理
   });
 }
-```dart
+```
 
 不难看出最核心的属性是 **gestures**，**Key(Type)** 是手势识别器的类型，如 TapGestureRecognizer，而**Value(GestureRecognizerFactory)** 是工厂对象，用于创建和配置手势识别器的实例，还算简单，因为真正的工作其实都是在它的 **State类** 中完成的。
 
@@ -815,7 +815,7 @@ void acceptGesture(int pointer) {
   // 📞 触发用户回调
   invokeCallback<void>('onTap', onTap);
 }
-```dart
+```
 
 接着看看竞技场 "**核心三剑客**"的源码。
 
@@ -845,7 +845,7 @@ DoubleTapGestureRecognizer    // 双击手势
 LongPressGestureRecognizer    // 长按手势
 PanGestureRecognizer          // 平移手势
 ScaleGestureRecognizer        // 缩放手势
-```dart
+```
 
 #### 5.6.2. _GestureArena - 竞技场实体类
 
@@ -889,7 +889,7 @@ class _GestureArena {
     eagerWinner ??= member;  // 只设置一次，先到先得！
   }
 }
-```dart
+```
 
 #### 5.6.3. GestureArenaEntry - 识别器 & 控制器的唯一桥梁
 
@@ -919,7 +919,7 @@ entry.resolve(GestureDisposition.accepted);
 
 // ❌ 识别器发现不匹配时主动退出
 entry.resolve(GestureDisposition.rejected);
-```dart
+```
 
 #### 5.6.4. 完整调用链路图
 
@@ -965,7 +965,7 @@ abstract class GestureRecognizer extends GestureArenaMember with DiagnosticableT
   // 被允许 → addAllowedPointer() → startTrackingPointer(pointer)-开始跟踪这个指针
   // 不被允许 → handleNonAllowedPointer() 处理不允许的情况
 }
-```dart
+```
 
 😐 **GestureRecognizer** 只是定义了基本的手势识别API，具体的逻辑都交给 **对应的子类** 去处理：
 
@@ -1018,7 +1018,7 @@ class PointerEvent {
 
   //...
 }
-```dart
+```
 
 **简化事件流**：
 
@@ -1069,7 +1069,7 @@ void acceptGesture(int pointer)
 // 【失败回调】当你的识别器在竞技场中失败时（例如，另一个识别器胜出），此方法被调用。
 // 通常在这里触发取消回调（如 onTapCancel）
 void rejectGesture(int pointer)	。
-```dart
+```
 
 🤔 所以，**单序列** 类型手势识别器，关注的重点就是 **handleEvent()** ，它回答了最关键的问题："**这个手势是如何被判定成功或失败的？** "。看下它的子类-单击和长按对应的源码。
 
@@ -1163,7 +1163,7 @@ void _registerSecondTap(_TapTracker tracker) {
   // 🔄 重置所有状态，准备下一次双击检测
   _reset();
 }
-```dart
+```
 
 #### 5.7.6. ScaleGestureRecognizer 源码
 
@@ -1228,7 +1228,7 @@ void handleEvent(PointerEvent event) {
   }
   stopTrackingIfPointerNoLongerDown(event);         // ④ 清理追踪
 }
-```dart
+```
 
 状态机核心逻辑在 **_advanceStateMachine()** 中：
 
@@ -1281,7 +1281,7 @@ void _advanceStateMachine(bool shouldStartIfAccepted, PointerEvent event) {
     }
   }
 }
-```dart
+```
 
 不难看出竞争判定的关键逻辑在于当状态为 _ScaleState.possible 时执行三重判定条件：
 
@@ -1410,7 +1410,7 @@ class MultipleTapGestureRecognizer extends OneSequenceGestureRecognizer {
     super.dispose();
   }
 }
-```dart
+```
 
 然后在需要使用自定义手势的地方使用 **RawGestureDetector**，通过 **gestures** 传入支持的手势类型，这里依次传入了"单击"、"长按" 和 "N连击"：
 
@@ -1446,7 +1446,7 @@ RawGestureDetector(
       },
     ),
   }, child: ...
-```dart
+```
 
 运行效果：
 

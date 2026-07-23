@@ -79,7 +79,7 @@ class _TestKeyWidgetState extends State<TestKeyWidget> {
         child: Text("$count", style: const TextStyle(color: Colors.white, fontSize: 30)),
       ));
 }
-```dart
+```
 
 运行后，点击数字自增，让三个Widget数字依次显示为：**绿1蓝2红3**，然后点击移除按钮：
 
@@ -91,7 +91,7 @@ List<Widget> items = [
   const TestKeyWidget(key: ValueKey(2), color: Colors.blue),
   const TestKeyWidget(key: ValueKey(3), color: Colors.red)
 ];
-```dart
+```
 
 此时再次重复上面的操作，Widget正确移除，数字也显示正确：
 
@@ -138,7 +138,7 @@ print(widget.color);	// 获得控件颜色
 final renderBox = _globalKey.currentContext!.findRenderObject() as RenderBox;
 print(renderBox.size);	// 获得控件尺寸
 print(renderBox.localToGlobal(Offset.zero))	// 获得控件坐标
-```dart
+```
 
 **Tips**： **不要在build() 方法中创建GlobalKey**！！！性能不好不说，还可能出现意想不到的异常，如：子树里的GestureDetector可能会由于每次build时重新创建GlobalKey而无法继续追踪手势事件。
 
@@ -202,7 +202,7 @@ List<Widget> items = [
   TestKeyWidget(key: UniqueKey(), color: Colors.blue),
   TestKeyWidget(key: UniqueKey(), color: Colors.red)
 ];
-```dart
+```
 
 **UniqueKey()** 创建的Key唯一，所以组件的状态也得以保存。另外，它还有一个使用场景：
 
