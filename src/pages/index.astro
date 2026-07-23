@@ -555,7 +555,7 @@ const categories = [
 
 <script>
   // Scroll reveal animation
-  document.addEventListener('astro:page-load', () => {
+  function initReveal() {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -570,5 +570,14 @@ const categories = [
     );
 
     reveals.forEach((el) => observer.observe(el));
-  });
+  }
+
+  document.addEventListener('astro:page-load', initReveal);
+
+  // Fallback: ensure content is visible even if ClientRouter fails
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => {
+      el.classList.add('is-visible');
+    });
+  }, 3000);
 </script>
