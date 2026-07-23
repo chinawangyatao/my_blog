@@ -5,7 +5,7 @@ description: "Flutter动画系统详解，Tween、Curve、AnimatedBuilder、Hero
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
-heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第二十三篇，该系列涵盖从环境搭建到高级原理的完整知识体系。

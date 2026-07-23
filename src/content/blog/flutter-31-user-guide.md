@@ -5,7 +5,7 @@ description: "封装新手引导组件，提升应用的用户引导体验。"
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
-heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第三十一篇，该系列涵盖从环境搭建到高级原理的完整知识体系。

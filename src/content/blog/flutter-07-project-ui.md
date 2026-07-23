@@ -5,7 +5,7 @@ description: "Flutter项目实战的UI实现，页面布局、组件封装、交
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
-heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第七篇，该系列涵盖从环境搭建到高级原理的完整知识体系。

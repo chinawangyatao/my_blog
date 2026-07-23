@@ -5,7 +5,7 @@ description: "Flutter滑动机制深度解析，Viewport、Sliver、自定义滚
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
-heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第三十五篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
