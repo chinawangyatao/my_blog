@@ -5,6 +5,7 @@ description: "Flutter SDK版本管理方案，fvm、git分支策略等。"
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第三十二篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -15,7 +16,7 @@ category: 'tech'
 
 **Flutter 3.18.0** 后才内置了PrivacyInfo.xcprivacy，现在我们的版本是3.7.12，要不要 **升级下Flutter版本**？不升的话就先按照这次提交改一下：[Add xcprivacy privacy manifest to iOS framework](https://github.com/flutter/engine/pull/48951/files/d41d6a041197b4ae51939f961b032de68b529c45#diff-061dbd9aea4078fde63015908bd77fb6a614bdb98aa9f89df8d3bef35316b005)
 
-😶 当初搞 **Flutter** 的一个原因就是 **适配鸿蒙**，但 [openharmony-sig/flutter\_flutter](https://gitee.com/openharmony-sig/flutter_flutter) 有 **flutter** 版本限制，所以组里一直没更新，看提交记录，前阵子合并了一个 **3.22.0** 的分支：
+😶 当初搞 **Flutter** 的一个原因就是 **适配鸿蒙**，但 [openharmony-sig/flutter_flutter](https://gitee.com/openharmony-sig/flutter_flutter) 有 **flutter** 版本限制，所以组里一直没更新，看提交记录，前阵子合并了一个 **3.22.0** 的分支：
 
 😄 反正早晚要踩坑，还是升级一波吧，「**本地 Flutter SDK**」切换到特定版本的命令如下：
 
@@ -100,7 +101,7 @@ choco -v
 fvm config --cache-path D:\Coding\fvm
 ```dart
 
-然后配置下环境变量「**FVM\_CACHE\_PATH**」
+然后配置下环境变量「**FVM_CACHE_PATH**」
 
 ### 2.2. Pub
 
@@ -140,8 +141,8 @@ dart pub global activate fvm
 
 如果一直卡住不动，可以尝试添加下述两个 **环境变量** 来指定 **镜像源**：
 
-* **PUB\_HOSTED\_URL** → [pub.flutter-io.cn](https://pub.flutter-io.cn)
-* **FLUTTER\_STORAGE\_BASE\_URL** → [storage.flutter-io.cn](https://storage.flutter-io.cn)
+* **PUB_HOSTED_URL** → [pub.flutter-io.cn](https://pub.flutter-io.cn)
+* **FLUTTER_STORAGE_BASE_URL** → [storage.flutter-io.cn](https://storage.flutter-io.cn)
 
 等待设置结束：
 
@@ -194,9 +195,9 @@ try:
 
 **对应作用**：
 
-* **flutter\_sdk**：指向 **versions** 文件夹中 **具体Flutter版本** 的 **符号链接(快捷方式)** 。
+* **flutter_sdk**：指向 **versions** 文件夹中 **具体Flutter版本** 的 **符号链接(快捷方式)** 。
 * **versions**：存储了通过 FVM 安装的所有 Flutter SDK 版本。
-* **fvm\_config.json**：(已弃用) 记录当前项目使用的Flutter版本及其它配置信息。
+* **fvm_config.json**：(已弃用) 记录当前项目使用的Flutter版本及其它配置信息。
 * **release**：(内部使用) 与 Flutter SDK 相关的发布信息和元数据。
 * **version**：(内部使用) 记录了当前使用的 Flutter SDK 版本号。
 
@@ -218,7 +219,7 @@ try:
 
 打开 **设置**，搜索 **Flutter**，修改 **Flutter SDK path** 指向 **fvm/default** 目录：
 
-不想采用 **全局设置** 的话而是 **单一项目设置**，路径指向当前项目的 **fvm\flutter\_sdk** 即可。
+不想采用 **全局设置** 的话而是 **单一项目设置**，路径指向当前项目的 **fvm\flutter_sdk** 即可。
 
 #### 3.3.2. Visual Studio Code
 

@@ -5,6 +5,7 @@ description: "Flutter中JSON数据处理方案对比，手动解析、json_seria
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第十二篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -13,7 +14,7 @@ category: 'tech'
 
 😀 之前写的 **《六、项目实战-非UI部分🤷‍♂️》**一文中关于 **Json序/反序列化** 和 **网络请求** 部分写得有些简陋，在实际开发中发现并不太好用，本节先来讲讲关于 **Flutter中的Json序/反序列化** 本人归纳出的最佳实践。😄 当然，有更好的实践方式也欢迎在评论区指出，谢谢~
 
-> **QuickType** + **json\_serializable库**，复制后端返回的Json字符串到QuickType生成Model类，直接复制粘贴到项目中。可以使用 **泛型** 减少重复Model的编写，利用 **build.yaml** 减少重复属性的设置，根据实际情况按需 **自定义字段的序列化/反序列化**。
+> **QuickType** + **json_serializable库**，复制后端返回的Json字符串到QuickType生成Model类，直接复制粘贴到项目中。可以使用 **泛型** 减少重复Model的编写，利用 **build.yaml** 减少重复属性的设置，根据实际情况按需 **自定义字段的序列化/反序列化**。
 
 **本节内容如下**：
 
@@ -140,9 +141,9 @@ void main() {
 
 > 摇树是Dart编译过程的一个术语， 它会 **移除** 应用程序编译后的 **未被使用的代码**，以缩减应用体积。而反射需要在运行时动态查询或调用对象的属性或方法，为此，**编译器必须保留应用中所有可能会被反射机制调用的代码**，即便这些代码在实际工作流程中可能永远不会被执行。这直接干扰到摇树，编译器无法确定那些代码是 **"多余"** 的。因此，Flutter直接禁掉了运行时反射(具体表现：不能使用 **dart:mirrors库**)，鼓励开发者使用 **编译时代码生成** 的方式来代替反射。
 
-😉 官方推荐使用 [json\_serializable](https://pub.dev/packages/json_serializable) 这个 **Flutter编译时工具** 来生成Json序/反序列化代码，过下它的详细用法~
+😉 官方推荐使用 [json_serializable](https://pub.dev/packages/json_serializable) 这个 **Flutter编译时工具** 来生成Json序/反序列化代码，过下它的详细用法~
 
-## 3. json\_serializable 库
+## 3. json_serializable 库
 
 😄 用库前，得之前这个库是用来解决什么问题的~
 
@@ -152,9 +153,9 @@ void main() {
 
 它由三个部分组成：
 
-* **json\_annotation** → 定义注解。
-* **json\_serializable** → 使用这些注解来生成代码。
-* **build\_runner** → 执行生成代码的任务。
+* **json_annotation** → 定义注解。
+* **json_serializable** → 使用这些注解来生成代码。
+* **build_runner** → 执行生成代码的任务。
 
 添加库依赖的方式二选一：
 
@@ -215,7 +216,7 @@ class Banner {
 }
 ```dart
 
-编写完上述代码，编译器会报\_BannerFromJson和\_BannerToJson找不到，没关系，只要确定没拼写错误就行，直接执行下述命令生成对应的序列化代码：
+编写完上述代码，编译器会报_BannerFromJson和_BannerToJson找不到，没关系，只要确定没拼写错误就行，直接执行下述命令生成对应的序列化代码：
 
 ```dart
 flutter pub run build_runner build --delete-conflicting-outputs
@@ -244,9 +245,9 @@ flutter pub run build_runner build --delete-conflicting-outputs
 * **createFactory** → 默认为true，当你需要自定义反序列化逻辑时，可以设置为false，生成器不会生成fromJson()。
 * **createToJson** → 默认为true，需要自定义序列化逻辑时，可以设置为false，生成器不会生成 toJson()。
 * **disallowUnrecognizedKeys** → 默认为false，设置为true时，如果输入的Json中包含Model中未定义的Key，fromJson() 将抛出一个异常。
-* **fieldRename** → 控制如何将类字段的名称更改为Json键名称，枚举类FieldRename，可选值有：none(默认，不更改)、kebab(短横线命名a-b)、snak(蛇形命名a\_b)、pascal(帕斯卡命名AxxBxx)。
+* **fieldRename** → 控制如何将类字段的名称更改为Json键名称，枚举类FieldRename，可选值有：none(默认，不更改)、kebab(短横线命名a-b)、snak(蛇形命名a_b)、pascal(帕斯卡命名AxxBxx)。
 * **converters** → 允许自定义转换器，这些转换器可以在序列化和反序列期间使用。
-* **createPerFieldToJson** → 默认为false，是否为每个字段创建一个单独的 **\_$[FieldName]ToJson()** 函数，当你需要对某些字段进行特殊处理时，如：自定义类型需要特殊的序列化逻辑、想根据字段的值改变输出的Json结构等，即复杂的自定义序列化，再考虑是否将这个属性设置为true，毕竟会增加代码的复杂性！
+* **createPerFieldToJson** → 默认为false，是否为每个字段创建一个单独的 **_$[FieldName]ToJson()** 函数，当你需要对某些字段进行特殊处理时，如：自定义类型需要特殊的序列化逻辑、想根据字段的值改变输出的Json结构等，即复杂的自定义序列化，再考虑是否将这个属性设置为true，毕竟会增加代码的复杂性！
 
 #### 3.2.2. @JsonKey
 
@@ -371,7 +372,7 @@ class ListResponse<T> {
 }
 ```dart
 
-执行 **flutter pub run build\_runner build** 生成完.g.dart文件后，写下简单的测试代码：
+执行 **flutter pub run build_runner build** 生成完.g.dart文件后，写下简单的测试代码：
 
 ```dart
 // 泛型的具体类型
@@ -477,7 +478,7 @@ List<T> parseList<T>(dynamic json, T Function(Map<String, dynamic>) fromJson) =>
 * **如何解决**：在每个Model类的 **@JsonSerializable** 注解中都设置属性 **includeIfNull: false** 生成器生成toJson()方法时忽略掉值为null的字段。
 * **又比如**：涉及Model类嵌套，需要设置 **explicitToJson: true**，让其显式调用嵌套类的toJson()，而不是复制一个引用类型。
 * **发现问题**：需要手动对所有的Model进行 **重复的属性设置**。
-* **更好解法**：使用 **build.yaml** 文件进行 **全局配置**，该文件会被 **build\_runner** 和 **项目中使用的构建插件** (如 json\_serializable、source\_gen 等) 所使用。
+* **更好解法**：使用 **build.yaml** 文件进行 **全局配置**，该文件会被 **build_runner** 和 **项目中使用的构建插件** (如 json_serializable、source_gen 等) 所使用。
 
 在项目中右键新建一个 **build.yaml** 文件，按需配置下就可：
 
@@ -492,7 +493,7 @@ targets:
           include_if_null: false  # toJson()时忽略值为null的字段
 ```dart
 
-更多可选配置可见： [json\_serializable build configuration](https://pub.dev/packages/json_serializable#build-configuration)
+更多可选配置可见： [json_serializable build configuration](https://pub.dev/packages/json_serializable#build-configuration)
 
 #### 3.3.3. 自定义字段序/反序列化逻辑
 
@@ -597,7 +598,7 @@ void main() {
 
 #### 3.4.2. 执行生成序/反序列化代码的命令真烦~！
 
-如题，每次新建或修改Model类，都需要执行 **flutter pub run build\_runner** 来生成序/反序列化代码，觉得麻烦可以执行下述命令启动一个 **watcher**，当带有 **json\_serializable** 注解的类发生改变时，它会自动更新对应的.g.dart文件：
+如题，每次新建或修改Model类，都需要执行 **flutter pub run build_runner** 来生成序/反序列化代码，觉得麻烦可以执行下述命令启动一个 **watcher**，当带有 **json_serializable** 注解的类发生改变时，它会自动更新对应的.g.dart文件：
 
 ```dart
 flutter packages pub run build_runner watch
@@ -638,7 +639,7 @@ flutter packages pub run build_runner watch
 
 ## 4. Json 生成 Model类 的一些工具
 
-**json\_serializable库** 解决的是 **自动生成Json序/反序列化代码**，Model类的 **属性** 还是得 **手动抠Json字段**，可以通过一些工具来自动生成，喜欢哪个用哪个哈~
+**json_serializable库** 解决的是 **自动生成Json序/反序列化代码**，Model类的 **属性** 还是得 **手动抠Json字段**，可以通过一些工具来自动生成，喜欢哪个用哪个哈~
 
 ### 4.1. 网页
 
@@ -646,7 +647,7 @@ flutter packages pub run build_runner watch
 
 [QuickType](https://app.quicktype.io/)，直接复制Json到左侧，右侧会自动生成Model类的代码，复制粘贴到项目里就好了：
 
-默认生成的代码是 **不包含json\_serializable注解相关**，直接生成对应的toJson() 和 fromJson() 方法。需要点击 **Options-Other** 勾选下左图的选项。点击 **Language** 可以进行 **编程语言的细节设置** (如这里选中Dart)：
+默认生成的代码是 **不包含json_serializable注解相关**，直接生成对应的toJson() 和 fromJson() 方法。需要点击 **Options-Other** 勾选下左图的选项。点击 **Language** 可以进行 **编程语言的细节设置** (如这里选中Dart)：
 
 #### 4.1.2. json2dart
 
@@ -660,10 +661,10 @@ AS的插件商店搜下 **JsonToDart** 下载安装：
 
 接着粘贴接口Json，写个类名，点击Generate生成就完事了~
 
-😭 不支持生成json\_serializable注解，类似的插件还有 **FlutterJsonBeanFactory**，用法大同小异。其它工具：
+😭 不支持生成json_serializable注解，类似的插件还有 **FlutterJsonBeanFactory**，用法大同小异。其它工具：
 
 * [fluttercandies/JsonToDart](https://github.com/fluttercandies/JsonToDart/)：号称功能最全面的 Json 转换 Dart 的工具，支持 Windows，Mac，Web；
-* [flutterchina/json\_model](https://github.com/flutterchina/json_model)：一行命令，将Json文件转为Dart model类；
+* [flutterchina/json_model](https://github.com/flutterchina/json_model)：一行命令，将Json文件转为Dart model类；
 
 😆 个人还是更倾向于 **QuickType** 或 **json2dart**，简单易用，通过工具生成绝大部分代码后，还需要进行微调，比如类名修改，添加属性注释等。😏 也可以根据自己的实际情况 **编写自动生成脚本/插件**，比如之前就写过一个py脚本，输入接口文档的URL：
 

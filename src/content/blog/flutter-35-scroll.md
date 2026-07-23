@@ -5,6 +5,7 @@ description: "Flutter滑动机制深度解析，Viewport、Sliver、自定义滚
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第三十五篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -84,8 +85,6 @@ class Scrollable extends StatefulWidget {
 * **up**：垂直方向，内容从下到上排列 (0.0在底部)
 * **right**:：水平方向，内容从左到右排列 (0.0在左侧)
 * **left**：水平方向，内容从右到左排列 (0.0在右侧)
-
----
 
 ② **physics**：**ScrollPhysics?**
 
@@ -182,7 +181,7 @@ _scrollController.addListener(() {
 
 💡 注：要精确地判断滑动状态，推荐使用 **NotificationListener** ，它比 **ScrollController** 的 **addListener** 提供了更丰富、更具体的事件信息，如滚动停止。另外，上拉加载更多 (滑动到底部，用户还往上拉)，常见的错误做法：在 addListener 里判断 **position.pixels == position.maxScrollExtent**，这只在到达底部时触发一次，而不是在到达底部后继续拉动时触发。正确的做法是：监听 **OverscrollNotification**，当用户试图滚动超过 **maxScrollExtent** 时，就会触发这个通知。
 
-**ScrollController** 内部维护了一个 **ScrollPosition** 列表 **\_positions**，**ScrollPosition** 存储了 "**单个滚动视图**" 的 "**状态信息 & 控制逻辑**"。
+**ScrollController** 内部维护了一个 **ScrollPosition** 列表 **_positions**，**ScrollPosition** 存储了 "**单个滚动视图**" 的 "**状态信息 & 控制逻辑**"。
 
 ```dart
 abstract class ScrollPosition extends ViewportOffset with ScrollMetrics {
@@ -266,7 +265,7 @@ ScrollBehavior copyWith({
 
 #### 2.1.2. ScrollableState
 
-**Scrollable** 的核心逻辑都在 **ScrollableState** 中，内部维护一个 **ScrollPosition** 类型的 **\_position** 属性，所有对滚动的操作，最终都作用于这个属性。**ScrollPosition** 是抽象类，在 **ScrollableState** 里的具体实现是 **ScrollPositionWithSingleContext**，核心实现：
+**Scrollable** 的核心逻辑都在 **ScrollableState** 中，内部维护一个 **ScrollPosition** 类型的 **_position** 属性，所有对滚动的操作，最终都作用于这个属性。**ScrollPosition** 是抽象类，在 **ScrollableState** 里的具体实现是 **ScrollPositionWithSingleContext**，核心实现：
 
 * **与 Scrollable 建立连接**："**Single Context**" 指的是它持有一个 "**ScrollableState**" 引用，通过它可以获取到：ScrollPhysics、BuildContext、TickerProvider 及 axisDirection。
 * **与 Viewport 通信**：applyNewDimensions() 的具体实现就是通过 **ScrollableState** 找到对应的 **Viewport**，并从 **Viewport** 获取 minScrollExtent/maxScrollExtent，这是 **ScrollPosition** 获得滚动范围信息的关键。
@@ -789,7 +788,7 @@ _paintContents() // 绘制所有可见内容
 
 ### 2.4. 几行代码轻松实现滚动效果
 
-😏 原理学完，动手缝合下三个构件，实现一个 **最简单** 的滑动效果【--->[c35/simple\_scroll\_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/simple_scroll_demo.dart)<---】：
+😏 原理学完，动手缝合下三个构件，实现一个 **最简单** 的滑动效果【--->[c35/simple_scroll_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/simple_scroll_demo.dart)<---】：
 
 **运行效果**：
 
@@ -811,7 +810,7 @@ _paintContents() // 绘制所有可见内容
 * **keyboardDismissBehavior**：**ScrollViewKeyboardDismissBehavior**，用户与滚动区域交互时，如何 & 何时自动收起弹出的键盘。【**manual**-默认】滚动视图本身不会做任何事情来收起键盘，键盘的收起完全依赖于其他方式，如：回退键、FocusScope.of(context).unfocus() 等。【**onDrag**】当键盘弹出时，用户在滚动视图上开始拖动 (**滚动**) 的那一刻，键盘就会自动收起 ✨。
 * **primary**：**bool?** ，是否使用主滚动控制器，默认null，由系统自动根据上下文自动选择最合适的控制器。为 **true** 时，使用 **主滚动控制器-PrimaryScrollController** (不能同时设置自定义controller)，🤔 用于页面级别的滚动，需要与其它组件共享滚动状态，在移动平台上它会自动处理一些系统级的交互。如：Android 从屏幕边缘拖动可以触发返回操作，主滚动视图会优先响应滚动。在 iOS 上，点击状态栏可以快速滚动到顶部。在Scaffold中，如果body是一个可滚动组件，当键盘弹出时，会调整滚动区域以保证焦点输入框可见。为 **false** 时，当一个页面有多个滚动视图时，只能有一个可以是primary，其它都应该显示设置为false。一般用于独立的滚动区域：如对话框、侧边栏。
 
-简单使用示例【--->[c35/single\_child\_scroll\_view\_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/single_child_scroll_view_demo.dart)<---】运行效果：
+简单使用示例【--->[c35/single_child_scroll_view_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/single_child_scroll_view_demo.dart)<---】运行效果：
 
 😄 非常简单，就切滚动物理效果、设置键盘随列表滚动消失、以及快速滑动到底部、中部和顶部。接着提下使用 **SingleChildScrollView** 的 **两个注意事项**：
 
@@ -823,7 +822,7 @@ _paintContents() // 绘制所有可见内容
 
 关于第一个注意事项 "**SingleChildScrollView 提供无限空间**"，在源码中的体现 (移除了滚动方向的尺寸约束)：
 
-接着是第二个 "**一次性将child全部渲染到内存中**"，跟下代码调用：**SingleChildScrollView** → **build()SingleChildScrollView** 的 **Viewport** 具体实现 **Widget** 是 **\_SingleChildViewport**，对应的 **RenderObject** → **\_RenderSingleChildViewport绘制方法**：
+接着是第二个 "**一次性将child全部渲染到内存中**"，跟下代码调用：**SingleChildScrollView** → **build()SingleChildScrollView** 的 **Viewport** 具体实现 **Widget** 是 **_SingleChildViewport**，对应的 **RenderObject** → **_RenderSingleChildViewport绘制方法**：
 
 上面通过 **pushClipRect()** 来显示显示区域 (视觉裁剪) 实现 "**窗口效果**"：
 
@@ -851,7 +850,7 @@ _paintContents() // 绘制所有可见内容
 │  子组件内容E     │ ← 不可见
 ```dart
 
-😊 可以将 **clipBehavior** 属性 **Clip.none** 来验证是否 **child** 是否真的是 **全部渲染**【--->[c35/single\_child\_scroll\_none\_clip\_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/single_child_scroll_none_clip_demo.dart)<---】运行效果：
+😊 可以将 **clipBehavior** 属性 **Clip.none** 来验证是否 **child** 是否真的是 **全部渲染**【--->[c35/single_child_scroll_none_clip_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/single_child_scroll_none_clip_demo.dart)<---】运行效果：
 
 ### 3.2. ScrollView
 
@@ -1024,7 +1023,7 @@ SliverChildListDelegate extends SliverChildDelegate {
 
 看下 **build()** 方法：
 
-"**盐值(Salt)** " 这个概念来自密码学，指的是在 **加密过程中添加的额外随机数据**。在这里是给原有Key **添加额外信息**，如：原始Key("item\_1") 包装成 \_SaltedValueKey(Key('item\_1'))，目的是让这个Key在delegate内部是 **唯一的**，以避免Flutter混乱这些Key，导致状态错乱。
+"**盐值(Salt)** " 这个概念来自密码学，指的是在 **加密过程中添加的额外随机数据**。在这里是给原有Key **添加额外信息**，如：原始Key("item_1") 包装成 _SaltedValueKey(Key('item_1'))，目的是让这个Key在delegate内部是 **唯一的**，以避免Flutter混乱这些Key，导致状态错乱。
 
 "**KeyedSubtree**" 是一个特殊的 **Widget**，它的作用是：为整个子树提供一个稳定的身份标识，帮助Flutter的渲染系统正确追踪Widget，确保当Widget位置变化时，状态能正确保持。"**Element复用机制**"：当Widget第一次显示时，Flutter创建对应的 **Element** 和 **RenderObject**，当Widget重新构建时，Flutter会尝试 **复用已有的Element**，复用条件是：**Widget的runtimeType和key都相同**。
 
@@ -1462,7 +1461,7 @@ GridView.custom(
 );
 ```dart
 
-简单使用示例【--->[c35/gridview\_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/gridview_demo.dart)<---】运行效果：
+简单使用示例【--->[c35/gridview_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/gridview_demo.dart)<---】运行效果：
 
 #### 3.4.2. 源码剖析
 
@@ -1774,18 +1773,18 @@ nextPage({required Duration duration, required Curve curve})
 previousPage({required Duration duration, required Curve curve})
 ```dart
 
-简单使用示例【--->[c35/pageview\_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/pageview_demo.dart)<---】运行效果：
+简单使用示例【--->[c35/pageview_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/pageview_demo.dart)<---】运行效果：
 
 💡 **Tips**：滑动几页后，切换Tab，再切回来，发现会从第一页开始，即重新创建。如果想 **保存页面状态**，子页面需混入 **AutomaticKeepAliveClientMixin** 并重写 **wantKeepAlive** 返回 true ❗️
 
 #### 3.5.2. 源码剖析
 
-😄 没啥新意，默认构造是 **SliverChildListDelegate**，**builder()** 则是 **SliverChildBuilderDelegate**，前者一次性构建所有的子Widget，后者动态懒加载。**PageView** 继承 **StatefulWidget**，直接看 **\_PageViewState.build()** ：
+😄 没啥新意，默认构造是 **SliverChildListDelegate**，**builder()** 则是 **SliverChildBuilderDelegate**，前者一次性构建所有的子Widget，后者动态懒加载。**PageView** 继承 **StatefulWidget**，直接看 **_PageViewState.build()** ：
 
 **SliverFillViewport** 继承 **StatelessWidget**，直接看 **build()** ：
 
-* **\_SliverFractionalPadding**：负责根据视口大小动态计算并添加内边距，让SliverFillViewport的首尾子项能够居中显示。
-* **\_SliverFillViewportRenderObjectWidget**：Widget 和 RenderObject间的桥梁，负责创建和管理**RenderSliverFillViewport** 渲染对象。
+* **_SliverFractionalPadding**：负责根据视口大小动态计算并添加内边距，让SliverFillViewport的首尾子项能够居中显示。
+* **_SliverFillViewportRenderObjectWidget**：Widget 和 RenderObject间的桥梁，负责创建和管理**RenderSliverFillViewport** 渲染对象。
 
 **RenderSliverFillViewport** 的父类 **RenderSliverFixedExtentBoxAdaptor** 实现了 **performLayout()** ，关键代码：
 
@@ -1903,25 +1902,25 @@ bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
 }
 ```dart
 
-写个简单使用示例【--->[c35/sliver\_persistent\_header\_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/sliver_persistent_header_demo.dart)<---】运行效果：
+写个简单使用示例【--->[c35/sliver_persistent_header_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/sliver_persistent_header_demo.dart)<---】运行效果：
 
 😶 简单传几个参数就实现了吸顶和浮动效果，跟下源码，看下是怎么做到的，**build()** 根据不同的值情况返回不同的 **渲染对象**，跟下对应的 **performLayout()** 的核心代码：
 
-从下往上看，先是 **\_SliverScrollingPersistentHeader** → **RenderSliverScrollingPersistentHeader**：
+从下往上看，先是 **_SliverScrollingPersistentHeader** → **RenderSliverScrollingPersistentHeader**：
 
-接着是 **\_SliverFloatingPersistentHeader** → **RenderSliverFloatingPersistentHeader**：
+接着是 **_SliverFloatingPersistentHeader** → **RenderSliverFloatingPersistentHeader**：
 
-再接着 **\_SliverPinnedPersistentHeader** → **RenderSliverPinnedPersistentHeader**：
+再接着 **_SliverPinnedPersistentHeader** → **RenderSliverPinnedPersistentHeader**：
 
-最后是 **\_SliverFloatingPinnedPersistentHeader** → **RenderSliverFloatingPinnedPersistentHeader**，浮动效果来自于父类 **RenderSliverFloatingPersistentHeader**，吸顶效果则是重写 **updateGeometry()** 实现：
+最后是 **_SliverFloatingPinnedPersistentHeader** → **RenderSliverFloatingPinnedPersistentHeader**，浮动效果来自于父类 **RenderSliverFloatingPersistentHeader**，吸顶效果则是重写 **updateGeometry()** 实现：
 
-😄 在 **CustomScrollView** 中连续使用多个 **SliverPersistentHeader** 会怎么样？**会一层层叠起来**！【--->[c35/multiple\_pinned\_header\_demo.dart](https://github.com/配套示例源码.dart)<---】运行效果：
+😄 在 **CustomScrollView** 中连续使用多个 **SliverPersistentHeader** 会怎么样？**会一层层叠起来**！【--->[c35/multiple_pinned_header_demo.dart](https://github.com/配套示例源码.dart)<---】运行效果：
 
-如果想实现 "**分组吸顶**"(多个分组只有一个分组标题吸顶)，可以使用 [**flutter\_sticky\_header**](https://pub.dev/packages/flutter_sticky_header) 三方库，使用案例【--->[c35/sticky\_header\_group\_demo.dart](https://github.com/配套示例源码.dart)<---】运行效果：
+如果想实现 "**分组吸顶**"(多个分组只有一个分组标题吸顶)，可以使用 [**flutter_sticky_header**](https://pub.dev/packages/flutter_sticky_header) 三方库，使用案例【--->[c35/sticky_header_group_demo.dart](https://github.com/配套示例源码.dart)<---】运行效果：
 
 ### 4.3. SliverAppBar
 
-基于 **SliverPersistentHeader** 实现的具体 **应用栏组件** (内置应用的常见功能，如标题、操作按钮、背景等)，开箱即用，相比起手写一坨 **\_SliverHeaderDelegate**，直接配置几个属性即可轻松实现相同的效果：**floating**、**pinned** 就不用说了，还有这些：
+基于 **SliverPersistentHeader** 实现的具体 **应用栏组件** (内置应用的常见功能，如标题、操作按钮、背景等)，开箱即用，相比起手写一坨 **_SliverHeaderDelegate**，直接配置几个属性即可轻松实现相同的效果：**floating**、**pinned** 就不用说了，还有这些：
 
 * **snap**：是否启用快速收缩/展开动画。
 * **expandedHeight**：完全展开时的高度，通常和 flexibleSpace 来显示背景内容，null 时使用默认工具栏高度。
@@ -1930,9 +1929,9 @@ bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
 * **stretchTriggerOffset**：double，设置触发 **onStretchTrigger** 回调 (拉伸回弹) 需要的过度滚动距离，默认100像素，计算方式: 从应用栏的自然位置开始计算向下的拖拽距离。
 * **onStretchTrigger**：**Future** ，拉伸触发的异步回调，用户拖拽超过阈值且松手时 (拉伸距离达到stretchTriggerOffset)，注意，只在 stretch = true 时有效。
 
-写个简单使用示例【--->[c35/sliver\_app\_bar\_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/sliver_app_bar_demo.dart)<---】运行效果：
+写个简单使用示例【--->[c35/sliver_app_bar_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/sliver_app_bar_demo.dart)<---】运行效果：
 
-跟下源码，内部使用 **\_SliverAppBarDelegate** 来实现 **SliverPersistentHeaderDelegate**：
+跟下源码，内部使用 **_SliverAppBarDelegate** 来实现 **SliverPersistentHeaderDelegate**：
 
 ### 4.4. SliverLayoutBuilder
 
@@ -2020,7 +2019,7 @@ void paint(PaintingContext context, Offset offset) {
 
 而 **NestedScrollView** 就是为了解决这两个问题而设计出来的：
 
-* 通过 **滚动协调器** ( **\_NestedScrollCoordinator**) 统一管理和分配滚动事件，消除竞争.
+* 通过 **滚动协调器** ( **_NestedScrollCoordinator**) 统一管理和分配滚动事件，消除竞争.
 * 为 **body** 提供了有界约束，使其内部的可滚动组件可以正常布局。
 
 #### 4.5.1. API 详解
@@ -2152,13 +2151,13 @@ SliverOverlapInjector(
 
 #### 4.5.2. 源码剖析
 
-核心大脑 **\_NestedScrollCoordinator** (协调器)：
+核心大脑 **_NestedScrollCoordinator** (协调器)：
 
 ```dart
 class _NestedScrollCoordinator implements ScrollActivityDelegate, ScrollHoldController { ... }
 ```dart
 
-它管理两个独立的 ScrollController： **\_outerController** 和 **\_innerController**：
+它管理两个独立的 ScrollController： **_outerController** 和 **_innerController**：
 
 协调内外滚动位置的同步、处理手势分发和滚动事件。滚动分发的核心算法 (用户开始拖拽-**drag()** → 拖拽更新-**applyUserOffset()** )：
 
@@ -2167,7 +2166,7 @@ class _NestedScrollCoordinator implements ScrollActivityDelegate, ScrollHoldCont
 
 然后是 **惯性滚动处理**，当手指离开屏幕：
 
-然后是关键的 **\_getMetrics()** ，它创建统一的滚动指标，让内外两个独立的滚动视图在物理模拟时表现得像一个整体。最后是为了解决 SliverAppBar 重叠问题的 SliverOverlapAbsorber/Injector 机制：
+然后是关键的 **_getMetrics()** ，它创建统一的滚动指标，让内外两个独立的滚动视图在物理模拟时表现得像一个整体。最后是为了解决 SliverAppBar 重叠问题的 SliverOverlapAbsorber/Injector 机制：
 
 在 **RenderSliverOverlapInjector.performLayout()** 中：
 
@@ -2552,7 +2551,7 @@ void _ensureKeepAlive() {
 }
 ```dart
 
-最近的 **AutomaticKeepAlive** 组件捕获这个通知，然后将 **handle** 添加到内部的 **\_handles** 映射中：
+最近的 **AutomaticKeepAlive** 组件捕获这个通知，然后将 **handle** 添加到内部的 **_handles** 映射中：
 
 ```dart
 Map<Listenable, VoidCallback>? _handles;
@@ -2753,7 +2752,7 @@ const double _kDragContainerExtentPercentage = 0.25;
 const double _kDragSizeFactorLimit = 1.5;
 ```dart
 
-**build()** 中发现滚动监听基于 **NotificationListener** ，滚动处理逻辑在 **\_handleScrollNotification()** ，核心代码如下：
+**build()** 中发现滚动监听基于 **NotificationListener** ，滚动处理逻辑在 **_handleScrollNotification()** ，核心代码如下：
 
 ```dart
 // 💡 【拖拽开始判断】
@@ -2870,7 +2869,7 @@ enum CpLoadState {
 
 从动图可以看到，这个二楼占据了整个内容区域，它出现时内容区域不见了，隐藏时内容区域又出来了，直接**Column** 一把梭：
 
-再写一个简单的控制类，测试下显示和隐藏，initState() 时\_attach() 下 State、dispose() 时 \_death() 下 State：
+再写一个简单的控制类，测试下显示和隐藏，initState() 时_attach() 下 State、dispose() 时 _death() 下 State：
 
 简单调用下：
 
@@ -2886,4 +2885,4 @@ OK，搭个简单的结构，等下再慢慢调~
 
 逻辑不算复杂，判断下拉还是上拉过度，然后走刷新或者加载更多的逻辑，然后根据不同的状态显示文本， 文章超过 **掘金最大字符数**，就不同贴代码了，运行效果：
 
-到此就把基本的核心骨架实现了，然后就是各种细节完善啦，比如过渡动画等。源码【--->[c35/cp\_second\_floor\_refresh\_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/cp_second_floor_refresh_demo.dart)<---】。
+到此就把基本的核心骨架实现了，然后就是各种细节完善啦，比如过渡动画等。源码【--->[c35/cp_second_floor_refresh_demo.dart](https://github.com/配套示例源码/blob/master/lib/c35/cp_second_floor_refresh_demo.dart)<---】。

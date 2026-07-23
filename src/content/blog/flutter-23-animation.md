@@ -5,6 +5,7 @@ description: "Flutter动画系统详解，Tween、Curve、AnimatedBuilder、Hero
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第二十三篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -254,7 +255,7 @@ _animation.addStatusListener((status) {
 
 **运行效果如下**：
 
-😏 其实，实现上面的效果，只需要调用一句 **\_controller.repeat(reverse: true);** 来启动动画即可。
+😏 其实，实现上面的效果，只需要调用一句 **_controller.repeat(reverse: true);** 来启动动画即可。
 
 ### 4.4. 修改动画曲线
 
@@ -462,7 +463,7 @@ Radius.lerp(a, b, t);
 ShapeBorder.lerp(a, b, t);
 ```dart
 
-计算公式一般遵循：**返回值 = a + (b - a) \* t** 。写个简单的颜色插值的简单示例：
+计算公式一般遵循：**返回值 = a + (b - a) ** t** 。写个简单的颜色插值的简单示例：
 
 ```dart
 class ColorLerpExample extends StatefulWidget {

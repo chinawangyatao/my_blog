@@ -5,6 +5,7 @@ description: "封装新手引导组件，提升应用的用户引导体验。"
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第三十一篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -112,7 +113,7 @@ category: 'tech'
 
 运行效果如下：
 
-👏 非常简单就实现了组件高亮的基本效果啦，源码【--->c31/d2/custom\_painter\_demo.dart<---】。另外，除了 **CustomPaint** 组件支持 **BlendMode** (混合模式) 能实现高亮效果外，**ShaderMask**、**ColorFiltered#ColorFilter.mode**、**DecoratedBox#BoxDecoration** 等组件也可以，不过在实现用户操作引导组件这个场景，个人感觉支持 **复杂自定义绘制** 的 **CustomPaint** 更合适，灵活而且稳定可控。
+👏 非常简单就实现了组件高亮的基本效果啦，源码【--->c31/d2/custom_painter_demo.dart<---】。另外，除了 **CustomPaint** 组件支持 **BlendMode** (混合模式) 能实现高亮效果外，**ShaderMask**、**ColorFiltered#ColorFilter.mode**、**DecoratedBox#BoxDecoration** 等组件也可以，不过在实现用户操作引导组件这个场景，个人感觉支持 **复杂自定义绘制** 的 **CustomPaint** 更合适，灵活而且稳定可控。
 
 ## 3. 规规矩矩-把活干完 😐
 
@@ -173,7 +174,7 @@ category: 'tech'
 
 ### 3.6. 写下测试代码
 
-源码【--->c31/d3/test\_user\_guide.dart<---】
+源码【--->c31/d3/test_user_guide.dart<---】
 
 运行效果如下：
 
@@ -183,7 +184,7 @@ category: 'tech'
 
 ### 4.1. 高亮区域-动画过渡效果
 
-Github仓库：[kpaxian7/feature\_guider](https://github.com/kpaxian7/feature_guider)
+Github仓库：[kpaxian7/feature_guider](https://github.com/kpaxian7/feature_guider)
 
 🤔 就是 **从当前高亮区域** 切换到 **上/下一个高亮区域** 的过渡效果，用到动画，**State** 混入 **SingleTickerProviderStateMixin**，定义两个属性保存切换前后的 **Path**，初始化 **动画控制器** 和 **动画曲线**。
 
@@ -206,17 +207,17 @@ Github仓库：[kpaxian7/feature\_guider](https://github.com/kpaxian7/feature_gu
 
 运行效果如下：
 
-👏 Nice，有个圆角变化的效果，丝滑了不少，源码【--->c31/d4/a1/test\_user\_guide.dart<---】
+👏 Nice，有个圆角变化的效果，丝滑了不少，源码【--->c31/d4/a1/test_user_guide.dart<---】
 
 ### 4.2. 悬浮文字-上下浮动效果
 
-Github 仓库：[SimformSolutionsPvtLtd/flutter\_showcaseview](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview)
+Github 仓库：[SimformSolutionsPvtLtd/flutter_showcaseview](https://github.com/SimformSolutionsPvtLtd/flutter_showcaseview)
 
 💁‍♂️ 加个循环执行的 **AnimationController**，在绘制文字时获取动画值，添加不断变化的偏移就好。关键代码：
 
 运行效果如下：
 
-👏 so easy，源码【--->c31/d4/a2/test\_user\_guide.dart<---】
+👏 so easy，源码【--->c31/d4/a2/test_user_guide.dart<---】
 
 ## 5. 小结
 

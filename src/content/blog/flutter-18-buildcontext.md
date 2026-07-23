@@ -5,6 +5,7 @@ description: "深入理解BuildContext的本质和作用，它在Widget树中的
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第十八篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -25,9 +26,9 @@ category: 'tech'
 
 好像看不出个所以然来...
 
-直觉告诉我很大概率是因为搞 **混合开发** 集成了 [flutter\_boost](https://github.com/alibaba/flutter_boost)，它接管 **路由** 管理导致的，翻了下文档，看到关闭页面的API → **BoostNavigator.instance.pop()** ，尝试把pop() 部分的代码改成这句，然后就不会黑屏了...
+直觉告诉我很大概率是因为搞 **混合开发** 集成了 [flutter_boost](https://github.com/alibaba/flutter_boost)，它接管 **路由** 管理导致的，翻了下文档，看到关闭页面的API → **BoostNavigator.instance.pop()** ，尝试把pop() 部分的代码改成这句，然后就不会黑屏了...
 
-🤔 问题是解决了，但引起问题的具体原因却还没定位到，直接去扒 **flutter\_boost** 有点自不量力了🤷‍♀️，毕竟连 **Flutter** 本身那套 **路由** 的机制都还没摸透，还是先搞点基础。本节来探探 **BuildContext**，它在Flutter开发中扮演着极其重要的角色，几乎贯穿整个 Flutter应用的开发周期，应该是本系列最轻松的一节了🤣~
+🤔 问题是解决了，但引起问题的具体原因却还没定位到，直接去扒 **flutter_boost** 有点自不量力了🤷‍♀️，毕竟连 **Flutter** 本身那套 **路由** 的机制都还没摸透，还是先搞点基础。本节来探探 **BuildContext**，它在Flutter开发中扮演着极其重要的角色，几乎贯穿整个 Flutter应用的开发周期，应该是本系列最轻松的一节了🤣~
 
 ## 2. BuildContext 简介
 

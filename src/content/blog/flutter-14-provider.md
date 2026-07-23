@@ -5,6 +5,7 @@ description: "Provider状态管理框架的使用详解，ChangeNotifier、Consu
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第十四篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -310,7 +311,7 @@ class ListenableProvider<T extends Listenable?> extends InheritedProvider<T> {
 }
 ```dart
 
-然后 **\_startListening()** 作为参数 **startListening** 传递给父类 **InheritedProvider** 的构造方法，点开父类发现它竟是 **所有 Provider的父类**，源码注释中这样描述它：**InheritedWidget的泛型实现**。简化版源码如下：
+然后 **_startListening()** 作为参数 **startListening** 传递给父类 **InheritedProvider** 的构造方法，点开父类发现它竟是 **所有 Provider的父类**，源码注释中这样描述它：**InheritedWidget的泛型实现**。简化版源码如下：
 
 ```dart
 // 继承SingleChildStatelessWidget
@@ -390,9 +391,9 @@ class InheritedProvider<T> extends SingleChildStatelessWidget {
 }
 ```dart
 
-🤔 定义了三种构造 **InheritedProvider实例** 的方法，差异点在于 **\_delegate属性** 的赋值，依次为： **\_CreateInheritedProvider** (数据对象随Provider创建而创建)、 **\_ValueInheritedProvider** (对已有的数据对象进行共享)、直接传入delegate实例。
+🤔 定义了三种构造 **InheritedProvider实例** 的方法，差异点在于 **_delegate属性** 的赋值，依次为： **_CreateInheritedProvider** (数据对象随Provider创建而创建)、 **_ValueInheritedProvider** (对已有的数据对象进行共享)、直接传入delegate实例。
 
-#### 2.4.2. \_Delegate & \_DelegateState
+#### 2.4.2. _Delegate & _DelegateState
 
 点开这两个 **私有Provider的父类** 康康：
 
@@ -427,7 +428,7 @@ abstract class _DelegateState<T, D extends _Delegate<T>> {
 }
 ```dart
 
-😳 哈？这 **\_Delegate** 和 **\_DelegateState** 跟 **Widget 和 State** 的关系有点像啊！这里是通过 **代理** 的方式来操作状态对象。接着依次看下 **\_DelegateState** 的两个子类，先是 **\_CreateInheritedProviderState**：
+😳 哈？这 **_Delegate** 和 **_DelegateState** 跟 **Widget 和 State** 的关系有点像啊！这里是通过 **代理** 的方式来操作状态对象。接着依次看下 **_DelegateState** 的两个子类，先是 **_CreateInheritedProviderState**：
 
 ```dart
 class _CreateInheritedProviderState<T>
@@ -518,16 +519,16 @@ class _CreateInheritedProviderState<T>
 }
 ```dart
 
-不难发现 \_**value** 做了 **懒加载**，在值需要用的的时候才调用create()初始化。然后build()中的逻辑：
+不难发现 _**value** 做了 **懒加载**，在值需要用的的时候才调用create()初始化。然后build()中的逻辑：
 
 * ① 判断是否同时满足 **外部触发**、**已初始化**、**委托类实现了update()** ，是才执行后续更新和通知。
-* ② 更新状态：保存当前状态到previousValue，通过委托类的update() 方法来更新状态值\_value。
-* ③ **决定是否通知依赖项**：如果委托类提供了 **\_updateShouldNotify()** ，调用此方法并传入新旧值进行比对，否则直接比较新旧值是否相等，根据比对值来决定是否通知。
+* ② 更新状态：保存当前状态到previousValue，通过委托类的update() 方法来更新状态值_value。
+* ③ **决定是否通知依赖项**：如果委托类提供了 **_updateShouldNotify()** ，调用此方法并传入新旧值进行比对，否则直接比较新旧值是否相等，根据比对值来决定是否通知。
 * ④ **执行通知**：如果决定通知依赖项且存在监听器，将其移除并置为null，调用委托的dispose()来处理旧值。
-* ⑤ **标记通知**：如果需要通知依赖项，将element的\_shouldNotifyDependents设置为true，确保依赖项会被通知。
+* ⑤ **标记通知**：如果需要通知依赖项，将element的_shouldNotifyDependents设置为true，确保依赖项会被通知。
 * ⑥ 更新委托并调用父类的build()，同时 **isBuildFromExternalSources** 参数。
 
-接着看看 **\_ValueInheritedProviderState：**
+接着看看 **_ValueInheritedProviderState：**
 
 ```dart
 class _ValueInheritedProviderState<T>
@@ -577,9 +578,9 @@ class _ValueInheritedProviderState<T>
 
 大概流程和前者类似，代码简单多了，不过到此，我们还没看到 **InheritedWidget** 的身影，它在哪呢？
 
-#### 2.4.3. \_InheritedProviderScope
+#### 2.4.3. _InheritedProviderScope
 
-回到 **InheritedProvider#buildWithChild()** 中的 **\_InheritedProviderScope**：
+回到 **InheritedProvider#buildWithChild()** 中的 **_InheritedProviderScope**：
 
 ```dart
 class _InheritedProviderScope<T> extends InheritedWidget {
@@ -611,9 +612,9 @@ class _InheritedProviderScope<T> extends InheritedWidget {
 
 这里直接返回false，那InheritedWidget更新怎么通知依赖项更新啊？往下看你就知道了~
 
-#### 2.4.4. \_InheritedProviderScopeElement
+#### 2.4.4. _InheritedProviderScopeElement
 
-接着 **createElement()** 返回了一个 **\_InheritedProviderScopeElement** 实例，同样看下源码：
+接着 **createElement()** 返回了一个 **_InheritedProviderScopeElement** 实例，同样看下源码：
 
 ```dart
 class _InheritedProviderScopeElement<T> extends InheritedElement
@@ -752,14 +753,14 @@ class _InheritedProviderScopeElement<T> extends InheritedElement
 
 😐 不难看出这个类的主要作用就是 **负责管理和通知依赖项的更新**，回顾下原 **InheritedElement** 依赖项更新的方法调用流程：
 
-上面说到 **\_InheritedProviderScope#updateShouldNotify()** 写死返回false，这样做的意图很明显：
+上面说到 **_InheritedProviderScope#updateShouldNotify()** 写死返回false，这样做的意图很明显：
 
 > **接管 InheritedWidget 原先的更新机制，自定义更新逻辑，以实现更细粒度的刷新控制**。
 
 具体细节如下：
 
-* 用 **\_updatedShouldNotify** 的标志位代替 **原updateShouldNotify()** 维持原有的刷新逻辑。
-* **notifyDependent()** 中对 **\_Dependency** 类型的数据做特殊处理，有状态更新通知依赖项。
+* 用 **_updatedShouldNotify** 的标志位代替 **原updateShouldNotify()** 维持原有的刷新逻辑。
+* **notifyDependent()** 中对 **_Dependency** 类型的数据做特殊处理，有状态更新通知依赖项。
 * 重写 **markNeedsNotifyDependents()** ，用于强制依赖项更新。点开 **InheritedContext** 的源码，可以看到这个方法的注释：
 
 ```dart
@@ -781,7 +782,7 @@ abstract class InheritedContext<T> extends BuildContext {.
 
 > 将InheritedProvider标记为需要更新依赖项，这将绕过InheritedWidget.updateShouldNotify，并将强制依赖的Widgets重新生成。
 
-然后这方法在哪里有调用到呢？看回上面的 **ListenableProvider#\_startListening()** ：
+然后这方法在哪里有调用到呢？看回上面的 **ListenableProvider#_startListening()** ：
 
 🤏 吼，给状态数据value添加一个监听器，当value发生变化时，调用 markNeedsNotifyDependents() 标记依赖项需要被通知更新。返回一个匿名函数 (闭包)，在不需要监听value时接触监听关系，避免内存泄露。最后看下访问和监听状态的相关代码，先是 **Provider.of()** ：
 
@@ -796,7 +797,7 @@ static T of<T>(BuildContext context, {bool listen = true}) {
 }
 ```dart
 
-**dependOnInheritedWidgetOfExactType()** 上节讲过，获取最近的 **\_InheritedProviderScope<T?>** 实例，其中会调用 **dependOnInheritedElement()** 注册依赖关系，然后会回调 **didChangeDependencies()** 触发重建，这就是 **listen参数设置为false** 可以减少不必要重建的原因，最后返回了当前的状态数据。然后看下**Consumer**：
+**dependOnInheritedWidgetOfExactType()** 上节讲过，获取最近的 **_InheritedProviderScope<T?>** 实例，其中会调用 **dependOnInheritedElement()** 注册依赖关系，然后会回调 **didChangeDependencies()** 触发重建，这就是 **listen参数设置为false** 可以减少不必要重建的原因，最后返回了当前的状态数据。然后看下**Consumer**：
 
 ```dart
 class Consumer<T> extends SingleChildStatelessWidget {

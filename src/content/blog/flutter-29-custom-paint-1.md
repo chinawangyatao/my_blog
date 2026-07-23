@@ -5,6 +5,7 @@ description: "Flutter自定义绘制入门，Canvas API、CustomPainter使用。
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第二十九篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -31,7 +32,7 @@ category: 'tech'
 * **Canvas**：**画布**，提供多种绘制方法，如drawCircle、drawLine 等，可在其上绘制形状和图像。
 * **Paint**：**画笔**，用于定义绘制的样式和颜色，通过设置不同属性来控制绘制的外观。
 
-具体绘制代码【--->c29/d2/draw\_circle\_demo.dart<---】：
+具体绘制代码【--->c29/d2/draw_circle_demo.dart<---】：
 
 ### 2.1. 问题：圆心 & 大小
 
@@ -220,7 +221,7 @@ Matrix4 matrix = Matrix4.fromFloat64List(float64List);
 * **strokeMiterLimit**：double，斜接限制，strokeJoin为miter才生效，用于控制斜接长度，值越大，尖角越尖，默认值为4，意味着斜接长度超过四倍线宽时，斜接将被剪裁。该值一般设置为 **大于等于1** 的数 (1就是bevel🐶)。
 * **invertColors**：bool，是否反转颜色，即是否使用color在色环中相反位置的颜色进行绘制。
 
-写下简单属性效果预览Demo【--->c29/d3/paint/paint\_api\_first\_preview.dart<---】：
+写下简单属性效果预览Demo【--->c29/d3/paint/paint_api_first_preview.dart<---】：
 
 ### 3.3. Canvas
 
@@ -355,7 +356,7 @@ getPositionForOffset(Offset offset)：根据触摸位置获取文本位置，用
 getOffsetForCaret(TextPosition position, Rect caretPrototype)：获取光标的位置。
 ```dart
 
-绘制效果示例【--->c29/d3/canvas/canvas\_api\_first\_preview.dart<---】
+绘制效果示例【--->c29/d3/canvas/canvas_api_first_preview.dart<---】
 
 #### 3.3.2. 其它
 
@@ -385,7 +386,7 @@ saveLayer(Rect? bounds, Paint paint): 保存当前的画布状态并创建一个
 // 使用 saveLayer() 会创建离屏缓冲，可能影响性能，应在需要时使用，例如需要特殊的混合效果。
 ```dart
 
-绘制效果示例【--->c29/d3/canvas/canvas\_api\_second\_preview.dart<---】
+绘制效果示例【--->c29/d3/canvas/canvas_api_second_preview.dart<---】
 
 ### 3.4. Path-路径
 
@@ -414,7 +415,7 @@ relativeCubicTo(double dx1, double dy1, double dx2, double dy2, double dx3, doub
 
 😁 **绝对** → 移动到指定的 **绝对坐标位置(x,y)** ，**相对** → 基于 **当前绘制点当前位置移动(dx,dy)** 的偏移量。前者参考的是 **画布原点**，后者参考的 **当前点所在的位置**。
 
-绘制效果示例【--->c29/d3/canvas/path\_api\_first\_preview.dart<---】
+绘制效果示例【--->c29/d3/canvas/path_api_first_preview.dart<---】
 
 #### 3.4.2. 添加路径
 
@@ -431,7 +432,7 @@ addRRect(RRect rrect): 添加一个圆角矩形。
 addPolygon(List<Offset> points, bool close): 添加一个多边形。
 ```dart
 
-绘制效果示例【--->c29/d3/canvas/path\_api\_second\_preview.dart<---】
+绘制效果示例【--->c29/d3/canvas/path_api_second_preview.dart<---】
 
 #### 3.4.3. 其它
 
@@ -452,11 +453,11 @@ setFillType(PathFillType fillType): 设置路径的填充类型，可选值：no
 Path.from(Path source)：复制一个路径，对其操作，不会影响原始路径。
 ```dart
 
-绘制效果示例【--->c29/d3/canvas/path\_api\_third\_preview.dart<---】
+绘制效果示例【--->c29/d3/canvas/path_api_third_preview.dart<---】
 
 ### 3.5. Paint-着色器
 
-源码【--->c29/d3/paint/paint\_api\_second\_preview.dart<---】
+源码【--->c29/d3/paint/paint_api_second_preview.dart<---】
 
 #### 3.5.1. Gradient-渐变着色器
 
@@ -555,7 +556,7 @@ Gradient.sweep(
 
 😮 混合模式是一种图形渲染技术，定义了 **源图像 (src，要绘制的内容)** 和 **目标图像 (dst，已绘制的内容/背景)** 进行 **像素级别的颜色混合**。每种混合模式都有自己的算法，决定了源色和目标色如何组合成最终的呈现效果，😏 它可是实现 **高级特效的必备技巧** ❗️ 在自定义绘制中，可以为 **源图像的Paint** 设置 **blendMode** 属性来使用混合模式，**dst** 则是 **已经绘制在Canvas上的内容**。
 
-绘制效果示例【--->c29/d3/paint/paint\_api\_third\_preview.dart<---】
+绘制效果示例【--->c29/d3/paint/paint_api_third_preview.dart<---】
 
 ### 3.7. Filter-滤镜
 
@@ -563,7 +564,7 @@ Gradient.sweep(
 
 除了 **Paint** 能使用 **BlendMode** 外，**ColorFilter(滤色器)** 也可以，它使用 **变换矩阵** 或 **颜色叠合模式** 对绘制的对象进行滤色处理。**ColorFilter.matrix()** 通过一个 **5x4的颜色矩阵** 控制色彩变换，计算方式如下：
 
-绘制效果示例【--->c29/d3/paint/color\_filter\_demo.dart<---】
+绘制效果示例【--->c29/d3/paint/color_filter_demo.dart<---】
 
 #### 3.7.2. 其它滤镜
 
@@ -594,7 +595,7 @@ ImageFilter.blur({double sigmaX = 0.0, double sigmaY = 0.0, TileMode tileMode = 
 // 一般作为 Paint 的「filterQuality」属性来使用。
 ```dart
 
-绘制效果示例【--->c29/d3/paint/other\_filter\_demo.dart<---】
+绘制效果示例【--->c29/d3/paint/other_filter_demo.dart<---】
 
 ## 4. 练手时间-画图表📊
 
@@ -602,7 +603,7 @@ ImageFilter.blur({double sigmaX = 0.0, double sigmaY = 0.0, TileMode tileMode = 
 
 ### 4.1. 柱形/直方图
 
-😁 直接说思路【--->c29/d4/bar\_chart.dart<---】：
+😁 直接说思路【--->c29/d4/bar_chart.dart<---】：
 
 * 1、绘制一个浅灰色背景用于标识画布区域。
 * 2、获取画布宽高，设置最大绘制宽高。
@@ -621,7 +622,7 @@ ImageFilter.blur({double sigmaX = 0.0, double sigmaY = 0.0, TileMode tileMode = 
 
 ### 4.2. 折线图
 
-😁 直接用柱形图的数据，然后一步步绘制【--->c29/d4/line\_chart.dart<---】
+😁 直接用柱形图的数据，然后一步步绘制【--->c29/d4/line_chart.dart<---】
 
 #### 4.2.1. 绘制虚线背景坐标系
 
@@ -687,7 +688,7 @@ ImageFilter.blur({double sigmaX = 0.0, double sigmaY = 0.0, TileMode tileMode = 
 
 ### 4.3. 饼图
 
-😊 也是很常见的统计图表，就画下微信公众号助手这个图吧【--->c29/d4/pie\_chart.dart<---】
+😊 也是很常见的统计图表，就画下微信公众号助手这个图吧【--->c29/d4/pie_chart.dart<---】
 
 没啥难点，就是按角度画弧，画一波 **实心圆+动画**：
 
@@ -697,17 +698,17 @@ ImageFilter.blur({double sigmaX = 0.0, double sigmaY = 0.0, TileMode tileMode = 
 
 ### 4.4. 蜘蛛/雷达图
 
-😁 最后画多一个 **蜘蛛/雷达图** 作为本节的收尾案例，这图核心难点在于「**顶点坐标的计算**」用到一点初中 **三角函数** 的芝士🧀：正多边形的顶点都在其外接圆上，所以任意一个顶点坐标为： **(r \* cos(θ), r \* sin(θ))** ，不理解的看图就懂了【--->c29/d3/paint/regular\_polygon\_calculate.dart<---】
+😁 最后画多一个 **蜘蛛/雷达图** 作为本节的收尾案例，这图核心难点在于「**顶点坐标的计算**」用到一点初中 **三角函数** 的芝士🧀：正多边形的顶点都在其外接圆上，所以任意一个顶点坐标为： **(r ** cos(θ), r * sin(θ))** ，不理解的看图就懂了【--->c29/d3/paint/regular_polygon_calculate.dart<---】
 
 接着是绘制思路：
 
 * 1、绘制五层多边形背景。
-* 2、按照分数/100的百分比\*半径，算出每个点的坐标。
+* 2、按照分数/100的百分比*半径，算出每个点的坐标。
 * 3、根据点坐标依次画点、连线、写分数、顶部加字。
 * 4、绘制红色半透明背景填充。
 * 5、加下clip动画。
 
-具体代码可见【--->c29/d4/spider\_chart.dart<---】最终运行效果：
+具体代码可见【--->c29/d4/spider_chart.dart<---】最终运行效果：
 
 ## 5. 小结
 

@@ -5,6 +5,7 @@ description: "Flutter项目实战的UI实现，页面布局、组件封装、交
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第七篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -17,7 +18,7 @@ category: 'tech'
 
 ### 1.1. 自定义App图标
 
-在[《三、纯Flutter项目打包 & 混合开发[Android]》]( "")有提过这一点了，建议直接使用Flutter插件 [flutter\_launcher\_icons](https://pub.dev/packages/flutter_launcher_icons) 来 **自动处理所有平台的图标生成和替换**，需要一张至少 **512x512** 像素的 **图标源图**！！！打开 **pubspec.yaml** 引用插件，并指定 **源图** 及 **生成的图标名**：
+在[《三、纯Flutter项目打包 & 混合开发[Android]》]( "")有提过这一点了，建议直接使用Flutter插件 [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) 来 **自动处理所有平台的图标生成和替换**，需要一张至少 **512x512** 像素的 **图标源图**！！！打开 **pubspec.yaml** 引用插件，并指定 **源图** 及 **生成的图标名**：
 
 ```dart
 dev_dependencies:
@@ -75,7 +76,7 @@ Column(
 
 运行效果如下：
 
-> Tips：字体图标对应的 **码点**，**建议以官方文档为准**！！！比如 **favorite\_outlined** 两者对应的码点值如下 (这也是为啥第二个图标是🚘不是♥)：
+> Tips：字体图标对应的 **码点**，**建议以官方文档为准**！！！比如 **favorite_outlined** 两者对应的码点值如下 (这也是为啥第二个图标是🚘不是♥)：
 
 ### 1.3. 自定义字体图标
 
@@ -126,11 +127,11 @@ Icon(CustomIcons.xiao, size: 26,color: Colors.yellow,)
 
 从 **App启动** 到 **Flutter第一帧渲染结束前** 需要一定的时间，Flutter项目会默认配置一个简单的启动视图 (**白色背景** + **居中的应用图标**)。打开android目录下的 **styles.xml** 文件，可以看到设置了一个启动主题：
 
-点开它指向的 **launch\_background.xml** 文件：
+点开它指向的 **launch_background.xml** 文件：
 
 修改这两个item值即可实现自定义，需要在 **不同分辨率mipmap** 的文件夹下放一张启动图，还挺麻烦😒。
 
-😜这里直接用Flutter插件 [flutter\_native\_splash](https://pub.dev/packages/flutter_native_splash) 来快速设置，打开 **pubspec.yaml** 文件引用插件，并 **指定颜色及图片**：
+😜这里直接用Flutter插件 [flutter_native_splash](https://pub.dev/packages/flutter_native_splash) 来快速设置，打开 **pubspec.yaml** 文件引用插件，并 **指定颜色及图片**：
 
 ```dart
 dev_dependencies:
@@ -441,7 +442,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 上面我们用 **Toast(吐司提示)** 来展示提示信息，但Flutter并没有内置这样的组件，这里用到三方库 [fluttertoast](https://pub.dev/packages/fluttertoast)。直接执行 **flutter pub add fluttertoast** 添加依赖，然后调用 **Fluttertoast.showToast(msg)** 就能显示Toast了，但运行时可能会报错：
 
-> uses-sdk:minSdkVersion 19 cannot be smaller than version 21 declared in library [:fluttertoast] D:\Code\Flutter\flutter\_wanandroid\build\fluttertoast\intermediates\merged\_manifest\debug\AndroidManifest.xml as the library might be using APIs not available in 19
+> uses-sdk:minSdkVersion 19 cannot be smaller than version 21 declared in library [:fluttertoast] D:\Code\Flutter\flutter_wanandroid\build\fluttertoast\intermediates\merged_manifest\debug\AndroidManifest.xml as the library might be using APIs not available in 19
 
 **问题概述**：使用 fluttertoast，App的minSdkVersion需要为21或以上版本。
 
@@ -449,7 +450,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 然后它会调用系统的Toast，不同的系统版本，可能会有不同的样式差异，比如我两台手机的Toast就不一样：
 
-如果想保证不同系统上都显示 **统一的Toast样式**，可以使用另一个 **支持自定义Toast** 的三方库：[another\_flushbar](https://pub.dev/packages/another_flushbar)。另外，🙊一般为了 **方便统一调用**，通常会封装一个建议的工具类：
+如果想保证不同系统上都显示 **统一的Toast样式**，可以使用另一个 **支持自定义Toast** 的三方库：[another_flushbar](https://pub.dev/packages/another_flushbar)。另外，🙊一般为了 **方便统一调用**，通常会封装一个建议的工具类：
 
 ```dart
 import 'package:flutter/material.dart';
@@ -483,7 +484,7 @@ class ToastUtil {
 
 ### 5.5. 封装两个支持泛型的响应基类
 
-请求网络用到 **dio** 库，数据解析用到 **json\_serializable** 库，接口返回格式都是固定的，**data** 字段有两种可能的类型：**Object** 或 **列表**，定义两个泛型类：
+请求网络用到 **dio** 库，数据解析用到 **json_serializable** 库，接口返回格式都是固定的，**data** 字段有两种可能的类型：**Object** 或 **列表**，定义两个泛型类：
 
 ```dart
 import 'package:json_annotation/json_annotation.dart';
@@ -531,7 +532,7 @@ class ListResponse<T> {
 
 个人积分接口返回数据的示例：
 
-复制下data字段的数据，直接丢 [json2dart\_for\_json\_serializable](https://caijinglong.github.io/json2dart/index_ch.html) 或者 **JsonToDart插件** 生成 Model 类：
+复制下data字段的数据，直接丢 [json2dart_for_json_serializable](https://caijinglong.github.io/json2dart/index_ch.html) 或者 **JsonToDart插件** 生成 Model 类：
 
 ```dart
 import 'package:json_annotation/json_annotation.dart';
@@ -683,7 +684,7 @@ void main() {
 
 ### 5.8. 请求积分接口并刷新UI
 
-在 **\_DrawerScreenState** 中定义一个 **\_integral** 属性，重写 **initState()** 方法，在这里 **请求积分接口**，并调用**setState()** 更新状态，具体实现代码：
+在 **_DrawerScreenState** 中定义一个 **_integral** 属性，重写 **initState()** 方法，在这里 **请求积分接口**，并调用**setState()** 更新状态，具体实现代码：
 
 ```dart
 class _DrawerScreenState extends State<DrawerScreen> {
@@ -710,7 +711,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
 }
 ```dart
 
-然后在 **build()** 方法中，对应组件获取到 **\_integral 属性**，显示不同的文本和交互，关键代码如下：
+然后在 **build()** 方法中，对应组件获取到 **_integral 属性**，显示不同的文本和交互，关键代码如下：
 
 ```dart
 DrawerHeader(
@@ -743,7 +744,7 @@ ListTile(
 ),
 ```dart
 
-😁当 **\_integral** 为空时，点击去登录，通过 **Navigator.push()** 跳转到登录页，接着要完善登录页的逻辑：
+😁当 **_integral** 为空时，点击去登录，通过 **Navigator.push()** 跳转到登录页，接着要完善登录页的逻辑：
 
 * 请求登录接口，登录成功，获取响应头里的 **Set-Cookies** ，更新请求头的 **Cookies**，并持久化到本地；
 * 关闭页面，通知导航侧滑页面请求积分接口，更新UI；
@@ -824,9 +825,9 @@ void showLoadingDialog(BuildContext context, {bool canPop = true}) {
 
 😄nice~
 
-## 7. 简单封装shared\_preferences
+## 7. 简单封装shared_preferences
 
-登录成功完，除了需要更新请求头外，还需要把 **Cookie持久化到本地**，这种小型数据很适合用三方库 [shared\_preferences](https://pub.dev/packages/shared_preferences) 来保存，简单封装下。单例，各种数据类型的put、get，是否存在key，清空、移除，没啥难度，直接写出工具代码：
+登录成功完，除了需要更新请求头外，还需要把 **Cookie持久化到本地**，这种小型数据很适合用三方库 [shared_preferences](https://pub.dev/packages/shared_preferences) 来保存，简单封装下。单例，各种数据类型的put、get，是否存在key，清空、移除，没啥难度，直接写出工具代码：
 
 ```dart
 import 'package:shared_preferences/shared_preferences.dart';
@@ -985,7 +986,7 @@ Provider.of<LoginStatus>(context, listen: false).updateLoginStatus(true);
 
 ### 8.2. 初始化时，获取下Cookie并设置
 
-在请求库初始化的时候，可以顺带获取下 **shared\_preferences** 里保存的Cookie 并设置到请求头中：
+在请求库初始化的时候，可以顺带获取下 **shared_preferences** 里保存的Cookie 并设置到请求头中：
 
 ```dart
 void main() {
@@ -1638,14 +1639,14 @@ class _WxArticleListWidgetState extends State<WxArticleListWidget> with Automati
 
 ## 12. 文章阅读页 (嵌套WebView)
 
-如题，就是嵌套一个WebView，Flutter没有内置浏览器组件，这里用到三方库：[flutter\_inappwebview](https://github.com/pichillilorenzo/flutter_inappwebview)，执行 **flutter pub add flutter\_inappwebview** 添加依赖，然后就可以使用库里的 **InAppWebView** 来加载网页了。此页面结构：
+如题，就是嵌套一个WebView，Flutter没有内置浏览器组件，这里用到三方库：[flutter_inappwebview](https://github.com/pichillilorenzo/flutter_inappwebview)，执行 **flutter pub add flutter_inappwebview** 添加依赖，然后就可以使用库里的 **InAppWebView** 来加载网页了。此页面结构：
 
 * **顶部**：**AppBar**，蕾姆蓝背景，白色字体，左边一个回退按钮，右边一个 **复制URL** 和 **跳转手机浏览器** 按钮；
 * **中间**：**Stack堆叠布局**，包含 **InAppWebView** 和 根据是否处于加载状态，显示圆形进度条或Container；
 
 ### 12.1. InAppWebView
 
-定义一个标记 **\_isLoading** 表示网页是否正在加载中，在 **InAppWebView** 的 **onLoadStart**(开始加载) 和 **onLoadStop**(结束加载) 中修改，并调用 **setState()** 更新状态；
+定义一个标记 **_isLoading** 表示网页是否正在加载中，在 **InAppWebView** 的 **onLoadStart**(开始加载) 和 **onLoadStop**(结束加载) 中修改，并调用 **setState()** 更新状态；
 
 ```dart
 class BrowserPageScreen extends StatefulWidget {
@@ -1740,7 +1741,7 @@ final ClipboardData data = await Clipboard.getData('text/plain');
 String pastedText = data.text;
 ```dart
 
-顺带完善下，上面的 **\_copyUrlToClipboard()** 方法：
+顺带完善下，上面的 **_copyUrlToClipboard()** 方法：
 
 ```dart
 void _copyUrlToClipboard() {
@@ -1752,7 +1753,7 @@ void _copyUrlToClipboard() {
 
 ### 12.3. 跳转手机浏览器
 
-这个用到Flutter三方库 [url\_launcher](https://pub.dev/packages/url_launcher)，支持跨平台（iOS、Android、Web等）的方式来打开 **外部网页**、发送邮件、拨打电话、发送短信等操作。执行 **flutter pub add url\_launcher** 添加依赖，使用方法非常简单：
+这个用到Flutter三方库 [url_launcher](https://pub.dev/packages/url_launcher)，支持跨平台（iOS、Android、Web等）的方式来打开 **外部网页**、发送邮件、拨打电话、发送短信等操作。执行 **flutter pub add url_launcher** 添加依赖，使用方法非常简单：
 
 ```dart
 import 'package:url_launcher/url_launcher.dart';

@@ -5,6 +5,7 @@ description: "深入理解Flutter UI框架的底层原理，Widget、Element、R
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: 'https://miro.medium.com/1*10RECXGTH5NyaeBg5yD1pw.png'
 ---
 
 > 本文是Flutter系统学习系列的第十一篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -179,13 +180,13 @@ App启动创建主线程消息循环后，创建第一个Activity时会调用 **
 
 #### 3.3.5. ViewRootImpl 与 SurfaceFlinger 建立联系
 
-* 接着调用 **WindowManagerService.addWindow()** 创建 **WindowState对象**，并调用 **win.attach()** 来创建一个 **SurfaceSession对象**，其中调用了 **android\_view\_SurfaceSession.cpp#nativeCreate()** 构造了一个 **SurfaceComposerClient对象**，它是App与 **SurfaceFlinger** 沟通的桥梁。
+* 接着调用 **WindowManagerService.addWindow()** 创建 **WindowState对象**，并调用 **win.attach()** 来创建一个 **SurfaceSession对象**，其中调用了 **android_view_SurfaceSession.cpp#nativeCreate()** 构造了一个 **SurfaceComposerClient对象**，它是App与 **SurfaceFlinger** 沟通的桥梁。
 * 这个指针在第一次创建时会调用 **createScopedConnection()** 来创建一个 **ISurfaceComposerClient对象**，**SurfaceComposerClient** 就是通过它来与 **SurfaceFlinger** 通信，除此之外，它还可以创建 **Surface** 并 **维护一个App所有的Layer(层)** 。
 
 #### 3.3.6. **requestLayout() 触发测绘**
 
 * 经过上述步骤，**ViewRootImpl** 和 **WMS**、**SurfaceFlinger** 都建立了连接，但此时 View 还没显示出来，回到 **ViewRootImpl.setView()** ，这里还调用了 **requestLayout()。**
-* 其中调用了 **scheduleTraversals()** 先设置同步屏障暂停处理后面的同步消息，然后调用 **mChoreographer.postCallback** (Choreographer.CALLBACK\_TRAVERSAL, **mTraversalRunnable**, null)，指定一个回调函数，在下一个vsync信号到来时，执行 **mTraversalRunnable** 里的 **run()** ，点开这个方法只有一句 **doTraversal()** ，移除同步屏障后调用 **performTraversals()** 正式进入 **View的绘制流程**。
+* 其中调用了 **scheduleTraversals()** 先设置同步屏障暂停处理后面的同步消息，然后调用 **mChoreographer.postCallback** (Choreographer.CALLBACK_TRAVERSAL, **mTraversalRunnable**, null)，指定一个回调函数，在下一个vsync信号到来时，执行 **mTraversalRunnable** 里的 **run()** ，点开这个方法只有一句 **doTraversal()** ，移除同步屏障后调用 **performTraversals()** 正式进入 **View的绘制流程**。
 
 #### 3.3.7. 测量与布局
 
@@ -268,7 +269,7 @@ Android系统会尽量减少不必要的View遍历，如：视图的尺寸没有
 
 调用 **WidgetsFlutterBinding.ensureInitialized()** 并返回了一个 **WidgetsBinding** 实例，点进去方法看看：
 
-判断 **WidgetsBinding.\_instance** 属性是否为空，空的话调用构造方法创建一个实例，然后返回**WidgetsBinding.instance** 属性调用：
+判断 **WidgetsBinding._instance** 属性是否为空，空的话调用构造方法创建一个实例，然后返回**WidgetsBinding.instance** 属性调用：
 
 **checkInstance()** 里的实例没初始化的话，会显示一个错误信息，吼，就获取一个 **WidgetsBinding单例**。然后 **WidgetsFlutterBinding()** 并没有构造方法，调用的父类 **BindingBase** 的构造方法 (省略无关代码)：
 
@@ -306,7 +307,7 @@ void registerServiceExtension({
 }
 ```dart
 
-Dart VM 和 Flutter 的 **通信** 遵循socket协议，只要连接上 **虚拟机运行的URL** 就行了，需要用到 **vm\_service** 模块，Flutter App 主动连接 VM的代码示例如下：
+Dart VM 和 Flutter 的 **通信** 遵循socket协议，只要连接上 **虚拟机运行的URL** 就行了，需要用到 **vm_service** 模块，Flutter App 主动连接 VM的代码示例如下：
 
 ```dart
 // Service.getInfo 是 Flutter 提供的获取虚拟机服务URL的API
@@ -435,9 +436,9 @@ Engine层事件监听的注册，在 **handleEvent()** 中处理所有RenderObje
 
 注册管理平台服务：
 
-* \_defaultBinaryMessenger：与platform通信；
+* _defaultBinaryMessenger：与platform通信；
 * handleSystemMessage：处理系统消息，如字体改变、内存不足；
-* \_parseAppLifecycleMessage：生命状态回调处理；
+* _parseAppLifecycleMessage：生命状态回调处理；
 * RestorationManager：数据保存/恢复管理；
 
 #### 5.1.4. PaintingBinding
