@@ -334,4 +334,11 @@ const totalArticles = postsWithNumber.length;
     );
     reveals.forEach((el) => observer.observe(el));
   });
+
+  // Fallback: ensure content is visible even if ClientRouter fails
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => {
+      el.classList.add('is-visible');
+    });
+  }, 3000);
 </script>

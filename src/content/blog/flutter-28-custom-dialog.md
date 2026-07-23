@@ -5,6 +5,7 @@ description: "Flutter中三种弹窗实现方式详解，Dialog、BottomSheet、
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第二十八篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -46,7 +47,7 @@ category: 'tech'
 
 > 💡 特例：**SnackBar** 的显示和隐藏是由 **ScaffoldMessenger** (管Snacker队列和动画控制) 和 **Scaffold** (在界面上显示SnackBar) 共同管理的。
 
-😊 顺手写了个简单的预览Demo【--->c28/d1/popup\_preview.dart<---】方便读者查看上述弹窗的 **UI效果，拿来主义，** 碰到合适的弹窗效果，改改就能用：
+😊 顺手写了个简单的预览Demo【--->c28/d1/popup_preview.dart<---】方便读者查看上述弹窗的 **UI效果，拿来主义，** 碰到合适的弹窗效果，改改就能用：
 
 😉 接着依次讲讲 **Stack**、**Overlay** 和 **Route** 如何实现自定义弹窗。
 
@@ -60,13 +61,13 @@ category: 'tech'
 * **clipBehavior**：裁剪行为，默认为 Clip.hardEdge，即超出边界的部分会被裁剪。
 * **children**：传递给父类的子组件列表。
 
-一般搭配 **Align (对齐)** 和 **Positioned** (**定位**，相对于Stack边缘进行精确定位) 组件使用，简单代码示例【--->c28/d2/stack\_use\_demo.dart<---】
+一般搭配 **Align (对齐)** 和 **Positioned** (**定位**，相对于Stack边缘进行精确定位) 组件使用，简单代码示例【--->c28/d2/stack_use_demo.dart<---】
 
 运行结果如下：
 
 ### 2.1. 组件：IndexedStack-索引堆叠
 
-**Stack** 还有一个常用的子类 **IndexedStack (索引堆叠)** ，通过 **index** 属性来控制 **显示多个子组件中的哪一个**，它 **不能为负数** (默认值为0)，否则会导致 **RenderIndexedStack#childAtIndex()** ，简单代码示例【--->c28/d2/indexed\_stack\_use\_demo.dart)<---】
+**Stack** 还有一个常用的子类 **IndexedStack (索引堆叠)** ，通过 **index** 属性来控制 **显示多个子组件中的哪一个**，它 **不能为负数** (默认值为0)，否则会导致 **RenderIndexedStack#childAtIndex()** ，简单代码示例【--->c28/d2/indexed_stack_use_demo.dart)<---】
 
 ### 2.2. 例子：IndexedStack 手搓筛选弹窗
 
@@ -74,9 +75,9 @@ category: 'tech'
 
 > 将 **显示内容部分的Widget** 和 **筛选弹窗Widget列表** 放到 **IndexedStack** 中，index为0的时候显示内容，其它值显示对应的弹窗Widget。
 
-具体实现下【--->c28/d2/filter\_menu\_indexed\_stack.dart<---】，先定义 **菜单栏配置** 和 **控制器** 类：
+具体实现下【--->c28/d2/filter_menu_indexed_stack.dart<---】，先定义 **菜单栏配置** 和 **控制器** 类：
 
-接着定义 **FilterMenuIndexedStack** 类，传入四个参数，State 中维护两个字段「 **\_currentIndex**-当前展开的菜单索引」和「 **\_stackIndex**-当前显示的IndexedStack索引」，两者 **相差1**：
+接着定义 **FilterMenuIndexedStack** 类，传入四个参数，State 中维护两个字段「 **_currentIndex**-当前展开的菜单索引」和「 **_stackIndex**-当前显示的IndexedStack索引」，两者 **相差1**：
 
 再接着是 **动态生成菜单项** 的方法：
 
@@ -84,7 +85,7 @@ category: 'tech'
 
 紧接着是 **build()** 方法，把它们都组合起来：
 
-最后调用下 **FilterMenuIndexedStack** 组件【--->c28/d2/filter\_menu\_indexed\_stack\_test.dart<---】：
+最后调用下 **FilterMenuIndexedStack** 组件【--->c28/d2/filter_menu_indexed_stack_test.dart<---】：
 
 运行看看效果：
 
@@ -94,7 +95,7 @@ category: 'tech'
 
 ### 2.3. 例子：Stack 手搓筛选弹窗
 
-【--->c28/d2/filter\_menu\_stack.dart 和 filter\_menu\_stack\_test.dart<---】
+【--->c28/d2/filter_menu_stack.dart 和 filter_menu_stack_test.dart<---】
 
 😊 先是 **菜单项配置** 和 **控制器**，改成直接传 **构建弹窗Widget的方法**，提供一个 **State** 的方法调用封装：
 
@@ -120,7 +121,7 @@ category: 'tech'
 
 😅 例子这里不顶起的话，会把输入框盖住，体验不是很好，具体选哪种，读者可在实际开发时自行斟酌。
 
-🤔 用 Stack 来实现弹窗的最大优点就是 **简单**，不用自己算位置、不用担心 Overlay (浮窗) 上弹窗反而显示在底部的问题，当然，缺点是 **灵活性不太好**，哪里想弹哪里弹，写起来有点繁琐🙂。挺多人用的 [gzx\_dropdown\_menu](https://github.com/GanZhiXiong/gzx_dropdown_menu) 开源下拉筛选菜单库就是 **基于Stack** 实现的。
+🤔 用 Stack 来实现弹窗的最大优点就是 **简单**，不用自己算位置、不用担心 Overlay (浮窗) 上弹窗反而显示在底部的问题，当然，缺点是 **灵活性不太好**，哪里想弹哪里弹，写起来有点繁琐🙂。挺多人用的 [gzx_dropdown_menu](https://github.com/GanZhiXiong/gzx_dropdown_menu) 开源下拉筛选菜单库就是 **基于Stack** 实现的。
 
 ## 3. Overlay-浮窗
 
@@ -128,9 +129,9 @@ category: 'tech'
 
 看下 **OverlayEntry** 的注释：
 
-**Overlay** 使用 **Stack** 布局，每个 **浮层的容器** 都是一个 **Positioned**，然后 **OverlayEntry** 对应 **浮层UI**，利用 **Stack后者居上** 的特性实现 **浮窗效果**，然后在 **OverlayState#build()** 中遍历 **\_entries列表**，通过 **\_OverlayEntryWidget** 来完成 **OverlayEntry** 的实际绘制：
+**Overlay** 使用 **Stack** 布局，每个 **浮层的容器** 都是一个 **Positioned**，然后 **OverlayEntry** 对应 **浮层UI**，利用 **Stack后者居上** 的特性实现 **浮窗效果**，然后在 **OverlayState#build()** 中遍历 **_entries列表**，通过 **_OverlayEntryWidget** 来完成 **OverlayEntry** 的实际绘制：
 
-😊 理解完 **Overlay的基本原理**，用起就不会束手束脚了，随手写下简单示例【--->c28/d3/overlay\_use\_demo.dart<---】
+😊 理解完 **Overlay的基本原理**，用起就不会束手束脚了，随手写下简单示例【--->c28/d3/overlay_use_demo.dart<---】
 
 运行效果如下：
 
@@ -138,11 +139,11 @@ category: 'tech'
 
 😏 因为 **MaterialApp** 已经内置了 **Overlay**，真？想想 **Navigator**，实现路由跳转效果不就依赖的 **Overlay**？
 
-**\_entries列表** 是私有变量，没法直接 **print打印** 看这三个浮层都是什么，给 **insert()** 方法打下 **断点**：
+**_entries列表** 是私有变量，没法直接 **print打印** 看这三个浮层都是什么，给 **insert()** 方法打下 **断点**：
 
 前两个在**《二十二、玩转Flutter路由之——Navigator 1.0详解》**里有提到：
 
-😄 所以依次是：**遮罩、当前页面、我们添加的浮层**，🤔 那如果是在我们的浮层上插入浮层呢？【--->c28/d3/overlay\_insert\_overlay.dart<---】
+😄 所以依次是：**遮罩、当前页面、我们添加的浮层**，🤔 那如果是在我们的浮层上插入浮层呢？【--->c28/d3/overlay_insert_overlay.dart<---】
 
 断点处：
 
@@ -167,7 +168,7 @@ final position = renderBox.localToGlobal(Offset.zero);
 
 // 获取屏幕尺寸
 final screenSize = MediaQuery.of(context).size;
-```dart
+```
 
 **获取context** 这个有些讲究，**BuildContext** 在之前的章节**《十八、进阶：🔍探探 BuildContext》**有讲过：
 
@@ -184,7 +185,7 @@ Builder(
     return Container();
   },
 );
-```dart
+```
 
 ② **GlobalKey**：使用它可以在任何地方获取与之关联的Widget的BuildContext。
 
@@ -196,7 +197,7 @@ Widget myWidget = Container(key: myKey);
 
 // 通过GlobalKey获取BuildContext
 BuildContext? context = myKey.currentContext;
-```dart
+```
 
 🤷‍♀️ 当然，你还可以参考各种 **Xxx.of()** 的写法，自己进行遍历，查找文本匹配 Text 的代码示例：
 
@@ -228,11 +229,11 @@ if (textElement != null) {
 } else {
   print('Text widget not found');
 }
-```dart
+```
 
 ### 3.2. 例子：简单的"米"字弹窗
 
-😄 写个 **"米"** 字往不同方向弹浮层的代码示例【--->c28/d3/overlay\_pop\_demo.dart)<---】，先是构造不同位置的Button：
+😄 写个 **"米"** 字往不同方向弹浮层的代码示例【--->c28/d3/overlay_pop_demo.dart)<---】，先是构造不同位置的Button：
 
 然后是 **弹出不同方向上浮层** 的方法：
 
@@ -272,7 +273,7 @@ Flutter 提供了两个组件「**CompositedTransformTarget - 目标」** 和「
 * 上：目标的中上，跟随者的中下；
 * 右上：目标的右上，跟随者的左下；
 
-😆 弄清楚了就可以写代码了【--->c28/d3/overlay\_pop\_layer\_link.dart<---】
+😆 弄清楚了就可以写代码了【--->c28/d3/overlay_pop_layer_link.dart<---】
 
 构建按钮的代码：
 
@@ -344,7 +345,7 @@ void paint(PaintingContext context, Offset offset) {
     );
   }
 }
-```dart
+```
 
 跟下这两个实现 "**跟随**" 效果的 **Layer** 类，先是记录 "**领导者**" 的位置和变换信息的 **LeaderLayer**：
 
@@ -366,7 +367,7 @@ class LeaderLayer extends ContainerLayer {
     super.remove();
   }
 }
-```dart
+```
 
 然后是记录 "**跟随者**" 对象的 **FollowerLayer**，它会根据 LeaderLayer 的位置和变换信息来调整自己的位置和变换，从而实现跟随效果。
 
@@ -411,7 +412,7 @@ class FollowerLayer extends ContainerLayer {
     }
   }
 }
-```dart
+```
 
 🤏 行吧，一句话概括原理：**利用底层渲染层的变换，无需频繁重建Widget或进行复杂的状态管理**。
 
@@ -419,7 +420,7 @@ class FollowerLayer extends ContainerLayer {
 
 ### 3.5. BUG：浮层上弹对话框反而显示到浮层下
 
-😄 如题，写个简单的代码示例复现这个问题【--->c28/d3/overlay\_pop\_bug.dart<---】 运行效果如下：
+😄 如题，写个简单的代码示例复现这个问题【--->c28/d3/overlay_pop_bug.dart<---】 运行效果如下：
 
 在弹窗上调用 **showDialog()** 弹对话框，竟然显示在 **Overlay** 的下方了？？？打开 **Flutter Inspector** 看看Widget树，😳em... 看不出什么，弹多几个对话框，发现浮层依旧处于最后：
 
@@ -434,17 +435,17 @@ class FollowerLayer extends ContainerLayer {
 * **OverlayRoute**：可以与Overlay交互的路由，它通过 **createOverlayEntries()** 方法创建 **OverlayEntry** 列表，并在 **install()** 中将这些条目添加到 **Overlay** 中。
 * **Route**：路由顶级父类，抽象类，表示导航器管理的一个页面或屏幕，定义了页面的生命周期方法、如何**install()** 、**disposed()** 等。
 
-😄 之前跟过代码了，**Navigator** 执行路由操作最终都会调 **\_flushHistoryUpdates()** ，其中有这段代码：
+😄 之前跟过代码了，**Navigator** 执行路由操作最终都会调 **_flushHistoryUpdates()** ，其中有这段代码：
 
 **rearrangeOverlay**-浮层是否需要重排，默认为true，点进去 **Overlay#rearrange()** ：
 
 **Debug** 窗口添加下相关变量的 **Watch**：
 
-接着跟下 **\_insertionIndex()** ：
+接着跟下 **_insertionIndex()** ：
 
 👏 到此，问题发生的原因就水落石出了：
 
-> **Navigator** 自己维护一个 **OverlayEntity列表**，在导航堆栈状态发生变化时，会调用 **Overlay#rearrange()** 进行 **浮层列表重排**：定义Set暂存\_entries里的旧浮层，清空后添加 **新浮层列表** 里的所有浮层，旧浮层Set做下新浮层列表去重，调用 **\_insertionIndex()** 计算 **旧浮层Set** 应该插入到 **新浮层列表** 的什么位置。这里的 **above** 和 **below** 参数都为空，返回列表的长度，即 **旧浮层Set** 插入到浮层列表的末尾，而 **Overlay后者居上** 的特性，**旧浮层** 反而显示在 **最上面**。
+> **Navigator** 自己维护一个 **OverlayEntity列表**，在导航堆栈状态发生变化时，会调用 **Overlay#rearrange()** 进行 **浮层列表重排**：定义Set暂存_entries里的旧浮层，清空后添加 **新浮层列表** 里的所有浮层，旧浮层Set做下新浮层列表去重，调用 **_insertionIndex()** 计算 **旧浮层Set** 应该插入到 **新浮层列表** 的什么位置。这里的 **above** 和 **below** 参数都为空，返回列表的长度，即 **旧浮层Set** 插入到浮层列表的末尾，而 **Overlay后者居上** 的特性，**旧浮层** 反而显示在 **最上面**。
 
 🤔 问题归因完，接着尝试下能否找到解决之法，突破口还是 **rearrange()** 方法的后两个参数：
 
@@ -458,7 +459,7 @@ class FollowerLayer extends ContainerLayer {
 
 给弹出的浮层内容视图 **套一个Navigator**，**showDialog()** 传参 **useRootNavigator:false**，查找 **最近的 Navigator** 而不是根 Navigator。
 
-改下代码【--->c28/d3/overlay\_pop\_bug\_fix.dart<---】
+改下代码【--->c28/d3/overlay_pop_bug_fix.dart<---】
 
 运行看看效果：
 
@@ -484,7 +485,7 @@ class FollowerLayer extends ContainerLayer {
 * **transitionDuration**：路由过渡动画的持续时间。
 * **buildPage** (content,animation,secondAnimation)：构建路由的页面内容，返回一个自定义Widget。animation 是主要过渡动画，如页面的缩放、平移、旋转等，secondAnimation 是次要过渡动画，如页面切换时的淡入淡出效果。
 
-😄 写下简单代码示例【--->c28/d4/custom\_pop\_route\_demo.dart<---】先是自定义Route：
+😄 写下简单代码示例【--->c28/d4/custom_pop_route_demo.dart<---】先是自定义Route：
 
 调用处：
 
@@ -494,7 +495,7 @@ class FollowerLayer extends ContainerLayer {
 
 ### 4.2. 例子：Route 手搓筛选弹窗
 
-源码【c28/d4/pop\_menu\_route.dart & pop\_menu\_route\_demo.dart】
+源码【c28/d4/pop_menu_route.dart & pop_menu_route_demo.dart】
 
 #### 4.2.1. 设置弹窗位置
 
@@ -552,7 +553,7 @@ em... 弹窗是实现了，但和我们想要的UI效果不太一致：
 
 🎉 到此，总算把 Flutter 中实现弹窗的三种核心方式讲完啦，读者喜欢哪一种呢？😏 我是无脑用 **Route** 的，毕竟自带弹窗基本用它，碰到喜欢的效果还能直接抄。在摸索过程中还发现了 **意外之喜**，之前都没发现 **Flutter DevTools** 里的 **Flutter Inspector** 有这几个东西：
 
-详细用法和效果图，可以参见这篇文章：**《DevTools 必知必会系列 —— Flutter inspector》**，行吧，本节就到这，😳 经常有读者私聊我要本专栏的配套代码，索性搞个仓库：[cp\_study\_flutter\_demo](https://github.com/配套示例源码)，后续相关的Demo都会Push上去，欢迎Star🌟，还有啥问题，欢迎评论区留言，谢谢🙏~
+详细用法和效果图，可以参见这篇文章：**《DevTools 必知必会系列 —— Flutter inspector》**，行吧，本节就到这，😳 经常有读者私聊我要本专栏的配套代码，索性搞个仓库：[cp_study_flutter_demo](https://github.com/配套示例源码)，后续相关的Demo都会Push上去，欢迎Star🌟，还有啥问题，欢迎评论区留言，谢谢🙏~
 
 **参考文献**
 

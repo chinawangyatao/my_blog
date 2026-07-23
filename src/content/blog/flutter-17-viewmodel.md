@@ -5,6 +5,7 @@ description: "使用ViewModel模式分离Flutter中的UI与业务逻辑，提升
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第十七篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -49,7 +50,7 @@ class UserModel {
     );
   }
 }
-```dart
+```
 
 ### 2.2. ViewModel
 
@@ -69,7 +70,7 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 }
-```dart
+```
 
 ### 2.3. View
 
@@ -110,7 +111,7 @@ class UserView extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 **运行输出结果如下**：
 
@@ -155,7 +156,7 @@ class UserView extends StatelessWidget {
 
 **主页面** (main.dart)：
 
-**登录页** (login\_page.dart)：
+**登录页** (login_page.dart)：
 
 **运行效果如下**：
 

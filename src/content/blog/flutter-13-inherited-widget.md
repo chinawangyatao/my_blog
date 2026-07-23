@@ -5,6 +5,7 @@ description: "深入Widget源码，理解InheritedWidget的数据传递机制。
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第十三篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -59,7 +60,7 @@ abstract class Widget extends DiagnosticableTree {
 
   //其它与调试相关的方法...
 }
-```dart
+```
 
 **源码解读**：
 
@@ -91,7 +92,7 @@ abstract class StatelessWidget extends Widget {
   @override
   StatelessElement createElement() => StatelessElement(this);
 }
-```dart
+```
 
 **源码解读**：
 
@@ -116,7 +117,7 @@ class StatelessElement extends ComponentElement {
     rebuild(force: true);
   }
 }
-```dart
+```
 
 **源码解读**：
 
@@ -172,7 +173,7 @@ Widget build(BuildContext context) {
     },
   );
 }
-```dart
+```
 
 ## 4. StatefulWidget
 
@@ -191,7 +192,7 @@ abstract class StatefulWidget extends Widget {
   @factory
   State createState();
 }
-```dart
+```
 
 **源码解读**：
 
@@ -270,15 +271,15 @@ class StatefulElement extends ComponentElement {
     _didChangeDependencies = true;
   }
 }
-```dart
+```
 
 **源码解读**：
 
-* **构造方法：** 传入一个StatefulWidget实例，并调用它的 **createState()** 创建一些State对象，并赋值给 **\_state**。调用父类ComponentElement的构造函数，将State对象的 **\_element** 设置为当前的StatefulElement实例，即完成 **State对象与Element的关联**。最后设置 **\_widget** 为传入的StatefulWidget实例。
+* **构造方法：** 传入一个StatefulWidget实例，并调用它的 **createState()** 创建一些State对象，并赋值给 **_state**。调用父类ComponentElement的构造函数，将State对象的 **_element** 设置为当前的StatefulElement实例，即完成 **State对象与Element的关联**。最后设置 **_widget** 为传入的StatefulWidget实例。
 * **build()** ：调用State对象的build()，并传递当前Element，在这里完成 **实际Widget的构建**。
 * **reassemble()** ：用于 **热重载** 的场景，先调用State的reassemble()，再调用父类的reassemble()。
-* **\_firstBuild()** ：**Element第一次被构建时调用**，通知State对象依赖关系已经改变，然后调父类\_firstBuild()。
-* **performRebuild()** ：**重新构建Widget时调用**，如果 \_didChangeDependencies 标志位设置为true，则会通知State对象依赖关系已经改变，并将标志重置为false，然后调父类的 performRebuild()。
+* **_firstBuild()** ：**Element第一次被构建时调用**，通知State对象依赖关系已经改变，然后调父类_firstBuild()。
+* **performRebuild()** ：**重新构建Widget时调用**，如果 _didChangeDependencies 标志位设置为true，则会通知State对象依赖关系已经改变，并将标志重置为false，然后调父类的 performRebuild()。
 * **update()** ：将新的Widget与当前的Element关联，先调父类的update()，然后更新State对象中保存的widget引用，并强制重新构建。
 * **activate()** ：Element重新插入到树中时调用，它会调用State对象的activate()，并标记为需要重新构建。
 * **deactivate()** ：当Element永久从树中移除时调用，它会调用State对象的 **dispose()** 来清理资源，然后断开State对象与Element的关联，并清空State对象的引用。
@@ -366,7 +367,7 @@ void markNeedsBuild() {
     }());
   }
 }
-```dart
+```
 
 **源码解读**：
 
@@ -396,7 +397,7 @@ abstract class ProxyWidget extends Widget {
   const ProxyWidget({ super.key, required this.child });
   final Widget child;
 }
-```dart
+```
 
 😳 就一个child属性，也忒简洁了吧，通常不会直接使用它，而是使用它的两个子类 → **InheritedWidget** 和**ParentDataWidget**，本节主要了解前者~
 
@@ -507,7 +508,7 @@ class MyApp extends StatelessWidget {
 void main() {
   runApp(MyApp());
 }
-```dart
+```
 
 **运行输出结果**：
 
@@ -522,7 +523,7 @@ void main() {
 dependOnInheritedWidgetOfExactType()
 // 改为：
 getElementForInheritedWidgetOfExactType<ThemeInheritedWidget>()!.widget as ThemeInheritedWidget
-```dart
+```
 
 具体原理，等下看源码你就知道了~
 
@@ -538,7 +539,7 @@ abstract class InheritedWidget extends ProxyWidget {
   @protected
   bool updateShouldNotify(covariant InheritedWidget oldWidget);
 }
-```dart
+```
 
 **源码解读**：
 
@@ -594,7 +595,7 @@ abstract class ProxyElement extends ComponentElement {
   @protected
   void notifyClients(covariant ProxyWidget oldWidget);
 }
-```dart
+```
 
 **源码解读**：
 
@@ -627,7 +628,7 @@ InheritedElement? getElementForInheritedWidgetOfExactType<T extends InheritedWid
   final InheritedElement? ancestor = _inheritedElements == null ? null : _inheritedElements![T];
   return ancestor;
 }
-```dart
+```
 
 可以看到前者多调了一个 **dependOnInheritedElement()** ，在其中注册了依赖关系，这就是为啥使用后者就不会回调 **didChangeDependencies()** 的原因。
 
@@ -639,8 +640,8 @@ InheritedElement? getElementForInheritedWidgetOfExactType<T extends InheritedWid
 
 🤔 通过跟踪源码，可以发现：无论是 **主动调用setState()** 传入匿名函数更新状态，还是 **InheritedWidget** 在共享数据发生改变时遍历所有依赖的子Widget的 **didChangeDependencies()** ，最终都是调用的 **markNeedsBuild()** ，该方法主要做了两件事：
 
-* **\_dirty = true** → 标记此Element为"dirty"，即状态改变需要重建，需要在下一帧中更新UI。
-* **owner!.\_scheduleBuildFor(this);** → 安排重建，将此Element加入框架的 **重建队列**。这里的owner指的是Element的 **BuildOwner**，它负责管理一个Widget的构建过程。
+* **_dirty = true** → 标记此Element为"dirty"，即状态改变需要重建，需要在下一帧中更新UI。
+* **owner!._scheduleBuildFor(this);** → 安排重建，将此Element加入框架的 **重建队列**。这里的owner指的是Element的 **BuildOwner**，它负责管理一个Widget的构建过程。
 
 在每个动画帧的开始，Flutter框架会调用 **BuildOwner#buildScope()** 创建一个 **上下文(Scope)** 来管理当前帧中所有需要重建的 Element：
 

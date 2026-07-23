@@ -5,6 +5,7 @@ description: "Flutter中各种Key的作用和使用场景，ValueKey、GlobalKey
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第十篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -78,7 +79,7 @@ class _TestKeyWidgetState extends State<TestKeyWidget> {
         child: Text("$count", style: const TextStyle(color: Colors.white, fontSize: 30)),
       ));
 }
-```dart
+```
 
 运行后，点击数字自增，让三个Widget数字依次显示为：**绿1蓝2红3**，然后点击移除按钮：
 
@@ -90,7 +91,7 @@ List<Widget> items = [
   const TestKeyWidget(key: ValueKey(2), color: Colors.blue),
   const TestKeyWidget(key: ValueKey(3), color: Colors.red)
 ];
-```dart
+```
 
 此时再次重复上面的操作，Widget正确移除，数字也显示正确：
 
@@ -137,7 +138,7 @@ print(widget.color);	// 获得控件颜色
 final renderBox = _globalKey.currentContext!.findRenderObject() as RenderBox;
 print(renderBox.size);	// 获得控件尺寸
 print(renderBox.localToGlobal(Offset.zero))	// 获得控件坐标
-```dart
+```
 
 **Tips**： **不要在build() 方法中创建GlobalKey**！！！性能不好不说，还可能出现意想不到的异常，如：子树里的GestureDetector可能会由于每次build时重新创建GlobalKey而无法继续追踪手势事件。
 
@@ -145,9 +146,9 @@ print(renderBox.localToGlobal(Offset.zero))	// 获得控件坐标
 
 可以看到默认实现是 **LabeledGlobalKey** 类，也看下这个类的实现：
 
-内部就一个 **debugLabel** 属性，仅仅为了debug时使用，实际开发不会传递这个参数，然后重写了toString() 方法。好像也没啥亮点🤔？往回看 **GlobalKey** 的源码，可以看到BuildContext、Widget、State 其实都是通过 **\_currentElement** 属性来获取的，跟下 **\_globalKeyRegistry**，指向 **BuildOwner**类中的一个map：
+内部就一个 **debugLabel** 属性，仅仅为了debug时使用，实际开发不会传递这个参数，然后重写了toString() 方法。好像也没啥亮点🤔？往回看 **GlobalKey** 的源码，可以看到BuildContext、Widget、State 其实都是通过 **_currentElement** 属性来获取的，跟下 **_globalKeyRegistry**，指向 **BuildOwner**类中的一个map：
 
-不难看出 **key为GlobalKey对象**，**value为与之关联的Element**，接着分别看下是啥时候 **建立关联** 与 **解除关联** 的。搜下 **\_globalKeyRegistry[** 定位到了 **\_registerGlobalKey()** 方法：
+不难看出 **key为GlobalKey对象**，**value为与之关联的Element**，接着分别看下是啥时候 **建立关联** 与 **解除关联** 的。搜下 **_globalKeyRegistry[** 定位到了 **_registerGlobalKey()** 方法：
 
 继续跟，定位到 **Element#mount()** 调用了这个方法：
 
@@ -155,7 +156,7 @@ print(renderBox.localToGlobal(Offset.zero))	// 获得控件坐标
 
 与之对应的 **卸载** 则是通过 **unmount()** 方法实现，当Element被永久移除出渲染树时调用的，通常是**与之关联的Widget在树中已经不存在**，**或者被替换成了另一个不同类型的Widget**。该方法主要执行一些清理操作，如：释放资源，解除监听器等。
 
-反过来跟下 **unmount()** 方法，可以看到其中调用了 **\_unregisterGlobalKey()** ：
+反过来跟下 **unmount()** 方法，可以看到其中调用了 **_unregisterGlobalKey()** ：
 
 跟下这个方法：
 
@@ -201,7 +202,7 @@ List<Widget> items = [
   TestKeyWidget(key: UniqueKey(), color: Colors.blue),
   TestKeyWidget(key: UniqueKey(), color: Colors.red)
 ];
-```dart
+```
 
 **UniqueKey()** 创建的Key唯一，所以组件的状态也得以保存。另外，它还有一个使用场景：
 

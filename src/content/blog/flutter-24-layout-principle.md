@@ -5,6 +5,7 @@ description: "Flutter布局系统的底层原理，Constraints向下传递，Siz
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第二十四篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -34,7 +35,7 @@ class HomePage extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 🤔 在学习了更多 **Widget** 后，我知道了：给 **溢出的Text** 套个 **Expanded** 或 **Flexible** 就能解决这个问题：
 
@@ -42,7 +43,7 @@ class HomePage extends StatelessWidget {
 
 不甘止步于当一只 **Flutter**🥬🐶，为了更好地扮演 **UI崽**  这个角色，弄清楚 **Flutter布局背后的门道** 非常有必要。所以这节来了，一起来探索下 **Flutter之下的布局规则 & 原理**。
 
-> 💡 **Tips**：这个黄色斑马线只在 **Debug** 时存在，**Release** 包是不会显示出来的 ❗️ 如果你在 **调试阶段** 也不想看到它，可以修改下源码 **debug\_overflow\_indicator.dart** → **\_calculateOverflowRegions()** ，除了最后的**return regions;** 把其它代码都注释掉，溢出也不会绘制黄色斑马线啦。😄 不过，建议还是保留，调试阶段这玩意还是挺有用的~
+> 💡 **Tips**：这个黄色斑马线只在 **Debug** 时存在，**Release** 包是不会显示出来的 ❗️ 如果你在 **调试阶段** 也不想看到它，可以修改下源码 **debug_overflow_indicator.dart** → **_calculateOverflowRegions()** ，除了最后的**return regions;** 把其它代码都注释掉，溢出也不会绘制黄色斑马线啦。😄 不过，建议还是保留，调试阶段这玩意还是挺有用的~
 
 另外，Android原生开发的App是可以在手机上直接查看 **布局边界** (开发者选项-显示布局边界) 的：
 
@@ -110,11 +111,11 @@ class HomePage extends StatelessWidget {
         ));
   }
 }
-```dart
+```
 
 😁 你觉得运行后的效果会是怎样？**蓝色大正方形在下，红色小正方形在上**？不好意思，只有红色大正方形：
 
-是不是一脸懵逼，为啥设置的100\*100木有生效？打开Flutter开发者调试工具-**Flutter Inspector**，分别看下两个**Container** 设置的约束：
+是不是一脸懵逼，为啥设置的100**100木有生效？打开Flutter开发者调试工具-**Flutter Inspector**，分别看下两个**Container** 设置的约束：
 
 🐶 好多constraints，其实，只需关注「**renderObject-渲染对象**」的三个属性：
 
@@ -162,7 +163,7 @@ Widget build(BuildContext context) {
         ),
       ));
 }
-```dart
+```
 
 运行结果和布局层次如下：
 
@@ -178,15 +179,15 @@ Widget build(BuildContext context) {
 void main() {
   runApp(Container(color: Colors.blue));
 }
-```dart
+```
 
 **Flutter Inspector** 看下布局层级：
 
 **Container** 的 **constraints** 为null，它的子控件 **ColoredBox** 的 **renderObject** 的 **constraints** 却为 w392.7,h769.5，😳 哪来的？点开 **ColoredBox** 的源码：
 
-继承 **SingleChildRenderObjectWidget** (创建只有一个子Widget的渲染对象)，重写 **createRenderObject()** 返回一个 **\_RenderColoredBox** 实例，点开源码：
+继承 **SingleChildRenderObjectWidget** (创建只有一个子Widget的渲染对象)，重写 **createRenderObject()** 返回一个 **_RenderColoredBox** 实例，点开源码：
 
-🤔 em... 就是根据 **size** 绘制矩形，说明在此之前size已经初始化了，而在 **\_RenderColoredBox** 中没找着给 **size** 赋值的代码，那必定是在父类里赋值了，跟下代码，发现它是在 **RenderBox** 类中定义的：
+🤔 em... 就是根据 **size** 绘制矩形，说明在此之前size已经初始化了，而在 **_RenderColoredBox** 中没找着给 **size** 赋值的代码，那必定是在父类里赋值了，跟下代码，发现它是在 **RenderBox** 类中定义的：
 
 给 **setsize()** 打下断点，跟下具体的代码调用流程：
 
@@ -210,7 +211,7 @@ void main() {
 
 看下它的创建 **RenderObject(渲染对象)** 的方法：
 
-点开 **RenderFlex#performLayout()** ，调用 **\_computeSizes()** 计算子元素的尺寸：
+点开 **RenderFlex#performLayout()** ，调用 **_computeSizes()** 计算子元素的尺寸：
 
 ### 4.1. 为什么是溢出1.7个像素？
 
@@ -222,7 +223,7 @@ void main() {
 * **计算主轴剩余空间-freeSpace** ，**totalFlex** 大于0，说明存在 **弹性子元素**，计算 **每个flex单位** 的空间 **spacePerFlex** = **freeSpace** / **totalFlex**。
 * **再次遍历子元素**，只对弹性子元素做处理(flex>0)，计算 **子元素尺寸-maxChildExtent** 并累加到 **allocatedFlexSpace** (已分配的弹性空间)，同时更新 **crossSize**。
 * **确定最终尺寸**：如果 **canFlex**-可以进行弹性布局，且 **mainAxisSize == MainAxisSize.max** (主轴空间应尽可能占满)，那最终尺寸 **idealSize** 为 **maxMainSize**-主轴可用最大尺寸，否则为 **allocatedSize**。
-* **返回计算结果**：返回一个 **\_LayoutSizes** 对象，包含主轴尺寸、交叉轴尺寸和已分配的尺寸。
+* **返回计算结果**：返回一个 **_LayoutSizes** 对象，包含主轴尺寸、交叉轴尺寸和已分配的尺寸。
 
 😁 简单点说就是：
 
@@ -230,7 +231,7 @@ void main() {
 
 看到这里，读者可能会问：
 
-> 怎么没看到调用子元素的 **layout()** 方法来布局？😄 **→ layoutChild()\_computeSizes()** 直接把 **ChildLayoutHelper#layoutChild()** 当做参数传过来了，里面调了 **child.layout()** ：
+> 怎么没看到调用子元素的 **layout()** 方法来布局？😄 **→ layoutChild()_computeSizes()** 直接把 **ChildLayoutHelper#layoutChild()** 当做参数传过来了，里面调了 **child.layout()** ：
 
 好，接着在这里打下断点，看下每个子元素计算出来的尺寸：
 
@@ -238,29 +239,29 @@ void main() {
 
 记着是第二个溢出的Text：
 
-😮 宽度为319.7，加上之前的42.7，直接362.4 → **主轴已分配尺寸**，拿它去减 **主轴可用最大尺寸360.7**，**溢出** 了**1.7** 个像素。回到 **\_computeSizes()** 的调用处 **RenderFlex#performLayout()** 继续往下走，可以看到把 **溢出值** 设置给了 **\_overflow** 变量：
+😮 宽度为319.7，加上之前的42.7，直接362.4 → **主轴已分配尺寸**，拿它去减 **主轴可用最大尺寸360.7**，**溢出** 了**1.7** 个像素。回到 **_computeSizes()** 的调用处 **RenderFlex#performLayout()** 继续往下走，可以看到把 **溢出值** 设置给了 **_overflow** 变量：
 
-搜索下变量，发现定义了一个 **\_hasOverflow** 的 get 方法：
+搜索下变量，发现定义了一个 **_hasOverflow** 的 get 方法：
 
-搜下 **\_hasOverflow**，在 **paint()** 方法中找到了它的身影 (布局过程或其它情况调了 **markNeedsPaint()** ，在下一帧渲染时，Flutter 会调用 paint() 来绘制该渲染对象及其子元素)：
+搜下 **_hasOverflow**，在 **paint()** 方法中找到了它的身影 (布局过程或其它情况调了 **markNeedsPaint()** ，在下一帧渲染时，Flutter 会调用 paint() 来绘制该渲染对象及其子元素)：
 
-最终调用 **paintOverflowIndicator()** ，其中会调用 **\_calculateOverflowRegions()** 来绘制 **溢出指示器**。
+最终调用 **paintOverflowIndicator()** ，其中会调用 **_calculateOverflowRegions()** 来绘制 **溢出指示器**。
 
 ### 4.2. 为什么套 Expanded 或 Flexible 就不会溢出？
 
 😄 弄清楚为啥是溢出1.7个像素，还有绘制溢出指示器的流程，接下来扒下为啥套 **Expanded** 或 **Flexible** 后 **Text** 就不会溢出。先跟下前者，给溢出的Text套上 **Expanded**，还是上面的断点，然后发现只有第一个Text会走，那就是 **flex > 0**，有 **弹性子元素**。再更下面的代码打断点：
 
-吼，**Expanded** 的 **flex** 为 1，然后 **\_getFit(child)** 返回的值为1，对应 **FlexFit.tight**：
+吼，**Expanded** 的 **flex** 为 1，然后 **_getFit(child)** 返回的值为1，对应 **FlexFit.tight**：
 
 把 **子元素的最大尺寸赋值给最小尺寸**，继续往下走，创建了 **子元素约束**：
 
-最后看下返回的 **\_LayoutSizes** 对象：
+最后看下返回的 **_LayoutSizes** 对象：
 
-**allocatedSize** 和 **actualSize** 相等， **\_overflow** 自然为0，所以 **不会绘制溢出指示器**。🤔 em... 好像并没有消除我们的疑问啊，换个方向，从 **Expanded** 着手，点开源码：
+**allocatedSize** 和 **actualSize** 相等， **_overflow** 自然为0，所以 **不会绘制溢出指示器**。🤔 em... 好像并没有消除我们的疑问啊，换个方向，从 **Expanded** 着手，点开源码：
 
 😳 啊？**Expanded** 继承 **Flexible**，只有 **fit** 不一样，然后 **Flexible** 又继承了 **ParentDataWidget**，看注释可以知道它的大概作用：**给 RenderObject 的 parentData 提供数据**。给这个 **applyParentData()** 打下断点，看下方法调用流程：
 
-最终调用 **Flexible#applyParentData()** ，获取 **父级渲染对象** 调用 **markNeedsLayout()** 标记需要 **重新布局** (重新计算子节点的位置和大小)。🤔 所以是在布局前，就把 **flex=1** 和 **fit=FlexFit.tight** 塞到 **ParentData** 中了？还是 **\_computeSizes()** 打下断点，留意 **childParentData** 的值：
+最终调用 **Flexible#applyParentData()** ，获取 **父级渲染对象** 调用 **markNeedsLayout()** 标记需要 **重新布局** (重新计算子节点的位置和大小)。🤔 所以是在布局前，就把 **flex=1** 和 **fit=FlexFit.tight** 塞到 **ParentData** 中了？还是 **_computeSizes()** 打下断点，留意 **childParentData** 的值：
 
 第一个Text：
 
@@ -269,7 +270,7 @@ flex和fit都是null，然后是第二个Text：
 💁‍♂️ 行吧，很清晰了，总结下套 Expanded 或 Flexible 就不会溢出的原因：
 
 * **Expand** 和 **Flexible** 的父类是 **ParentDataWidget**，在 **child** 的 **renderObject** 添加到 **渲染树** 时会调用 **applyParentData()** 更新 **渲染对象** 的 **parentData** 属性(存储布局 **child** 时所需的数据)。
-* **RenderFlex#performLayout()** 调 **\_computeSizes()** 时，会先获取 **渲染对象** 的 **parentData**，再对子元素进行布局。
+* **RenderFlex#performLayout()** 调 **_computeSizes()** 时，会先获取 **渲染对象** 的 **parentData**，再对子元素进行布局。
 * 前面 **Expand#applyParentData()** 把 **parentData** 的 **flex** 设置为1、**fit** 设置为 FlexFit.tight，对应生成的约束 **innerConstraints** 在主轴方向为 **紧约束**，比如上面的 **w(宽度)** 就固定为 **318.0**。
 * **Text** 有了一个 **宽度的紧约束**，当内容超过这个宽度，它会尝试 **自动换行** (如果softWrap为true)。
 
@@ -339,7 +340,7 @@ flex和fit都是null，然后是第二个Text：
 * **遍历子节点**，调用其 **layout()** 计算出 **子节点的size**，提取它在 **主轴和交叉轴的长度**，判断 **当前行** 能否容纳子节点
 
   + 如果 **加了会超限制**，更新 **主轴和交叉轴的总长度** (当前行尺寸+行间距)，**记录当前行的布局信息**，**重置行尺寸和子节点计数**。
-  + 更新 **当前行的主轴** (子节点数>0，需要添加子节点间距) 和 **交叉轴长度**，当前行子节点计数+1，更新子节点parentData里的\_runIndex(所在行索引)，指针移动到下一个子节点。
+  + 更新 **当前行的主轴** (子节点数>0，需要添加子节点间距) 和 **交叉轴长度**，当前行子节点计数+1，更新子节点parentData里的_runIndex(所在行索引)，指针移动到下一个子节点。
 * 如果 **有子节点未处理** (最后一行)，处理后，记录当前行的布局信息。
 * 计算 **容器尺寸**，检查是否有 **视觉溢出** (内容超出容器边界，导致部分内容无法在容器内完全显示)。
 * 计算 **交叉轴上的剩余空间**，根据 **runAlignement** 设置不同的交叉轴 **前导空间** 和 **间隔空间**，加上行间距，计算出 **子节点在交叉轴的偏移量**。
@@ -365,8 +366,6 @@ flex和fit都是null，然后是第二个Text：
 * 以 **Align** 和 **Wrap** 为例，带大家了解 **单子 & 多子 Widget** 的布局流程。
 
 🤷‍♀️ 抛砖引玉，主要还是学习 **分析的思路**，相信读者学完本节，以后再遇到布局相关的问题，不会无从下手啦~
-
----
 
 **参考文献**：
 

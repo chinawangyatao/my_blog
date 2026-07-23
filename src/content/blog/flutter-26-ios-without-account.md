@@ -5,6 +5,7 @@ description: "无Apple开发者账号情况下打包安装iOS应用的方案。"
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第二十六篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -47,14 +48,14 @@ category: 'tech'
 
 ```dart
 git clone https://github.com/配套示例源码.git
-```dart
+```
 
-然后，因为的flutter项目用到了 **json\_serializable** 库，需要用到运行时代码生成，所以要执行下生成命令：
+然后，因为的flutter项目用到了 **json_serializable** 库，需要用到运行时代码生成，所以要执行下生成命令：
 
 ```dart
 cd van_android_getx
 flutter pub run build_runner build --delete-conflicting-outputs
-```dart
+```
 
 执行完，打开「**ios**」目录，双击打开「**Runner.xcworkspace**」自动唤起「**XCode**」：
 
@@ -70,7 +71,7 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 重启「**XCode**」，接着可能会出现下述报错。
 
-#### 2.4.2. Module 'flutter\_inappwebview' not found XCode
+#### 2.4.2. Module 'flutter_inappwebview' not found XCode
 
 终端执行：
 
@@ -79,7 +80,7 @@ cd ios
 flutter clean
 flutter pub get
 pod install
-```dart
+```
 
 如果执行中途出现这样的报错：
 
@@ -93,7 +94,7 @@ brew install cocoapods
 brew link cocoapods
 pod repo update
 pod install
-```dart
+```
 
 ### 2.5. 插手机 & 打开开发者模式
 
@@ -177,15 +178,15 @@ echo "The .ipa file has been created at: $(pwd)/$appName.ipa"
 
 # Exit successfully
 exit 0
-```dart
+```
 
-保存为 **app\_to\_ipa.sh** 后，执行下脚本，可以看到生成的 **ipa** 文件路径：
+保存为 **app_to_ipa.sh** 后，执行下脚本，可以看到生成的 **ipa** 文件路径：
 
-如果报错：permission denied: /Users/xxx/app\_to\_ipa.sh，执行下述命令给脚本点权限：
+如果报错：permission denied: /Users/xxx/app_to_ipa.sh，执行下述命令给脚本点权限：
 
 ```dart
 chmod +x app_to_ipa.sh
-```dart
+```
 
 🎉 再次运行脚本就可以啦~
 

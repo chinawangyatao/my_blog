@@ -5,6 +5,7 @@ description: "深入理解Flutter UI框架的底层原理，Widget、Element、R
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第十一篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -179,13 +180,13 @@ App启动创建主线程消息循环后，创建第一个Activity时会调用 **
 
 #### 3.3.5. ViewRootImpl 与 SurfaceFlinger 建立联系
 
-* 接着调用 **WindowManagerService.addWindow()** 创建 **WindowState对象**，并调用 **win.attach()** 来创建一个 **SurfaceSession对象**，其中调用了 **android\_view\_SurfaceSession.cpp#nativeCreate()** 构造了一个 **SurfaceComposerClient对象**，它是App与 **SurfaceFlinger** 沟通的桥梁。
+* 接着调用 **WindowManagerService.addWindow()** 创建 **WindowState对象**，并调用 **win.attach()** 来创建一个 **SurfaceSession对象**，其中调用了 **android_view_SurfaceSession.cpp#nativeCreate()** 构造了一个 **SurfaceComposerClient对象**，它是App与 **SurfaceFlinger** 沟通的桥梁。
 * 这个指针在第一次创建时会调用 **createScopedConnection()** 来创建一个 **ISurfaceComposerClient对象**，**SurfaceComposerClient** 就是通过它来与 **SurfaceFlinger** 通信，除此之外，它还可以创建 **Surface** 并 **维护一个App所有的Layer(层)** 。
 
 #### 3.3.6. **requestLayout() 触发测绘**
 
 * 经过上述步骤，**ViewRootImpl** 和 **WMS**、**SurfaceFlinger** 都建立了连接，但此时 View 还没显示出来，回到 **ViewRootImpl.setView()** ，这里还调用了 **requestLayout()。**
-* 其中调用了 **scheduleTraversals()** 先设置同步屏障暂停处理后面的同步消息，然后调用 **mChoreographer.postCallback** (Choreographer.CALLBACK\_TRAVERSAL, **mTraversalRunnable**, null)，指定一个回调函数，在下一个vsync信号到来时，执行 **mTraversalRunnable** 里的 **run()** ，点开这个方法只有一句 **doTraversal()** ，移除同步屏障后调用 **performTraversals()** 正式进入 **View的绘制流程**。
+* 其中调用了 **scheduleTraversals()** 先设置同步屏障暂停处理后面的同步消息，然后调用 **mChoreographer.postCallback** (Choreographer.CALLBACK_TRAVERSAL, **mTraversalRunnable**, null)，指定一个回调函数，在下一个vsync信号到来时，执行 **mTraversalRunnable** 里的 **run()** ，点开这个方法只有一句 **doTraversal()** ，移除同步屏障后调用 **performTraversals()** 正式进入 **View的绘制流程**。
 
 #### 3.3.7. 测量与布局
 
@@ -268,7 +269,7 @@ Android系统会尽量减少不必要的View遍历，如：视图的尺寸没有
 
 调用 **WidgetsFlutterBinding.ensureInitialized()** 并返回了一个 **WidgetsBinding** 实例，点进去方法看看：
 
-判断 **WidgetsBinding.\_instance** 属性是否为空，空的话调用构造方法创建一个实例，然后返回**WidgetsBinding.instance** 属性调用：
+判断 **WidgetsBinding._instance** 属性是否为空，空的话调用构造方法创建一个实例，然后返回**WidgetsBinding.instance** 属性调用：
 
 **checkInstance()** 里的实例没初始化的话，会显示一个错误信息，吼，就获取一个 **WidgetsBinding单例**。然后 **WidgetsFlutterBinding()** 并没有构造方法，调用的父类 **BindingBase** 的构造方法 (省略无关代码)：
 
@@ -278,7 +279,7 @@ BindingBase() {
   initInstances();
   initServiceExtensions();
 }
-```dart
+```
 
 **initInstances()** 用于 **初始化绑定器实例**，**initServiceExtensions()** 用于 **注册扩展服务**。Flutter App 运行在 Dart VM上，两者是可以互相调用的，如Flutter调用Dart VM的服务来获取内存信息、类信息、调用方法等，Dart VM也可以反过来调用 Flutter 层注册好的方法。不过它们间的调用要遵循 [Json协议](https://github.com/dart-lang/sdk/blob/master/runtime/vm/service/service.md)，只要注册过，名字匹配上就可以调用，注册方法 **registerServiceExtension()** ，具体代码示例如下：
 
@@ -304,9 +305,9 @@ void registerServiceExtension({
     return developer.ServiceExtensionResponse.result(json.encode(result));
   });
 }
-```dart
+```
 
-Dart VM 和 Flutter 的 **通信** 遵循socket协议，只要连接上 **虚拟机运行的URL** 就行了，需要用到 **vm\_service** 模块，Flutter App 主动连接 VM的代码示例如下：
+Dart VM 和 Flutter 的 **通信** 遵循socket协议，只要连接上 **虚拟机运行的URL** 就行了，需要用到 **vm_service** 模块，Flutter App 主动连接 VM的代码示例如下：
 
 ```dart
 // Service.getInfo 是 Flutter 提供的获取虚拟机服务URL的API
@@ -333,7 +334,7 @@ registerSignalServiceExtension(
 Future<void> _exitApplication() async {
   exit(0);
 }
-```dart
+```
 
 接着提一嘴 混入**mixin** 的语法，它的几个关键字：**mixin**(声明混入类)、**with**(使用混入类)、**on**(限制混入只能应用于特定的子类)。混入的实现是依靠 **生成中间类** 的方式，生成伪代码如下：
 
@@ -352,7 +353,7 @@ class _Intermediate3 extends _Intermediate2 with C { }
 class D extends _Intermediate3 {
   // 可以添加自己的成员和方法
 }
-```dart
+```
 
 不难看出 **混入是线性** 的，优先级高于 **继承**，后面的混入类会覆盖前面的 **同名方法**，所以下面的代码：
 
@@ -368,7 +369,7 @@ class D with A,B,C {
 void main(List<String> args) {
   D().printName();	// 输出：C
 }
-```dart
+```
 
 输出结果是 **C**，如果想 **每个混入类的同名方法都被调用**，可以这样玩：
 
@@ -402,7 +403,7 @@ class D extends Parent with A,B,C {
 void main(List<String> args) {
   D().printName();  // 输出：ABC
 }
-```dart
+```
 
 **定义一个父类**，**每个混入类用on限定只能被父类的子类混入**，**方法中调用super**，**使用混入的类继承父类** 通过这四步就能实现多个混入类的 **链式调用**，每个mixin可以添加自己的逻辑，而不影响到其它mixin或基类。
 
@@ -435,9 +436,9 @@ Engine层事件监听的注册，在 **handleEvent()** 中处理所有RenderObje
 
 注册管理平台服务：
 
-* \_defaultBinaryMessenger：与platform通信；
+* _defaultBinaryMessenger：与platform通信；
 * handleSystemMessage：处理系统消息，如字体改变、内存不足；
-* \_parseAppLifecycleMessage：生命状态回调处理；
+* _parseAppLifecycleMessage：生命状态回调处理；
 * RestorationManager：数据保存/恢复管理；
 
 #### 5.1.4. PaintingBinding

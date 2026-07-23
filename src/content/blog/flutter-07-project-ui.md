@@ -5,6 +5,7 @@ description: "Flutter项目实战的UI实现，页面布局、组件封装、交
 author: wxc
 tags: ["Flutter", "Dart", "前端"]
 category: 'tech'
+heroImage: '/images/flutter-cover.png'
 ---
 
 > 本文是Flutter系统学习系列的第七篇，该系列涵盖从环境搭建到高级原理的完整知识体系。
@@ -17,9 +18,9 @@ category: 'tech'
 
 ### 1.1. 自定义App图标
 
-在[《三、纯Flutter项目打包 & 混合开发[Android]》]( "")有提过这一点了，建议直接使用Flutter插件 [flutter\_launcher\_icons](https://pub.dev/packages/flutter_launcher_icons) 来 **自动处理所有平台的图标生成和替换**，需要一张至少 **512x512** 像素的 **图标源图**！！！打开 **pubspec.yaml** 引用插件，并指定 **源图** 及 **生成的图标名**：
+在[《三、纯Flutter项目打包 & 混合开发[Android]》]( "")有提过这一点了，建议直接使用Flutter插件 [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) 来 **自动处理所有平台的图标生成和替换**，需要一张至少 **512x512** 像素的 **图标源图**！！！打开 **pubspec.yaml** 引用插件，并指定 **源图** 及 **生成的图标名**：
 
-```dart
+```yaml
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -29,14 +30,14 @@ flutter_icons:
   image_path: "assets/images/icon.png"
   android: "ic_launcher"	# 指定生成的图标名
   ios: true	# iOS是否也生成图标
-```dart
+```
 
 保存后，执行下述命令： **添加插件依赖** 及 **生成并替换图标**：
 
 ```dart
 flutter pub get
 flutter pub run flutter_launcher_icons
-```dart
+```
 
 即可实现图标替换，接着，顺手修改下 **APP名称**，定位到 **android/app/src/main/AndroidManifest.xml** 文件，修改 **android:label** 标签的值为你的应用名称，也支持通过 **strings.xml** 索引字符串资源的写法：
 
@@ -47,7 +48,7 @@ flutter pub run flutter_launcher_icons
   android:icon="@mipmap/ic_launcher">
   ...
 </application>
-```dart
+```
 
 都修改完，运行看看效果：
 
@@ -71,11 +72,11 @@ Column(
       ),)
     ],
 )
-```dart
+```
 
 运行效果如下：
 
-> Tips：字体图标对应的 **码点**，**建议以官方文档为准**！！！比如 **favorite\_outlined** 两者对应的码点值如下 (这也是为啥第二个图标是🚘不是♥)：
+> Tips：字体图标对应的 **码点**，**建议以官方文档为准**！！！比如 **favorite_outlined** 两者对应的码点值如下 (这也是为啥第二个图标是🚘不是♥)：
 
 ### 1.3. 自定义字体图标
 
@@ -89,10 +90,15 @@ Flutter中，**字体图标** 相比 **图片** 的优势：
 
 ```dart
 fonts:
+```
+
   - family: customIcon	# 指定字体名
-    fonts:
-      - asset: assets/fonts/iconfont.ttf
+
 ```dart
+    fonts:
+```
+
+      - asset: assets/fonts/iconfont.ttf
 
 然后可以就通过 **IconData** 来引用我们的自定义图标啦：
 
@@ -103,7 +109,7 @@ Icon(
   size: 26,
   color: Colors.yellow,
 )
-```dart
+```
 
 **运行效果图**：
 
@@ -118,7 +124,7 @@ class CustomIcons {
 
 // 使用
 Icon(CustomIcons.xiao, size: 26,color: Colors.yellow,)
-```dart
+```
 
 😁再安利两个图标工具站点：[fluttericon.com](https://www.fluttericon.com/) 和 [fluttericon.cn](https://www.fluttericon.cn/)
 
@@ -126,13 +132,13 @@ Icon(CustomIcons.xiao, size: 26,color: Colors.yellow,)
 
 从 **App启动** 到 **Flutter第一帧渲染结束前** 需要一定的时间，Flutter项目会默认配置一个简单的启动视图 (**白色背景** + **居中的应用图标**)。打开android目录下的 **styles.xml** 文件，可以看到设置了一个启动主题：
 
-点开它指向的 **launch\_background.xml** 文件：
+点开它指向的 **launch_background.xml** 文件：
 
 修改这两个item值即可实现自定义，需要在 **不同分辨率mipmap** 的文件夹下放一张启动图，还挺麻烦😒。
 
-😜这里直接用Flutter插件 [flutter\_native\_splash](https://pub.dev/packages/flutter_native_splash) 来快速设置，打开 **pubspec.yaml** 文件引用插件，并 **指定颜色及图片**：
+😜这里直接用Flutter插件 [flutter_native_splash](https://pub.dev/packages/flutter_native_splash) 来快速设置，打开 **pubspec.yaml** 文件引用插件，并 **指定颜色及图片**：
 
-```dart
+```yaml
 dev_dependencies:
 	flutter_native_splash: ^2.3.8
 
@@ -145,7 +151,7 @@ flutter_native_splash:
   android_12:
     icon_background_color: "79B4EB"
     image: assets/images/icon.png
-```dart
+```
 
 保存后，执行下述命令： **添加插件依赖** 及 **生成并配置启动页**：
 
@@ -155,7 +161,7 @@ flutter pub run flutter_native_splash:create
 
 # 如果想去掉自定义闪屏页，可以使用下述命令
 # flutter pub run flutter_native_splash:remove
-```dart
+```
 
 编译运行后打开APP看看闪屏效果 (Android 12会裁剪图片中间的圆形部分)：
 
@@ -192,7 +198,7 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 }
-```dart
+```
 
 然后在 main.dart 中优先显示 SplashScreen：
 
@@ -221,7 +227,7 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-```dart
+```
 
 ## 3. 首页草图
 
@@ -287,7 +293,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
     );
   }
 }
-```dart
+```
 
 运行代码后，从左侧划出抽屉看看效果：
 
@@ -435,13 +441,13 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-```dart
+```
 
 ### 5.4. Toast (提示)
 
 上面我们用 **Toast(吐司提示)** 来展示提示信息，但Flutter并没有内置这样的组件，这里用到三方库 [fluttertoast](https://pub.dev/packages/fluttertoast)。直接执行 **flutter pub add fluttertoast** 添加依赖，然后调用 **Fluttertoast.showToast(msg)** 就能显示Toast了，但运行时可能会报错：
 
-> uses-sdk:minSdkVersion 19 cannot be smaller than version 21 declared in library [:fluttertoast] D:\Code\Flutter\flutter\_wanandroid\build\fluttertoast\intermediates\merged\_manifest\debug\AndroidManifest.xml as the library might be using APIs not available in 19
+> uses-sdk:minSdkVersion 19 cannot be smaller than version 21 declared in library [:fluttertoast] D:\Code\Flutter\flutter_wanandroid\build\fluttertoast\intermediates\merged_manifest\debug\AndroidManifest.xml as the library might be using APIs not available in 19
 
 **问题概述**：使用 fluttertoast，App的minSdkVersion需要为21或以上版本。
 
@@ -449,7 +455,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 然后它会调用系统的Toast，不同的系统版本，可能会有不同的样式差异，比如我两台手机的Toast就不一样：
 
-如果想保证不同系统上都显示 **统一的Toast样式**，可以使用另一个 **支持自定义Toast** 的三方库：[another\_flushbar](https://pub.dev/packages/another_flushbar)。另外，🙊一般为了 **方便统一调用**，通常会封装一个建议的工具类：
+如果想保证不同系统上都显示 **统一的Toast样式**，可以使用另一个 **支持自定义Toast** 的三方库：[another_flushbar](https://pub.dev/packages/another_flushbar)。另外，🙊一般为了 **方便统一调用**，通常会封装一个建议的工具类：
 
 ```dart
 import 'package:flutter/material.dart';
@@ -475,7 +481,7 @@ class ToastUtil {
         fontSize: fontSize);
   }
 }
-```dart
+```
 
 照葫芦画瓢，顺手把注册页UI也画出来：
 
@@ -483,7 +489,7 @@ class ToastUtil {
 
 ### 5.5. 封装两个支持泛型的响应基类
 
-请求网络用到 **dio** 库，数据解析用到 **json\_serializable** 库，接口返回格式都是固定的，**data** 字段有两种可能的类型：**Object** 或 **列表**，定义两个泛型类：
+请求网络用到 **dio** 库，数据解析用到 **json_serializable** 库，接口返回格式都是固定的，**data** 字段有两种可能的类型：**Object** 或 **列表**，定义两个泛型类：
 
 ```dart
 import 'package:json_annotation/json_annotation.dart';
@@ -525,13 +531,13 @@ class ListResponse<T> {
   // 使用泛型方法将实例转换为Json
   Map<String, dynamic> toJson(dynamic Function(T value) toJsonT) => _$ListResponseToJson(this, toJsonT);
 }
-```dart
+```
 
 ### 5.6. 定义积分Model类
 
 个人积分接口返回数据的示例：
 
-复制下data字段的数据，直接丢 [json2dart\_for\_json\_serializable](https://caijinglong.github.io/json2dart/index_ch.html) 或者 **JsonToDart插件** 生成 Model 类：
+复制下data字段的数据，直接丢 [json2dart_for_json_serializable](https://caijinglong.github.io/json2dart/index_ch.html) 或者 **JsonToDart插件** 生成 Model 类：
 
 ```dart
 import 'package:json_annotation/json_annotation.dart';
@@ -563,13 +569,13 @@ class Integral extends Object {
 
   Map<String, dynamic> toJson() => _$IntegralToJson(this);
 }
-```dart
+```
 
 然后执行下述命令生成对应的序列化和反序列化代码：
 
 ```dart
 flutter pub run build_runner build --delete-conflicting-outputs
-```dart
+```
 
 生成的 **integral.g.dart** 文件内容如下：
 
@@ -595,7 +601,7 @@ class OtherException implements Exception {
 
   OtherException(this.message);
 }
-```dart
+```
 
 然后 **工厂单例**，封装下请求，根据不同的 errorCode 决定正确响应，以及抛哪种类型的异常，并提供一个更新请求头中Cookie的方法：
 
@@ -670,7 +676,7 @@ class DioClient {
     _dio.options.headers.remove("Cookie");
   }
 }
-```dart
+```
 
 然后在 **main.dart** 执行 **runApp()** 函数前，调用下 **DioClient.init()** 设置下 **请求域名**：
 
@@ -679,11 +685,11 @@ void main() {
   DioClient.init("https://www.wanandroid.com/");
   runApp(const MyApp());
 }
-```dart
+```
 
 ### 5.8. 请求积分接口并刷新UI
 
-在 **\_DrawerScreenState** 中定义一个 **\_integral** 属性，重写 **initState()** 方法，在这里 **请求积分接口**，并调用**setState()** 更新状态，具体实现代码：
+在 **_DrawerScreenState** 中定义一个 **_integral** 属性，重写 **initState()** 方法，在这里 **请求积分接口**，并调用**setState()** 更新状态，具体实现代码：
 
 ```dart
 class _DrawerScreenState extends State<DrawerScreen> {
@@ -708,9 +714,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
   }
   //...
 }
-```dart
+```
 
-然后在 **build()** 方法中，对应组件获取到 **\_integral 属性**，显示不同的文本和交互，关键代码如下：
+然后在 **build()** 方法中，对应组件获取到 **_integral 属性**，显示不同的文本和交互，关键代码如下：
 
 ```dart
 DrawerHeader(
@@ -741,9 +747,9 @@ ListTile(
   // 不为空显示积分
   title: Text('我的积分${(_integral != null ? _integral!.coinCount : "")}'),
 ),
-```dart
+```
 
-😁当 **\_integral** 为空时，点击去登录，通过 **Navigator.push()** 跳转到登录页，接着要完善登录页的逻辑：
+😁当 **_integral** 为空时，点击去登录，通过 **Navigator.push()** 跳转到登录页，接着要完善登录页的逻辑：
 
 * 请求登录接口，登录成功，获取响应头里的 **Set-Cookies** ，更新请求头的 **Cookies**，并持久化到本地；
 * 关闭页面，通知导航侧滑页面请求积分接口，更新UI；
@@ -818,15 +824,15 @@ void showLoadingDialog(BuildContext context, {bool canPop = true}) {
     },
   );
 }
-```dart
+```
 
 运行看看效果：
 
 😄nice~
 
-## 7. 简单封装shared\_preferences
+## 7. 简单封装shared_preferences
 
-登录成功完，除了需要更新请求头外，还需要把 **Cookie持久化到本地**，这种小型数据很适合用三方库 [shared\_preferences](https://pub.dev/packages/shared_preferences) 来保存，简单封装下。单例，各种数据类型的put、get，是否存在key，清空、移除，没啥难度，直接写出工具代码：
+登录成功完，除了需要更新请求头外，还需要把 **Cookie持久化到本地**，这种小型数据很适合用三方库 [shared_preferences](https://pub.dev/packages/shared_preferences) 来保存，简单封装下。单例，各种数据类型的put、get，是否存在key，清空、移除，没啥难度，直接写出工具代码：
 
 ```dart
 import 'package:shared_preferences/shared_preferences.dart';
@@ -874,7 +880,7 @@ class SharedPreferencesUtil {
 
   Future<bool> clear() => _preferences.clear();
 }
-```dart
+```
 
 接着补全下登录部分的代码：
 
@@ -913,7 +919,7 @@ class SharedPreferencesUtil {
       Fluttertoast.showToast(msg: "用户名或密码不能为空");
     }
   }
-```dart
+```
 
 输入正确账号密码，点击登录，登录成功后，登录页自动关闭，**手动关闭侧滑导航**，**再次点开**，可以看到用户名和积分都显示出来了：
 
@@ -938,19 +944,19 @@ class LoginStatus extends ChangeNotifier {
     notifyListeners()；
   }
 }
-```dart
+```
 
 监听者们会在这个方法被调用时得到通知，在顶层 **main.dart** 文件中，设置 **Provider**：
 
 ```dart
 runApp(ChangeNotifierProvider(create: (context) => LoginStatus(), child: const MyApp()));
-```dart
+```
 
 **登录页**，登录成功时调用updateLoginStatus() 通知更新：
 
 ```dart
 Provider.of<LoginStatus>(context, listen: false).updateLoginStatus(true);
-```dart
+```
 
 **侧滑导航**，可以使用 **Consumer** 或 **Provider.of()** 来监听数据变化：
 
@@ -979,13 +985,13 @@ Provider.of<LoginStatus>(context, listen: false).updateLoginStatus(true);
       }
     });
   }
-```dart
+```
 
 运行后，登录成功，登录自动关闭，侧滑导航自动拉取积分接口，nice😁。当然，侧滑这里其实没必要每次展开都拉取的，后续再优化下细节~
 
 ### 8.2. 初始化时，获取下Cookie并设置
 
-在请求库初始化的时候，可以顺带获取下 **shared\_preferences** 里保存的Cookie 并设置到请求头中：
+在请求库初始化的时候，可以顺带获取下 **shared_preferences** 里保存的Cookie 并设置到请求头中：
 
 ```dart
 void main() {
@@ -998,7 +1004,7 @@ void main() {
   });
   runApp(ChangeNotifierProvider(create: (context) => LoginStatus(), child: const MyApp()));
 }
-```dart
+```
 
 😑 侧滑导航就折腾到这吧，接着折腾底部Tab~
 
@@ -1047,7 +1053,7 @@ class _BottomBarWidgetState extends State<BottomBarWidget> {
     );
   }
 }
-```dart
+```
 
 ### 9.2. PageView (切页)
 
@@ -1087,7 +1093,7 @@ class _ContentPageViewState extends State<ContentPageView> {
     );
   }
 }
-```dart
+```
 
 ### 9.3. 底部Tab + PageView 联动
 
@@ -1147,7 +1153,7 @@ class _MyHomePageState extends State<MyHomePage> {
         drawer: const DrawerScreen());
   }
 }
-```dart
+```
 
 运行看看效果：
 
@@ -1251,7 +1257,7 @@ class _AutoScrollBannerWidgetState extends State<AutoScrollBannerWidget> {
     );
   }
 }
-```dart
+```
 
  这部分的代码多看几遍就懂了~
 
@@ -1316,7 +1322,7 @@ class _ArticleItemWidgetState extends State<ArticleItemWidget> {
     );
   }
 }
-```dart
+```
 
 ### 10.4. 滑动到底部加载更多
 
@@ -1329,7 +1335,7 @@ class _ArticleItemWidgetState extends State<ArticleItemWidget> {
       _requestArticleList();
     }
   });
-```dart
+```
 
 ### 10.5. 组合封装
 
@@ -1428,7 +1434,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ));
   }
 }
-```dart
+```
 
 运行看下效果：
 
@@ -1457,7 +1463,7 @@ class _HomeScreenState extends State<HomeScreen> with AutomaticKeepAliveClientMi
  	@override
   bool get wantKeepAlive => true;
 }
-```dart
+```
 
 😁 通过上述配置，切去别的页面再切回来，页面内容也不会重新加载啦。
 
@@ -1526,7 +1532,7 @@ class _WxArticleScreenState extends State<WxArticleScreen> with SingleTickerProv
   @override
   bool get wantKeepAlive => true;
 }
-```dart
+```
 
 封装下 **TabBar** 写个组件：
 
@@ -1551,7 +1557,7 @@ class _BlogTabBarWidgetState extends State<BlogTabBarWidget> {
     );
   }
 }
-```dart
+```
 
 **TabBarView** 的子项同样封装成一个组件：
 
@@ -1630,7 +1636,7 @@ class _WxArticleListWidgetState extends State<WxArticleListWidget> with Automati
   @override
   bool get wantKeepAlive => true;
 }
-```dart
+```
 
 列表项的话，直接复用首页文章列表的组件，改下数据结构就完事了，运行看下效果：
 
@@ -1638,14 +1644,14 @@ class _WxArticleListWidgetState extends State<WxArticleListWidget> with Automati
 
 ## 12. 文章阅读页 (嵌套WebView)
 
-如题，就是嵌套一个WebView，Flutter没有内置浏览器组件，这里用到三方库：[flutter\_inappwebview](https://github.com/pichillilorenzo/flutter_inappwebview)，执行 **flutter pub add flutter\_inappwebview** 添加依赖，然后就可以使用库里的 **InAppWebView** 来加载网页了。此页面结构：
+如题，就是嵌套一个WebView，Flutter没有内置浏览器组件，这里用到三方库：[flutter_inappwebview](https://github.com/pichillilorenzo/flutter_inappwebview)，执行 **flutter pub add flutter_inappwebview** 添加依赖，然后就可以使用库里的 **InAppWebView** 来加载网页了。此页面结构：
 
 * **顶部**：**AppBar**，蕾姆蓝背景，白色字体，左边一个回退按钮，右边一个 **复制URL** 和 **跳转手机浏览器** 按钮；
 * **中间**：**Stack堆叠布局**，包含 **InAppWebView** 和 根据是否处于加载状态，显示圆形进度条或Container；
 
 ### 12.1. InAppWebView
 
-定义一个标记 **\_isLoading** 表示网页是否正在加载中，在 **InAppWebView** 的 **onLoadStart**(开始加载) 和 **onLoadStop**(结束加载) 中修改，并调用 **setState()** 更新状态；
+定义一个标记 **_isLoading** 表示网页是否正在加载中，在 **InAppWebView** 的 **onLoadStart**(开始加载) 和 **onLoadStop**(结束加载) 中修改，并调用 **setState()** 更新状态；
 
 ```dart
 class BrowserPageScreen extends StatefulWidget {
@@ -1715,7 +1721,7 @@ class _BrowserPageScreenState extends State<BrowserPageScreen> {
     );
   }
 }
-```dart
+```
 
 运行后可能会报错：
 
@@ -1738,9 +1744,9 @@ Clipboard.setData(ClipboardData(text: '这里是要复制的文字'));
 // 读取剪切板数据
 final ClipboardData data = await Clipboard.getData('text/plain');
 String pastedText = data.text;
-```dart
+```
 
-顺带完善下，上面的 **\_copyUrlToClipboard()** 方法：
+顺带完善下，上面的 **_copyUrlToClipboard()** 方法：
 
 ```dart
 void _copyUrlToClipboard() {
@@ -1748,11 +1754,11 @@ void _copyUrlToClipboard() {
   // 底部弹出一个SnackBar告知用户
   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('链接已复制到剪贴板')));
 }
-```dart
+```
 
 ### 12.3. 跳转手机浏览器
 
-这个用到Flutter三方库 [url\_launcher](https://pub.dev/packages/url_launcher)，支持跨平台（iOS、Android、Web等）的方式来打开 **外部网页**、发送邮件、拨打电话、发送短信等操作。执行 **flutter pub add url\_launcher** 添加依赖，使用方法非常简单：
+这个用到Flutter三方库 [url_launcher](https://pub.dev/packages/url_launcher)，支持跨平台（iOS、Android、Web等）的方式来打开 **外部网页**、发送邮件、拨打电话、发送短信等操作。执行 **flutter pub add url_launcher** 添加依赖，使用方法非常简单：
 
 ```dart
 import 'package:url_launcher/url_launcher.dart';
@@ -1765,7 +1771,7 @@ void _openBrowser() async {
     throw 'Could not launch $uri';
   }
 }
-```dart
+```
 
 运行看看最终效果：
 
