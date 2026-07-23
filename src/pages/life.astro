@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SectionTitle from '../components/SectionTitle.astro';
+import PhotoWall from '../components/react/PhotoWall.tsx';
 import fs from 'fs';
 import path from 'path';
 
@@ -10,13 +11,12 @@ interface MediaItem {
   src: string;
   name: string;
   type: 'image' | 'video';
-  ext: string;
 }
 
 let mediaItems: MediaItem[] = [];
 
 if (fs.existsSync(mediaDir)) {
-  const files = fs.readdirSync(mediaDir).sort().reverse(); // 最新的在前
+  const files = fs.readdirSync(mediaDir).sort().reverse();
   const imageExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.bmp'];
   const videoExts = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
 
@@ -25,9 +25,9 @@ if (fs.existsSync(mediaDir)) {
     const src = `/images/life/${encodeURIComponent(file)}`;
 
     if (imageExts.includes(ext)) {
-      mediaItems.push({ src, name: file, type: 'image', ext });
+      mediaItems.push({ src, name: file, type: 'image' });
     } else if (videoExts.includes(ext)) {
-      mediaItems.push({ src, name: file, type: 'video', ext });
+      mediaItems.push({ src, name: file, type: 'video' });
     }
   }
 }
@@ -60,41 +60,8 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     </header>
 
     {mediaItems.length > 0 ? (
-      <div class="masonry-gallery reveal reveal-delay-1">
-        {mediaItems.map((item, index) => (
-          <div
-            class="media-item"
-            data-type={item.type}
-            data-src={item.src}
-            data-index={index}
-            style={`--delay: ${Math.min(index * 40, 800)}ms`}
-          >
-            {item.type === 'image' ? (
-              <img
-                src={item.src}
-                alt={item.name}
-                loading="lazy"
-                class="media-img"
-              />
-            ) : (
-              <div class="video-wrapper">
-                <video
-                  src={item.src}
-                  preload="metadata"
-                  class="media-video"
-                  muted
-                />
-                <div class="video-overlay">
-                  <div class="play-btn">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+      <div class="reveal reveal-delay-1">
+        <PhotoWall client:load items={mediaItems} />
       </div>
     ) : (
       <div class="empty-state reveal">
@@ -102,29 +69,6 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
         <p>还没有照片，把照片放到 <code>public/images/life/</code> 目录下即可自动展示</p>
       </div>
     )}
-  </div>
-
-  <!-- Lightbox -->
-  <div class="lightbox" id="lightbox">
-    <div class="lightbox-backdrop"></div>
-    <button class="lightbox-close" id="lightbox-close" aria-label="关闭">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="18" y1="6" x2="6" y2="18"/>
-        <line x1="6" y1="6" x2="18" y2="18"/>
-      </svg>
-    </button>
-    <button class="lightbox-nav lightbox-prev" id="lightbox-prev" aria-label="上一张">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="15 18 9 12 15 6"/>
-      </svg>
-    </button>
-    <button class="lightbox-nav lightbox-next" id="lightbox-next" aria-label="下一张">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="9 18 15 12 9 6"/>
-      </svg>
-    </button>
-    <div class="lightbox-content" id="lightbox-content"></div>
-    <div class="lightbox-counter" id="lightbox-counter"></div>
   </div>
 </Layout>
 
@@ -160,7 +104,7 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     font-size: var(--text-xs);
     font-weight: 600;
     color: var(--color-life);
-    background: var(--color-life-bg, color-mix(in srgb, #FB923C 12%, transparent));
+    background: color-mix(in srgb, #FB923C 12%, transparent);
     border: 1px solid color-mix(in srgb, #FB923C 25%, transparent);
   }
 
@@ -198,35 +142,34 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
   }
 
   /* Masonry Gallery */
-  .masonry-gallery {
+  :global(.masonry-gallery) {
     column-count: 1;
     column-gap: 12px;
   }
 
   @media (min-width: 640px) {
-    .masonry-gallery {
+    :global(.masonry-gallery) {
       column-count: 2;
     }
   }
 
   @media (min-width: 1024px) {
-    .masonry-gallery {
+    :global(.masonry-gallery) {
       column-count: 3;
     }
   }
 
   @media (min-width: 1280px) {
-    .masonry-gallery {
+    :global(.masonry-gallery) {
       column-count: 4;
     }
   }
 
-  .media-item {
+  :global(.media-item) {
     break-inside: avoid;
     margin-bottom: 12px;
     border-radius: var(--radius-lg);
     overflow: hidden;
-    cursor: pointer;
     position: relative;
     background: var(--color-surface);
     border: 1px solid var(--color-border);
@@ -234,7 +177,6 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     opacity: 0;
     transform: translateY(20px);
     animation: fadeUp 0.6s var(--ease-out) forwards;
-    animation-delay: var(--delay, 0ms);
   }
 
   @keyframes fadeUp {
@@ -244,35 +186,32 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     }
   }
 
-  .media-item:hover {
+  :global(.media-item:hover) {
     transform: translateY(-4px);
     box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.3);
     border-color: var(--color-life);
   }
 
-  .media-img {
+  :global(.media-img) {
     width: 100%;
     height: auto;
     display: block;
-    transition: transform var(--duration-slow) var(--ease-out);
+    cursor: zoom-in;
   }
 
-  .media-item:hover .media-img {
-    transform: scale(1.03);
-  }
-
-  .video-wrapper {
+  :global(.video-wrapper) {
     position: relative;
     width: 100%;
+    cursor: pointer;
   }
 
-  .media-video {
+  :global(.media-video) {
     width: 100%;
     height: auto;
     display: block;
   }
 
-  .video-overlay {
+  :global(.video-overlay) {
     position: absolute;
     inset: 0;
     display: flex;
@@ -282,11 +221,11 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     transition: background var(--duration-normal) var(--ease-out);
   }
 
-  .media-item:hover .video-overlay {
+  :global(.media-item:hover .video-overlay) {
     background: rgba(0, 0, 0, 0.15);
   }
 
-  .play-btn {
+  :global(.play-btn) {
     width: 64px;
     height: 64px;
     border-radius: 50%;
@@ -299,13 +238,61 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   }
 
-  .media-item:hover .play-btn {
+  :global(.media-item:hover .play-btn) {
     transform: scale(1.1);
     background: #fff;
   }
 
-  .play-btn svg {
+  :global(.play-btn svg) {
     margin-left: 4px;
+  }
+
+  /* Video Lightbox */
+  :global(.video-lightbox) {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.video-lightbox-backdrop) {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  :global(.video-lightbox video) {
+    position: relative;
+    z-index: 1;
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: var(--radius-md);
+  }
+
+  :global(.video-lightbox-close) {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+
+  :global(.video-lightbox-close:hover) {
+    background: rgba(255, 255, 255, 0.3);
   }
 
   /* Empty state */
@@ -329,144 +316,6 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     color: var(--color-text-secondary);
   }
 
-  /* Lightbox */
-  .lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .lightbox.active {
-    display: flex;
-  }
-
-  .lightbox-backdrop {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.92);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    cursor: zoom-out;
-  }
-
-  .lightbox-content {
-    position: relative;
-    z-index: 1;
-    max-width: 90vw;
-    max-height: 85vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .lightbox-content img {
-    max-width: 90vw;
-    max-height: 85vh;
-    object-fit: contain;
-    border-radius: var(--radius-md);
-    animation: lightboxIn 0.3s var(--ease-out);
-  }
-
-  .lightbox-content video {
-    max-width: 90vw;
-    max-height: 85vh;
-    border-radius: var(--radius-md);
-    animation: lightboxIn 0.3s var(--ease-out);
-  }
-
-  @keyframes lightboxIn {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-
-  .lightbox-close {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    z-index: 2;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background var(--duration-fast) var(--ease-out);
-  }
-
-  .lightbox-close:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  .lightbox-nav {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 2;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all var(--duration-fast) var(--ease-out);
-  }
-
-  .lightbox-nav:hover {
-    background: rgba(255, 255, 255, 0.3);
-  }
-
-  .lightbox-prev {
-    left: 20px;
-  }
-
-  .lightbox-next {
-    right: 20px;
-  }
-
-  .lightbox-counter {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 2;
-    color: rgba(255, 255, 255, 0.8);
-    font-size: var(--text-sm);
-    font-weight: 600;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-full);
-    background: rgba(0, 0, 0, 0.4);
-  }
-
-  @media (max-width: 640px) {
-    .lightbox-nav {
-      width: 40px;
-      height: 40px;
-    }
-    .lightbox-prev { left: 8px; }
-    .lightbox-next { right: 8px; }
-    .lightbox-close {
-      top: 12px;
-      right: 12px;
-    }
-  }
-
   /* Reveal */
   .reveal {
     opacity: 0;
@@ -482,69 +331,7 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
 </style>
 
 <script>
-  function initLifePage() {
-    const mediaItems = document.querySelectorAll('.media-item');
-    const lightbox = document.getElementById('lightbox');
-    const lightboxContent = document.getElementById('lightbox-content');
-    const lightboxClose = document.getElementById('lightbox-close');
-    const lightboxPrev = document.getElementById('lightbox-prev');
-    const lightboxNext = document.getElementById('lightbox-next');
-    const lightboxCounter = document.getElementById('lightbox-counter');
-    const lightboxBackdrop = document.querySelector('.lightbox-backdrop');
-
-    if (!mediaItems.length || !lightbox) return;
-
-    let currentIndex = 0;
-    const items = Array.from(mediaItems).map(el => ({
-      src: el.dataset.src,
-      type: el.dataset.type,
-    }));
-
-    function openLightbox(index: number) {
-      currentIndex = index;
-      renderLightbox();
-      lightbox.classList.add('active');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox() {
-      lightbox.classList.remove('active');
-      document.body.style.overflow = '';
-      lightboxContent.innerHTML = '';
-    }
-
-    function renderLightbox() {
-      const item = items[currentIndex];
-      if (item.type === 'image') {
-        lightboxContent.innerHTML = `<img src="${item.src}" alt="" />`;
-      } else {
-        lightboxContent.innerHTML = `<video src="${item.src}" controls autoplay playsinline></video>`;
-      }
-      lightboxCounter.textContent = `${currentIndex + 1} / ${items.length}`;
-    }
-
-    function navigate(dir: number) {
-      currentIndex = (currentIndex + dir + items.length) % items.length;
-      renderLightbox();
-    }
-
-    mediaItems.forEach((el, i) => {
-      el.addEventListener('click', () => openLightbox(i));
-    });
-
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightboxBackdrop.addEventListener('click', closeLightbox);
-    lightboxPrev.addEventListener('click', () => navigate(-1));
-    lightboxNext.addEventListener('click', () => navigate(1));
-
-    document.addEventListener('keydown', (e) => {
-      if (!lightbox.classList.contains('active')) return;
-      if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') navigate(-1);
-      if (e.key === 'ArrowRight') navigate(1);
-    });
-
-    // Reveal animation
+  function initLifeReveal() {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -560,9 +347,8 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     reveals.forEach((el) => observer.observe(el));
   }
 
-  document.addEventListener('astro:page-load', initLifePage);
+  document.addEventListener('astro:page-load', initLifeReveal);
 
-  // Fallback
   setTimeout(() => {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => {
       el.classList.add('is-visible');

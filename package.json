@@ -28,6 +28,7 @@
     "ogl": "^1.0.11",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
+    "react-zmage": "^1.9.0",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.3.2",
     "tslib": "^2.8.1",
