@@ -1,0 +1,337 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+
+// Get all Flutter series posts
+const allPosts = (await getCollection('blog', ({ data }) => !data.draft))
+  .filter(post => post.data.tags.includes('Flutter'))
+  .sort((a, b) => a.data.pubDate.getTime() - b.data.pubDate.getTime());
+
+// Group by series number
+const postsWithNumber = allPosts.map(post => {
+  const match = post.data.title.match(/（(.+?)）：/);
+  const num = match ? match[1] : '';
+  return { ...post, seriesNum: num };
+});
+
+const totalArticles = postsWithNumber.length;
+---
+
+<Layout title="Flutter入门到精通系列 - wxc 的博客" description="36篇Flutter系统学习教程，从环境搭建到高级原理，涵盖Dart语法、UI开发、状态管理、路由、动画、布局原理等完整知识体系。" category="tech">
+  <div class="series-page container">
+    <!-- Hero Header -->
+    <header class="series-header reveal">
+      <div class="series-badge">
+        <span class="badge-icon">🐦</span>
+        <span>系列教程</span>
+      </div>
+      <h1 class="series-title">Flutter 入门到精通</h1>
+      <p class="series-subtitle">
+        共 {totalArticles} 篇文章，从环境搭建到高级原理，系统掌握 Flutter 跨平台开发
+      </p>
+      <div class="series-stats">
+        <div class="stat-item">
+          <span class="stat-number">{totalArticles}</span>
+          <span class="stat-label">篇文章</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">5</span>
+          <span class="stat-label">大模块</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-item">
+          <span class="stat-number">90w+</span>
+          <span class="stat-label">字</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Module Sections -->
+    {
+      [
+        { title: '环境搭建与入门', range: ['前置篇', '一', '二', '三'], icon: '🚀', desc: '开发环境配置、第一个Flutter应用、Android开发者的知识迁移' },
+        { title: 'Dart语言与UI基础', range: ['四', '五', '六', '七'], icon: '🎨', desc: 'Dart语法速通、Widget体系、项目实战' },
+        { title: '进阶与组件封装', range: ['八', '九', '十', '十一', '十二', '十三'], icon: '🔧', desc: '异步编程、Key机制、UI框架原理、JSON处理、InheritedWidget' },
+        { title: '状态管理', range: ['十四', '十五', '十六', '十七', '十八', '十九', '二十', '二十一'], icon: '🧠', desc: 'Provider、Riverpod、GetX三大框架、网络封装、MVVM架构' },
+        { title: '高级原理与实战', range: ['二十二', '二十三', '二十四', '二十五', '二十六', '二十七', '二十八', '二十九', '三十', '三十一', '三十二', '三十三', '三十四', '三十五'], icon: '⚡', desc: '路由、动画、布局原理、Channel机制、自定义绘制、手势与滑动' },
+      ].map((module) => {
+        const modulePosts = postsWithNumber.filter(p => module.range.includes(p.seriesNum));
+        return (
+          <section class="module-section reveal">
+            <div class="module-header">
+              <span class="module-icon">{module.icon}</span>
+              <div>
+                <h2 class="module-title">{module.title}</h2>
+                <p class="module-desc">{module.desc}</p>
+              </div>
+              <span class="module-count">{modulePosts.length} 篇</span>
+            </div>
+            <div class="module-posts">
+              {modulePosts.map((post, index) => (
+                <a href={`/posts/${post.id}`} class="series-post-card" style={`--delay: ${index * 40}ms`}>
+                  <div class="post-number">{post.seriesNum}</div>
+                  <div class="post-info">
+                    <h3 class="post-title">{post.data.title.replace(/Flutter入门到精通（.+?）：/, '')}</h3>
+                    <p class="post-desc">{post.data.description}</p>
+                  </div>
+                  <div class="post-arrow">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        );
+      })
+    }
+  </div>
+</Layout>
+
+<style>
+  .series-page {
+    padding-top: var(--space-12);
+    padding-bottom: var(--space-16);
+  }
+
+  .series-header {
+    text-align: center;
+    margin-bottom: var(--space-16);
+  }
+
+  .series-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.375rem 1rem;
+    border-radius: var(--radius-full);
+    background: color-mix(in srgb, #02569B 10%, transparent);
+    color: #02569B;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    margin-bottom: var(--space-5);
+  }
+
+  .badge-icon {
+    font-size: 1.1rem;
+  }
+
+  .series-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    background: linear-gradient(135deg, #02569B 0%, #54C5F8 50%, #02569B 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: var(--space-4);
+  }
+
+  .series-subtitle {
+    font-size: var(--text-lg);
+    color: var(--color-text-secondary);
+    max-width: 600px;
+    margin: 0 auto var(--space-8);
+    line-height: var(--leading-relaxed);
+  }
+
+  .series-stats {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-3) var(--space-6);
+    border-radius: var(--radius-xl);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .stat-number {
+    font-size: var(--text-2xl);
+    font-weight: 800;
+    color: #02569B;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: 32px;
+    background: var(--color-border);
+  }
+
+  .module-section {
+    margin-bottom: var(--space-12);
+  }
+
+  .module-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-4);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .module-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .module-title {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  .module-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  .module-count {
+    margin-left: auto;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    background: var(--color-surface-muted);
+    flex-shrink: 0;
+  }
+
+  .module-posts {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .series-post-card {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+    transition: all var(--duration-fast) var(--ease-out);
+    cursor: pointer;
+  }
+
+  .series-post-card:hover {
+    border-color: #54C5F8;
+    background: color-mix(in srgb, #54C5F8 5%, var(--color-surface));
+    transform: translateX(4px);
+  }
+
+  .post-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, #02569B 10%, transparent);
+    color: #02569B;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .post-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .post-title {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--color-text);
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .series-post-card:hover .post-title {
+    color: #02569B;
+  }
+
+  .post-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .post-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+    transition: all var(--duration-fast) var(--ease-out);
+  }
+
+  .series-post-card:hover .post-arrow {
+    color: #02569B;
+    transform: translateX(4px);
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity var(--duration-slow) var(--ease-out),
+                transform var(--duration-slow) var(--ease-out);
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 640px) {
+    .series-stats {
+      gap: var(--space-4);
+    }
+    .post-desc {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+    reveals.forEach((el) => observer.observe(el));
+  });
+</script>
