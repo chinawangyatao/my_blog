@@ -411,7 +411,7 @@ const iconMap: Record<string, any> = {
       <div class="container">
         <SectionHeading title="项目经历" subtitle="点击项目卡片查看详细技术方案" />
         <div class="reveal">
-          <ProjectShowcase client:visible projects={projects} />
+          <ProjectShowcase client:load projects={projects} />
         </div>
       </div>
     </section>
@@ -456,7 +456,7 @@ const iconMap: Record<string, any> = {
 </Layout>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
+  function initAboutReveal() {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -470,5 +470,14 @@ const iconMap: Record<string, any> = {
       { threshold: 0.1 }
     );
     reveals.forEach((el) => observer.observe(el));
-  });
+  }
+
+  document.addEventListener('astro:page-load', initAboutReveal);
+
+  // Fallback: ensure content is visible even if ClientRouter fails
+  setTimeout(() => {
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => {
+      el.classList.add('is-visible');
+    });
+  }, 3000);
 </script>
