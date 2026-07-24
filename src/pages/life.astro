@@ -6,16 +6,58 @@ import fs from 'fs';
 import path from 'path';
 
 const mediaDir = path.resolve('public/images/life');
+const convertedDir = path.resolve('public/images/life/converted');
 
 interface MediaItem {
   src: string;
   name: string;
-  type: 'image' | 'video';
+  type: 'image' | 'video' | 'livephoto';
+  videoSrc?: string;
 }
 
 let mediaItems: MediaItem[] = [];
 
-if (fs.existsSync(mediaDir)) {
+if (fs.existsSync(convertedDir)) {
+  // Use converted JPGs
+  const files = fs.readdirSync(convertedDir).sort().reverse();
+  const imageExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.bmp'];
+  const videoExts = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
+
+  for (const file of files) {
+    const ext = path.extname(file).toLowerCase();
+    const basename = path.parse(file).name;
+
+    if (imageExts.includes(ext)) {
+      const src = `/images/life/converted/${encodeURIComponent(file)}`;
+
+      // Check if there's a paired MOV/MP4 for Live Photo
+      const movFile = files.find(f =>
+        path.parse(f).name === basename &&
+        ['.mov', '.mp4'].includes(path.extname(f).toLowerCase())
+      );
+
+      if (movFile) {
+        mediaItems.push({
+          src,
+          name: file,
+          type: 'livephoto',
+          videoSrc: `/images/life/converted/${encodeURIComponent(movFile)}`,
+        });
+      } else {
+        mediaItems.push({ src, name: file, type: 'image' });
+      }
+    } else if (videoExts.includes(ext)) {
+      // Skip standalone video files that are already paired as livephoto
+      const basename2 = path.parse(file).name;
+      const alreadyPaired = mediaItems.some(m => m.type === 'livephoto' && m.videoSrc?.includes(encodeURIComponent(file)));
+      if (!alreadyPaired) {
+        const src = `/images/life/converted/${encodeURIComponent(file)}`;
+        mediaItems.push({ src, name: file, type: 'video' });
+      }
+    }
+  }
+} else if (fs.existsSync(mediaDir)) {
+  // Fallback: use original directory (only web-compatible formats)
   const files = fs.readdirSync(mediaDir).sort().reverse();
   const imageExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.bmp'];
   const videoExts = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
@@ -32,8 +74,9 @@ if (fs.existsSync(mediaDir)) {
   }
 }
 
-const photoCount = mediaItems.filter(m => m.type === 'image').length;
+const photoCount = mediaItems.filter(m => m.type === 'image' || m.type === 'livephoto').length;
 const videoCount = mediaItems.filter(m => m.type === 'video').length;
+const livephotoCount = mediaItems.filter(m => m.type === 'livephoto').length;
 ---
 
 <Layout title="生活 - wxc 的博客" description="记录旅行、日常与生活中的小确幸" category="life">
@@ -49,6 +92,7 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
         {mediaItems.length > 0 && (
           <div class="media-stats">
             {photoCount > 0 && <span class="stat-pill">📷 {photoCount} 张照片</span>}
+            {livephotoCount > 0 && <span class="stat-pill">✨ {livephotoCount} 个 Live Photo</span>}
             {videoCount > 0 && <span class="stat-pill">🎬 {videoCount} 个视频</span>}
           </div>
         )}
@@ -197,6 +241,41 @@ const videoCount = mediaItems.filter(m => m.type === 'video').length;
     height: auto;
     display: block;
     cursor: zoom-in;
+  }
+
+  /* Live Photo */
+  :global(.livephoto-wrapper) {
+    position: relative;
+    width: 100%;
+  }
+
+  :global(.livephoto-container) {
+    width: 100%;
+    aspect-ratio: auto;
+    min-height: 200px;
+  }
+
+  :global(.livephoto-container > *) {
+    border-radius: inherit;
+  }
+
+  :global(.livephoto-badge) {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    z-index: 1;
   }
 
   :global(.video-wrapper) {
