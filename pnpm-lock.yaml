@@ -35,6 +35,9 @@ importers:
       gsap:
         specifier: ^3.15.0
         version: 3.15.0
+      livephotoskit:
+        specifier: ^1.5.6
+        version: 1.5.6
       lucide-react:
         specifier: ^1.23.0
         version: 1.23.0(react@19.2.7)
@@ -56,6 +59,9 @@ importers:
       react-dom:
         specifier: ^19.2.7
         version: 19.2.7(react@19.2.7)
+      react-zmage:
+        specifier: ^1.9.0
+        version: 1.9.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       tailwind-merge:
         specifier: ^3.6.0
         version: 3.6.0
@@ -1870,6 +1876,9 @@ packages:
     resolution: {integrity: sha512-NXYBzinNrblfraPGyrbPoD19C1h9lfI/1mzgWYvXUTe414Gz/X1FD2XBZSZM7rRTrMA8JL3OtAaGifrIKhQ5yQ==}
     engines: {node: '>= 12.0.0'}
 
+  livephotoskit@1.5.6:
+    resolution: {integrity: sha512-dsD6EzQnExuYfYvBSxf3t1bdl2Juw7NnlpWZrsGxdYq2x4pnxyOYrkOG6LGHmklytdFdxaru86GvviLpUhaIBQ==}
+
   lodash-es@4.18.1:
     resolution: {integrity: sha512-J8xewKD/Gk22OZbhpOVSwcs60zhd95ESDwezOFuA3/099925PdHJ7OFHNTGtajL3AlZkykD32HykiMo+BIBI8A==}
 
@@ -2095,6 +2104,12 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  react-zmage@1.9.0:
+    resolution: {integrity: sha512-WVbwTzVt1NWWy57dkToHWCO6sxYUc2tlnwQYNtZs5y0CdX/NCF6YuYyOtJEt3q2WY/e3hw782Ob0dpxXtH51ag==}
+    peerDependencies:
+      react: '>=16.8.0 <20'
+      react-dom: '>=16.8.0 <20'
 
   react@19.2.7:
     resolution: {integrity: sha512-HNe9WslTbXmFK8o8cmwgAeJFSBvt1bPdHCVKtaaV+WlAN36mpT4hcRpwbf3fY56ar2oIXzsBpOAiIRHAdY0OlQ==}
@@ -4145,6 +4160,8 @@ snapshots:
       lightningcss-win32-arm64-msvc: 1.32.0
       lightningcss-win32-x64-msvc: 1.32.0
 
+  livephotoskit@1.5.6: {}
+
   lodash-es@4.18.1: {}
 
   lru-cache@11.5.1: {}
@@ -4363,6 +4380,11 @@ snapshots:
       tslib: 2.8.1
     optionalDependencies:
       '@types/react': 19.2.17
+
+  react-zmage@1.9.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
+    dependencies:
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
 
   react@19.2.7: {}
 

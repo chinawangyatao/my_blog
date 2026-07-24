@@ -1,17 +1,87 @@
 ---
-import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
-import PostCard from '../components/PostCard.astro';
 import SectionTitle from '../components/SectionTitle.astro';
+import PhotoWall from '../components/react/PhotoWall.tsx';
+import fs from 'fs';
+import path from 'path';
 
-const posts = (await getCollection('blog', ({ data }) => !data.draft && data.category === 'life'))
-  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+const mediaDir = path.resolve('public/images/life');
+const convertedDir = path.resolve('public/images/life/converted');
 
-const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
+interface MediaItem {
+  src: string;
+  name: string;
+  type: 'image' | 'video' | 'livephoto';
+  videoSrc?: string;
+}
+
+let mediaItems: MediaItem[] = [];
+
+if (fs.existsSync(convertedDir)) {
+  // Use converted JPGs
+  const files = fs.readdirSync(convertedDir).sort().reverse();
+  const imageExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.bmp'];
+  const videoExts = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
+
+  for (const file of files) {
+    const ext = path.extname(file).toLowerCase();
+    const basename = path.parse(file).name;
+
+    if (imageExts.includes(ext)) {
+      const src = `/images/life/converted/${encodeURIComponent(file)}`;
+
+      // Check if there's a paired MOV/MP4 for Live Photo
+      const movFile = files.find(f =>
+        path.parse(f).name === basename &&
+        ['.mov', '.mp4'].includes(path.extname(f).toLowerCase())
+      );
+
+      if (movFile) {
+        mediaItems.push({
+          src,
+          name: file,
+          type: 'livephoto',
+          videoSrc: `/images/life/converted/${encodeURIComponent(movFile)}`,
+        });
+      } else {
+        mediaItems.push({ src, name: file, type: 'image' });
+      }
+    } else if (videoExts.includes(ext)) {
+      // Skip standalone video files that are already paired as livephoto
+      const basename2 = path.parse(file).name;
+      const alreadyPaired = mediaItems.some(m => m.type === 'livephoto' && m.videoSrc?.includes(encodeURIComponent(file)));
+      if (!alreadyPaired) {
+        const src = `/images/life/converted/${encodeURIComponent(file)}`;
+        mediaItems.push({ src, name: file, type: 'video' });
+      }
+    }
+  }
+} else if (fs.existsSync(mediaDir)) {
+  // Fallback: use original directory (only web-compatible formats)
+  const files = fs.readdirSync(mediaDir).sort().reverse();
+  const imageExts = ['.jpg', '.jpeg', '.png', '.webp', '.avif', '.gif', '.bmp'];
+  const videoExts = ['.mp4', '.webm', '.mov', '.avi', '.mkv'];
+
+  for (const file of files) {
+    const ext = path.extname(file).toLowerCase();
+    const src = `/images/life/${encodeURIComponent(file)}`;
+
+    if (imageExts.includes(ext)) {
+      mediaItems.push({ src, name: file, type: 'image' });
+    } else if (videoExts.includes(ext)) {
+      mediaItems.push({ src, name: file, type: 'video' });
+    }
+  }
+}
+
+const photoCount = mediaItems.filter(m => m.type === 'image' || m.type === 'livephoto').length;
+const videoCount = mediaItems.filter(m => m.type === 'video').length;
+const livephotoCount = mediaItems.filter(m => m.type === 'livephoto').length;
 ---
 
 <Layout title="生活 - wxc 的博客" description="记录旅行、日常与生活中的小确幸" category="life">
-  <div class="category-page container">
+  <div class="life-page container">
+    <!-- Header -->
     <header class="page-header reveal">
       <div class="header-content">
         <SectionTitle
@@ -19,6 +89,13 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
           subtitle="记录旅行、日常与生活中的小确幸"
           category="life"
         />
+        {mediaItems.length > 0 && (
+          <div class="media-stats">
+            {photoCount > 0 && <span class="stat-pill">📷 {photoCount} 张照片</span>}
+            {livephotoCount > 0 && <span class="stat-pill">✨ {livephotoCount} 个 Live Photo</span>}
+            {videoCount > 0 && <span class="stat-pill">🎬 {videoCount} 个视频</span>}
+          </div>
+        )}
       </div>
       <div class="header-deco">
         <div class="deco-circle deco-circle-1"></div>
@@ -26,44 +103,21 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
       </div>
     </header>
 
-    {allTags.length > 0 && (
-      <div class="tags-bar reveal reveal-delay-1">
-        <span class="tags-label">标签：</span>
-        <div class="tags-list">
-          <button class="tag active" data-tag="all">全部</button>
-          {allTags.map(tag => (
-            <button class="tag" data-tag={tag}>{tag}</button>
-          ))}
-        </div>
-      </div>
-    )}
-
-    {posts.length > 0 ? (
-      <div class="post-grid">
-        {posts.map((post, index) => (
-          <div class="reveal" data-tags={post.data.tags.join(',')} style={`transition-delay: ${index * 60}ms`}>
-            <PostCard
-              title={post.data.title}
-              href={`/posts/${post.id}`}
-              pubDate={post.data.pubDate}
-              description={post.data.description}
-              category={post.data.category}
-              tags={post.data.tags}
-              heroImage={post.data.heroImage}
-            />
-          </div>
-        ))}
+    {mediaItems.length > 0 ? (
+      <div class="reveal reveal-delay-1">
+        <PhotoWall client:load items={mediaItems} />
       </div>
     ) : (
       <div class="empty-state reveal">
-        <p>这个分类下还没有文章，敬请期待！</p>
+        <div class="empty-icon">📷</div>
+        <p>还没有照片，把照片放到 <code>public/images/life/</code> 目录下即可自动展示</p>
       </div>
     )}
   </div>
 </Layout>
 
 <style>
-  .category-page {
+  .life-page {
     padding-top: var(--space-12);
     padding-bottom: var(--space-16);
   }
@@ -77,6 +131,25 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
   .header-content {
     position: relative;
     z-index: 1;
+  }
+
+  .media-stats {
+    display: flex;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .stat-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    color: var(--color-life);
+    background: color-mix(in srgb, #FB923C 12%, transparent);
+    border: 1px solid color-mix(in srgb, #FB923C 25%, transparent);
   }
 
   .header-deco {
@@ -112,76 +185,217 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
     opacity: 0.15;
   }
 
-  .tags-bar {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    margin-bottom: var(--space-8);
-    flex-wrap: wrap;
-    padding: var(--space-3) 0;
-  }
-
-  .tags-label {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    flex-shrink: 0;
-  }
-
-  .tags-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: var(--radius-full);
-    font-size: var(--text-xs);
-    font-weight: 500;
-    font-family: inherit;
-    color: var(--color-text-secondary);
-    background: var(--color-surface-muted);
-    border: 1px solid var(--color-border);
-    transition: all var(--duration-fast) var(--ease-out);
-    cursor: pointer;
-  }
-
-  .tag:hover {
-    color: var(--color-accent);
-    border-color: var(--color-accent);
-  }
-
-  .tag.active {
-    color: #fff;
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-  }
-
-  .post-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: var(--space-5);
+  /* Masonry Gallery */
+  :global(.masonry-gallery) {
+    column-count: 1;
+    column-gap: 12px;
   }
 
   @media (min-width: 640px) {
-    .post-grid {
-      grid-template-columns: repeat(2, 1fr);
+    :global(.masonry-gallery) {
+      column-count: 2;
     }
   }
 
   @media (min-width: 1024px) {
-    .post-grid {
-      grid-template-columns: repeat(3, 1fr);
+    :global(.masonry-gallery) {
+      column-count: 3;
     }
   }
 
+  @media (min-width: 1280px) {
+    :global(.masonry-gallery) {
+      column-count: 4;
+    }
+  }
+
+  :global(.media-item) {
+    break-inside: avoid;
+    margin-bottom: 12px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    position: relative;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    transition: all var(--duration-normal) var(--ease-out);
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.6s var(--ease-out) forwards;
+  }
+
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  :global(.media-item:hover) {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.3);
+    border-color: var(--color-life);
+  }
+
+  :global(.media-img) {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: zoom-in;
+  }
+
+  /* Live Photo */
+  :global(.livephoto-wrapper) {
+    position: relative;
+    width: 100%;
+  }
+
+  :global(.livephoto-container) {
+    width: 100%;
+    aspect-ratio: auto;
+    min-height: 200px;
+  }
+
+  :global(.livephoto-container > *) {
+    border-radius: inherit;
+  }
+
+  :global(.livephoto-badge) {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  :global(.video-wrapper) {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+  }
+
+  :global(.media-video) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  :global(.video-overlay) {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.3);
+    transition: background var(--duration-normal) var(--ease-out);
+  }
+
+  :global(.media-item:hover .video-overlay) {
+    background: rgba(0, 0, 0, 0.15);
+  }
+
+  :global(.play-btn) {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #1a1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-normal) var(--ease-out);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  :global(.media-item:hover .play-btn) {
+    transform: scale(1.1);
+    background: #fff;
+  }
+
+  :global(.play-btn svg) {
+    margin-left: 4px;
+  }
+
+  /* Video Lightbox */
+  :global(.video-lightbox) {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global(.video-lightbox-backdrop) {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  :global(.video-lightbox video) {
+    position: relative;
+    z-index: 1;
+    max-width: 90vw;
+    max-height: 85vh;
+    border-radius: var(--radius-md);
+  }
+
+  :global(.video-lightbox-close) {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--duration-fast) var(--ease-out);
+  }
+
+  :global(.video-lightbox-close:hover) {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Empty state */
   .empty-state {
     text-align: center;
-    padding: var(--space-20) 0;
+    padding: var(--space-20) var(--space-4);
     color: var(--color-text-muted);
   }
 
+  .empty-icon {
+    font-size: 3rem;
+    margin-bottom: var(--space-4);
+  }
+
+  .empty-state code {
+    padding: 0.15rem 0.4rem;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-muted);
+    border: 1px solid var(--color-border);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  /* Reveal */
   .reveal {
     opacity: 0;
     transform: translateY(24px);
@@ -196,30 +410,7 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
 </style>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
-    // Tag filtering
-    const tagButtons = document.querySelectorAll('.tags-list .tag');
-    const postCards = document.querySelectorAll('[data-tags]');
-
-    tagButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const tag = btn.dataset.tag;
-
-        tagButtons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        postCards.forEach(card => {
-          if (tag === 'all') {
-            card.style.display = '';
-          } else {
-            const tags = card.dataset.tags.split(',');
-            card.style.display = tags.includes(tag) ? '' : 'none';
-          }
-        });
-      });
-    });
-
-    // Scroll reveal
+  function initLifeReveal() {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(
       (entries) => {
@@ -233,9 +424,10 @@ const allTags = [...new Set(posts.flatMap(post => post.data.tags))];
       { threshold: 0.1 }
     );
     reveals.forEach((el) => observer.observe(el));
-  });
+  }
 
-  // Fallback: ensure content is visible even if ClientRouter fails
+  document.addEventListener('astro:page-load', initLifeReveal);
+
   setTimeout(() => {
     document.querySelectorAll('.reveal:not(.is-visible)').forEach(el => {
       el.classList.add('is-visible');
