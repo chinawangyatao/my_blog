@@ -5,6 +5,7 @@ description: "介绍 Live Photo 的开发知识点，涵盖 iOS、Web 和 Androi
 author: wxc
 tags: ["iOS", "LivePhoto", "前端"]
 category: 'tech'
+heroImage: '/images/livephoto-dev/livephoto-cover.png'
 ---
 
 > 本文转载自博客园，原作者 [zhanggui](https://www.cnblogs.com/zhanggui/p/9283428.html)。
